@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EduToyRentalPlatform", "EduToyRentalPlatform\EduToyRentalPlatform.csproj", "{F0678C93-C486-4882-839D-6DED9CE7C0A1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.WPF", "1.WPF", "{5450F317-5B6E-4291-BDC6-CF1D68FD278E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.Services", "2.Services", "{18A7F255-E7E8-40AD-BDF1-D8A336472919}"
@@ -21,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.Mapper", "ToyShop.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.Repositories", "ToyShop.Repositories\ToyShop.Repositories.csproj", "{668D6DE1-34E9-46B7-8BBE-B78AE5B5CAA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyShop.Contract.Services", "ToyShop.Contract.Services\ToyShop.Contract.Services.csproj", "{9458A2A2-A3A7-479A-9841-60F601BC67A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.Contract.Services", "ToyShop.Contract.Services\ToyShop.Contract.Services.csproj", "{9458A2A2-A3A7-479A-9841-60F601BC67A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyShop.Services", "ToyShop.Services\ToyShop.Services.csproj", "{31EDF52C-37E9-4C62-A1CF-1206E15586AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.Services", "ToyShop.Services\ToyShop.Services.csproj", "{31EDF52C-37E9-4C62-A1CF-1206E15586AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduToyRentalPlatform", "EduToyRentalPlatform\EduToyRentalPlatform.csproj", "{9DA4B01B-F27C-4640-984E-82E31A8E54C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F0678C93-C486-4882-839D-6DED9CE7C0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0678C93-C486-4882-839D-6DED9CE7C0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F0678C93-C486-4882-839D-6DED9CE7C0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F0678C93-C486-4882-839D-6DED9CE7C0A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF654B6F-FD58-4A99-9E0D-9248279CEBAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF654B6F-FD58-4A99-9E0D-9248279CEBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF654B6F-FD58-4A99-9E0D-9248279CEBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,18 +55,22 @@ Global
 		{31EDF52C-37E9-4C62-A1CF-1206E15586AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31EDF52C-37E9-4C62-A1CF-1206E15586AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31EDF52C-37E9-4C62-A1CF-1206E15586AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DA4B01B-F27C-4640-984E-82E31A8E54C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DA4B01B-F27C-4640-984E-82E31A8E54C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DA4B01B-F27C-4640-984E-82E31A8E54C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DA4B01B-F27C-4640-984E-82E31A8E54C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F0678C93-C486-4882-839D-6DED9CE7C0A1} = {5450F317-5B6E-4291-BDC6-CF1D68FD278E}
 		{AF654B6F-FD58-4A99-9E0D-9248279CEBAE} = {D4BE1ABB-7E37-4FF9-BCA0-EF5BBB66B44B}
 		{6DBAC0FE-E133-4FB1-BAC7-592C29FB82DC} = {3C098EA0-1CAF-4B10-9425-60BCCF8188E4}
 		{03935487-2081-405F-9220-518486BF9A8E} = {3C098EA0-1CAF-4B10-9425-60BCCF8188E4}
 		{668D6DE1-34E9-46B7-8BBE-B78AE5B5CAA2} = {D4BE1ABB-7E37-4FF9-BCA0-EF5BBB66B44B}
 		{9458A2A2-A3A7-479A-9841-60F601BC67A5} = {18A7F255-E7E8-40AD-BDF1-D8A336472919}
 		{31EDF52C-37E9-4C62-A1CF-1206E15586AA} = {18A7F255-E7E8-40AD-BDF1-D8A336472919}
+		{9DA4B01B-F27C-4640-984E-82E31A8E54C7} = {5450F317-5B6E-4291-BDC6-CF1D68FD278E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5681BEB-03ED-4564-A4A1-A3FAC9A5E5D3}
