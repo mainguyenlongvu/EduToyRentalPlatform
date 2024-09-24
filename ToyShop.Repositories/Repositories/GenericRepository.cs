@@ -57,8 +57,6 @@ namespace ToyShop.Repositories.Repositories
             return _dbSet.Skip(index * pageSize).Take(pageSize).ToList();
         }
 
-
-
         public List<T> GetAll()
         {
             return _context.Set<T>().ToList();
