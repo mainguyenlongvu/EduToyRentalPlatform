@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Core.Utils;
 
 namespace ToyShop.Repositories.Entity
@@ -11,6 +12,9 @@ namespace ToyShop.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
+        public virtual ICollection<ContractEntity>? ContractEntitys { get; set; }
+        public virtual ICollection<Chat>? Chats { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
         // Navigation properties
         public ApplicationUser()
         {
