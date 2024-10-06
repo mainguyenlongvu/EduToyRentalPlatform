@@ -6,4 +6,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\js\.DS_Store" />
+    <None Include="wwwroot\tinymce\.DS_Store" />
+    <None Include="wwwroot\tinymce\plugins\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\content\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\ui\.DS_Store" />
+    <None Include="wwwroot\tinymce\themes\.DS_Store" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToyShop.Contract.Services\ToyShop.Contract.Services.csproj" />
+    <ProjectReference Include="..\ToyShop.Services\ToyShop.Services.csproj" />
+  </ItemGroup>
+
 </Project>
