@@ -1,0 +1,25 @@
+﻿@page
+@model ToyShop.Pages.MessageModel
+@{
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml"; 
+    ViewData["Title"] = "Giao Diện Chat";
+}
+
+<div class="messmain">
+    <div class="message-container" id="messageContainer">
+        @foreach (var message in Model.Messages)
+        {
+            <div class="message-item">
+                <div class="message-bubble">@message.MessageText</div>
+                <div class="message-info">@message.CreatedTime.ToString("HH:mm")</div>
+            </div>
+        }
+    </div>
+
+    <form id="messageForm" method="post" asp-page-handler="SendMessage">
+        <div class="form-group">
+            <input type="text" id="messageInput" name="messageInput" class="form-control" placeholder="Gõ tin nhắn của bạn ở đây..." required>
+            <button type="submit" class="btn btn-primary2">Gửi</button>
+        </div>
+    </form>
+</div>

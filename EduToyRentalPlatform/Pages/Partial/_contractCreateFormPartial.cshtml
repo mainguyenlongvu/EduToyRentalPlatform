@@ -1,0 +1,138 @@
+﻿@using ToyShop.Contract.Repositories.Entity;
+@using ToyShop.ModelViews.ContractModelView;
+@using ToyShop.Contract.Repositories.Interface;
+@using ToyShop.Repositories.Entity
+@model ResponseContractModel
+@inject IUnitOfWork _uow
+
+@{
+    var customerRoleId = _uow.GetRepository<ApplicationRole>().Entities
+        .Where(r => r.Name == "Customer")
+        .Select(r => r.Id)
+        .FirstOrDefault();
+
+    IEnumerable<SelectListItem> customerList = _uow.GetRepository<ApplicationUser>().Entities
+        .Where(u => _uow.GetRepository<ApplicationUserRoles>().Entities.Any(ur => ur.UserId == u.Id && ur.RoleId == customerRoleId))
+        .Select(u => new SelectListItem
+                {
+                    Text = u.UserName,
+                    Value = u.Id.ToString()
+                }).ToList();
+
+    var supplierRoleId = _uow.GetRepository<ApplicationRole>().Entities
+        .Where(r => r.Name == "Supplier")
+        .Select(r => r.Id)
+        .FirstOrDefault();
+
+    IEnumerable<SelectListItem> supplierList = _uow.GetRepository<ApplicationUser>().Entities
+        .Where(u => _uow.GetRepository<ApplicationUserRoles>().Entities.Any(ur => ur.UserId == u.Id && ur.RoleId == supplierRoleId))
+        .Select(u => new SelectListItem
+                {
+                    Text = u.UserName,
+                    Value = u.Id.ToString()
+                }).ToList();
+
+    var staffRoleId = _uow.GetRepository<ApplicationRole>().Entities
+        .Where(r => r.Name == "Staff")
+        .Select(r => r.Id)
+        .FirstOrDefault();
+
+    IEnumerable<SelectListItem> staffList = _uow.GetRepository<ApplicationUser>().Entities
+        .Where(u => _uow.GetRepository<ApplicationUserRoles>().Entities.Any(ur => ur.UserId == u.Id && ur.RoleId == staffRoleId))
+        .Select(u => new SelectListItem
+                {
+                    Text = u.UserName,
+                    Value = u.Id.ToString()
+                }).ToList();
+
+
+    IEnumerable<SelectListItem> toyList = _uow.GetRepository<Toy>().Entities
+    .Select(u => new SelectListItem
+    {
+        Text = u.ToyName,
+        Value = u.Id.ToString()
+    });
+    IEnumerable<SelectListItem> statusList = _uow.GetRepository<ToyShop.Contract.Repositories.Entity.ContractEntity>().Entities
+           .Select(u => new SelectListItem
+           {
+               Text = u.Status == "Active" ? "Kích hoạt" : u.Status == "Pending" ? "Đang chờ":"Hoàn thành",
+               Value = u.Status
+           });
+}
+<div id="createContractForm" class="container-fluid px-1 py-5 mx-auto position-relative index-12">
+    <div class="row d-flex justify-content-center">
+        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
+            <div class="card">
+                <div class="text-right"><a class="close-form"><i class="fa fa-times text-dark fs-3" aria-hidden="true"></i></a></div>
+                <h3 class="text-primary fs-2">Thêm hợp đồng</h3>
+                <form class="form-card p-3" onsubmit="event.preventDefault()" asp-page="Contract" method="post">
+                    @Html.ValidationSummary(true, "", new {@class="text-danger"})
+                    <input type="hidden" name="_method" value="DELETE"/>
+                    <div class="row justify-content-between text-left">
+                        <div class="form-group col-sm-6 flex-column d-flex"> 
+                            @Html.LabelFor(Model => Model.ToyName, new {@class="text-dark fw-bold"}) 
+                            @Html.DropDownListFor(
+                                     model => model.ToyName,
+                            toyList, new{@class="form-control"})
+                            @Html.ValidationMessageFor(Model => Model.ToyName, "", new { @class = "text-danger", htmlAttributes = new { @placeholder = "Nhập tên đồ chơi" } })
+                        </div>
+                    </div>
+                    <div class="row justify-content-between text-left">
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.SupplierName, new { @class = "text-dark fw-bold" })
+                            @Html.DropDownListFor(
+                                     model => model.SupplierName,
+                            supplierList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.SupplierName, "", new { @class = "text-danger", htmlAttributes = new { @placeholder = "Nhập tên nhà cung cấp" } })
+                        </div>
+                    </div>
+                    <div class="row justify-content-between text-left">
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.CustomerName, new { @class = "text-dark fw-bold" })
+                            @Html.DropDownListFor(
+                                     model => model.CustomerName,
+                            customerList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.CustomerName, "", new { @class = "text-danger"})
+                        </div>
+                    </div>
+                    <div class="row justify-content-between text-left">
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.DateStart, new { @class = "text-dark fw-bold" })
+                            @Html.EditorFor(Model => Model.DateStart, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.DateStart, "", new { @class = "text-danger form-control" })
+                        </div>
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.DateEnd, new { @class = "text-dark fw-bold" })
+                            @Html.EditorFor(Model => Model.DateEnd, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.DateEnd, "", new { @class = "text-danger form-control" })
+                        </div>
+                    </div>
+                    <div class="row justify-content-between text-left">
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.Status, new { @class = "text-dark fw-bold" })
+                            @Html.DropDownListFor(
+                                     model => model.Status,
+                            statusList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.Status, "", new { @class = "text-danger"})
+                        </div>
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.StaffConfirmed, new { @class = "text-dark fw-bold" })
+                            @Html.DropDownListFor(
+                                     model => model.StaffConfirmed,
+                            staffList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.StaffConfirmed, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="form-group col-sm-6 flex-column d-flex">
+                            @Html.LabelFor(Model => Model.TotalValue, new { @class = "text-dark fw-bold", htmlAttributes = new { @placeholder = "Nhập giá trị" }})
+                            @Html.EditorFor(Model => Model.TotalValue, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(Model => Model.TotalValue, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <button type="submit" class="px-5 fs-4 fw-bold button btn-success">Tạo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

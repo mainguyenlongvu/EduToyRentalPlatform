@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ToyShop.Repositories\ToyShop.Repositories.csproj" />
   </ItemGroup>
 
