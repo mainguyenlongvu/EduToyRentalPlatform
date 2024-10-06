@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Repositories.Repositories;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ToyShop.Services
 {
@@ -30,7 +31,7 @@ namespace ToyShop.Services
         }
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-           
+			
         }
     }
 }
