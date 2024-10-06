@@ -6,6 +6,8 @@ using ToyShop.Services;
 using ToyShop.Services.Service;
 using Microsoft.EntityFrameworkCore;
 using ToyShop.Repositories.Base;
+using Microsoft.AspNetCore.Identity;
+using ToyShop.Repositories.Entity;
 
 namespace ToyShop
 {
@@ -53,10 +55,17 @@ namespace ToyShop
             services.AddScoped<IFeedBackService, FeedBackService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IDeliveryService, DeliveryService>();
+
+            // Đăng ký PasswordHasher cho ApplicationUser
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
             services.AddRazorPages();
-
         }
+
 
         public static void AddAutoMapper(this IServiceCollection services)
         {
