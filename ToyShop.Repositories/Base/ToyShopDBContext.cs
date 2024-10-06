@@ -151,7 +151,7 @@ namespace ToyShop.Repositories.Base
             // Configure Lazy Loading Proxies here
             optionsBuilder.UseLazyLoadingProxies(); // or optionsBuilder.UseChangeTrackingProxies();
 
-            optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=EduToyDB;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("EduToy.Repositories"));
+            optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=ToyShop;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("ToyShop.Repositories"));
         }
     }
 }
