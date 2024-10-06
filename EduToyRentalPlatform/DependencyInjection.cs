@@ -55,6 +55,7 @@ namespace ToyShop
             services.AddScoped<IMessageService, MessageService>();
 
             services.AddRazorPages();
+			services.AddSignalR();
 
         }
 

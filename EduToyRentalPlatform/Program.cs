@@ -1,9 +1,12 @@
-﻿using ToyShop;
+﻿using EduToyRentalPlatform.SignalR;
+using System.Runtime.CompilerServices;
+using ToyShop;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 
 // config appsettings by env
 builder.Configuration
@@ -13,6 +16,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddConfig(builder.Configuration);
+DependencyInjection.AddServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
@@ -33,5 +37,8 @@ app.MapGet("/", context => {
     context.Response.Redirect("/Admin/Index");
     return Task.CompletedTask;
 });
+
+app.MapHub<NotificationHub>("notification-hub");
+app.MapHub<MessageHub>("message-hub");
 
 app.Run();
