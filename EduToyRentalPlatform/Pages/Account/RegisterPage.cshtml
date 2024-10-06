@@ -1,0 +1,121 @@
+﻿@page
+@model ToyShop.Pages.Account.RegisterPageModel
+@{
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<div class="register-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post" asp-page-handler="OnPostAsync">
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label"> Tài khoản</label>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="control-label"> Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password" class="control-label"> Mật khẩu</label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Phone" class="control-label"> Số điện thoại</label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="form-group role-select">
+            <label for="RoleId">Role</label>
+            <select id="RoleId" asp-for="RoleId" asp-items="Model.Quyen">
+                <option value="">Chọn vai trò</option>
+            </select>
+            <span asp-validation-for="RoleId" style="color:red"></span>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary">Đăng Ký</button>
+    </form>
+
+    <div class="form-group">
+        <p class="text-center">
+            Đã có tài khoản? <a href="/Account/Login" class="btn btn-link">Đăng Nhập tại đây</a>
+        </p>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    body {
+        background-color: #2ecc71;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .register-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .role-select {
+        margin-bottom: 20px;
+    }
+
+
+    /* Thiết kế label */
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    /* Thiết kế form-control */
+    .form-control {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    /* Thiết kế button */
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+    .btn-link {
+        color: #3498db;
+    }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+</style>

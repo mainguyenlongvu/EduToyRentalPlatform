@@ -1,0 +1,132 @@
+﻿@page
+@model ToyShop.Pages.Admin.ProductModel
+@{
+    ViewData["Title"] = "Toy Management";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/Toy.css">
+
+<div class="section-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <form method="get" asp-page-handler="Search" class="d-flex">
+                                <input type="text" name="searchName" placeholder="Search by name" class="form-control" />
+                                <button type="submit" class="btn btn-primary custom-search-btn">Search</button>
+                            </form>
+                        </div>
+
+                        <div>
+                            <a href="/Admin/CreateProduct" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add New Toy
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="example1">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Image</th>
+                                    <th>Remaining</th>
+                                    <th>Sold</th>
+                                    <th>Action</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Toys != null)
+                                {
+                                    foreach (var toy in Model.Toys)
+                                    {
+                                        <tr>
+                                            <td>@toy.ToyName</td>
+                                            <td><img src="@Url.Content("~/img/" + toy.ToyImg)" alt="Toy Image" style="width:50px;height:50px;" /></td>
+                                            <td>@toy.ToyRemainingQuantity</td>
+                                            <td>@toy.ToyQuantitySold</td>
+                                            <td class="pt_10 pb_10">
+                                                <a href="" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_@toy.Id">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="/Admin/EditToy/@toy.Id" class="btn btn-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/Admin/DeleteToy/@toy.Id" class="btn btn-danger" onClick="return confirm('Are you sure?');"><i class="fas fa-trash"></i></a>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Modal for each toy -->
+                                        <div class="modal fade" id="modal_@toy.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Name</label></div>
+                                                            <div class="col-md-8">@toy.ToyName</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Price</label></div>
+                                                            <div class="col-md-8">@toy.ToyPrice</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Description</label></div>
+                                                            <div class="col-md-8">@toy.ToyDescription</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Option</label></div>
+                                                            <div class="col-md-8">@toy.option</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Deleted</label></div>
+                                                            <div class="col-md-8">@(toy.IsDeleted ? "Yes" : "No")</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Last Updated Time</label></div>
+                                                            <div class="col-md-8">@toy.LastUpdatedTime.ToString("dd-MM-yyyy")</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="/Admin/Product?pageNumber=@(Model.PageNumber - 1)" class="btn btn-secondary prev-btn">Previous</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary prev-btn" disabled>Previous</button>
+                            }
+
+                            <span class="page-number">@Model.PageNumber</span>
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <a href="/Admin/Product?pageNumber=@(Model.PageNumber + 1)" class="btn btn-secondary next-btn">Next</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary next-btn" disabled>Next</button>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

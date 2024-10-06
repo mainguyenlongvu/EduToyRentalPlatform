@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ToyShop.Contract.Repositories\ToyShop.Contract.Repositories.csproj" />
     <ProjectReference Include="..\ToyShop.Core\ToyShop.Core.csproj" />
+    <ProjectReference Include="..\ToyShop.ModelViews\ToyShop.ModelViews.csproj" />
   </ItemGroup>
 
   <ItemGroup>
