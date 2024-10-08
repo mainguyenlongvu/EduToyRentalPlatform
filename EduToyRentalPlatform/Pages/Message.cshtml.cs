@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EduToyRentalPlatform.SignalR.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.MessageModelViews;
 
@@ -8,10 +10,13 @@ namespace ToyShop.Pages
     public class MessageModel : PageModel
     {
         private readonly IMessageService _messageService;
+		private readonly IMessageHub _messageHub;
 
-        public MessageModel(IMessageService messageService)
+
+        public MessageModel(IMessageService messageService, IMessageHub messageHub)
         {
             _messageService = messageService;
+			_messageHub = messageHub;
         }
 
         public List<MessageViewModel> Messages { get; set; } = new List<MessageViewModel>();
@@ -23,6 +28,8 @@ namespace ToyShop.Pages
 
         public async Task<IActionResult> OnPostSendMessageAsync(string messageInput)
         {
+			
+
             if (!string.IsNullOrWhiteSpace(messageInput))
             {
                 var newMessage = new CreateMessageModel
@@ -34,7 +41,9 @@ namespace ToyShop.Pages
 
                 try
                 {
-                    await _messageService.AddAsync(newMessage); // Gọi dịch vụ để thêm tin nhắn
+					await _messageHub.SendMessage(newMessage, ClaimTypes.NameIdentifier);
+					await _messageService.AddAsync(newMessage); // Gọi dịch vụ để thêm tin nhắn
+					
                 }
                 catch (Exception ex)
                 {
