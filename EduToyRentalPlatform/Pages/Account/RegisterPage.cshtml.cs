@@ -45,11 +45,11 @@ namespace ToyShop.Pages.Account
 
         public void OnGet()
         {
-            Quyen = _context.Roles.Select(r => new SelectListItem
-            {
-                /*Value = r.Id,*/ // Nếu bạn có Id để lưu vào RoleId
-                Text = r.Name
-            }).ToList();
+            //Quyen = _context.Roles.Select(r => new SelectListItem
+            //{
+            //    /*Value = r.Id,*/ // Nếu bạn có Id để lưu vào RoleId
+            //    Text = r.Name
+            //}).ToList();
 
         }
 

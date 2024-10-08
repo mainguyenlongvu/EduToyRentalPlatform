@@ -5,34 +5,30 @@
 }
 
 <div class="login-container">
-    <h2>@ViewData["Title"]</h2>
+    <h2 class="text-center">@ViewData["Title"]</h2>
 
     <form method="post" asp-page-handler="OnPostAsync">
         @Html.AntiForgeryToken()
+
         <div class="form-group">
-            <label asp-for="Email" class="control-label">Tài khoản</label>
-            <input asp-for="Email" class="form-control" />
+            <label asp-for="Email" class="control-label label-bold">Tài khoản</label>
+            <input asp-for="Email" class="form-control" placeholder="Nhập tài khoản của bạn" required />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="Password" class="control-label">Mật khẩu</label>
-            <input asp-for="Password" type="password" class="form-control" />
+            <label asp-for="Password" class="control-label label-bold">Mật khẩu</label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu của bạn" required />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
-        <div class="form-group form-check">
-            <input asp-for="RememberMe" class="form-check-input" id="rememberMe" />
-            <label asp-for="RememberMe" class="form-check-label" for="rememberMe">Bạn muốn nhớ mật khẩu?</label>
-        </div>
-
-
-        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <button type="submit" class="btn btn-primary mt-3">Đăng nhập</button>
     </form>
 
-    <div class="form-group">
+    <div class="form-group mt-4">
         <p class="text-center">
-            Chưa có tài khoản? <a href="/Account/RegisterPage" class="btn btn-link">Đăng ký ngay</a>
+            <span class="font-bold">Chưa có tài khoản?</span>
+            <a href="/Account/RegisterPage" class="btn btn-link no-underline">Đăng ký tại đây</a>
         </p>
     </div>
 </div>
@@ -42,62 +38,111 @@
 }
 
 <style>
-    /* Đặt nền màu xanh lá */
+    /* Define the RGB color */
+    :root {
+        --custom-green: rgb(129, 196, 8); /* Custom green color */
+    }
+
     body {
-        background-color: #2ecc71; /* Màu xanh lá */
+        background-image: url('https://wallpaperaccess.com/full/1804535.jpg'); /* Path to your image */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        margin: 0;
+        height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        margin: 0;
     }
-    /* Căn giữa form */
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
     .login-container {
-        background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
         width: 100%;
-        max-width: 400px;
+        max-width: 420px;
     }
-    /* Thiết kế label */
-    label {
-        font-weight: bold;
-        margin-bottom: 5px;
+
+    .form-group {
+        margin-bottom: 20px;
     }
-    /* Thiết kế form-control */
+
+    /* Form input styles */
     .form-control {
-        margin-bottom: 15px;
-        padding: 10px;
-        border-radius: 5px;
+        padding: 12px;
+        border-radius: 6px;
         border: 1px solid #ccc;
-        width: 100%;
+        font-size: 15px;
+        transition: border-color 0.3s ease;
+        padding-right: 135px;
     }
-    /* Thiết kế button */
+
+        .form-control:focus {
+            border-color: var(--custom-green); /* Use custom green color */
+            outline: none;
+            box-shadow: 0 0 5px rgba(129, 196, 8, 0.5); /* Use custom green color for shadow */
+        }
+
+    /* Label styles */
+    .label-bold {
+        font-weight: bold; /* Make label text bold */
+    }
+
+    /* Button styles */
     .btn-primary {
         width: 100%;
-        padding: 10px;
-        background-color: #3498db;
+        padding: 12px;
+        background-color: var(--custom-green); /* Use custom green color */
         border: none;
         color: white;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .form-check-input {
-        width: 20px; /* Chiều rộng của checkbox */
-        height: 20px; /* Chiều cao của checkbox */
-        margin-right: 10px; /* Khoảng cách bên phải checkbox */
-    }
-
-    /* Thiết kế label */
-    .form-check-label {
+        font-size: 18px;
         font-weight: bold;
-        margin-left: 5px; /* Khoảng cách bên trái cho label */
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
     }
 
+        .btn-primary:hover {
+            background-color: rgb(100, 150, 10); /* Darker shade of green for hover */
+        }
 
-    .btn-primary:hover {
-        background-color: #2980b9;
+    /* Link styles */
+    .btn-link {
+        color: var(--custom-green); /* Use custom green color */
+        font-weight: bold;
+        text-decoration: none;
     }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+    /* Additional styles for the new classes */
+    .font-bold {
+        font-weight: bold; /* Make text bold */
+    }
+
+    .no-underline {
+        text-decoration: none; /* Remove underline */
+        color: var(--custom-green); /* Use custom green color */
+    }
+
+        .no-underline:hover {
+            text-decoration: underline; /* Optional: add underline on hover for better UX */
+        }
 </style>
