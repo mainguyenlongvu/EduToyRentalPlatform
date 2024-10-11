@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Repositories.Base;
 
-namespace EduToyRentalPlatform.Pages.Admin.Order
+namespace ToyShopRentalPlatform.Pages.Admin.Order
 {
     public class DetailsModel : PageModel
     {

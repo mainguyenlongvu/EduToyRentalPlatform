@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Repositories.Base;
 
-namespace EduToyRentalPlatform.Pages.Admin.Order
+namespace ToyShopRentalPlatform.Pages.Admin.Order
 {
     public class CreateModel : PageModel
     {

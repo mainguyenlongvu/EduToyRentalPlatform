@@ -1,52 +1,55 @@
-
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using ToyShop.Contract.Repositories.Entity;
-using ToyShop.Contract.Services.Interface;
+锘縰sing ToyShop.Contract.Repositories.Entity;
 using ToyShop.Core.Base;
 using ToyShop.ModelViews.ContractModelView;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using ToyShop.Contract.Services.Interface;
 
 namespace ToyShop.Pages
 {
     public class ContractModel : PageModel
     {
+
         private readonly IContractService _contractService;
+        public BasePaginatedList<ToyShop.Contract.Repositories.Entity.ContractEntity>? Contracts { get; set; }
         public ContractModel(IContractService contractService)
         {
             _contractService = contractService;
         }
-        public BasePaginatedList<ContractEntity>? Contracts { get; set; }
-       
-        public async Task OnGet([FromRoute] int index = 1, [FromRoute] int size = 5)
+        public async Task OnGetAsync([FromRoute] int index = 1, [FromRoute] int size = 5)
         {
             Contracts = await _contractService.GetContractsAsync(index, size);
         }
 
-        public  async Task<IActionResult> OnPut(string id, [FromForm] UpdateContractModel contract)
+        public async Task<IActionResult> OnPutAsync(string id, [FromForm] UpdateContractModel contract)
         {
-            try { 
+            try
+            {
                 await _contractService.UpdateContractAsync(id, contract);
             }
-            catch(BaseException ex)
+            catch (BaseException ex)
             {
                 return BadRequest(ex.Message);
             }
-           return Content("Thanh cong");
+            return Content("Th脿nh c么ng");
         }
 
-        public async Task<IActionResult> OnDelete([FromRoute] string? id)
+        public async Task<IActionResult> OnDeleteAsync([FromBody] string? id)
         {
-            try { 
+            try
+            {
                 await _contractService.DeleteContractAsync(id);
             }
-            catch(BaseException ex)
+            catch (BaseException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("C贸 l峄梚");
             }
-            return Content("X骯 th鄋h c鬾g");
+            return Content("X贸a th脿nh c么ng");
         }
 
-        public async Task<IActionResult> OnPost(CreateContractModel contract)
+        [BindProperty]
+        private CreateContractModel createNewContract { get; set; }
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
@@ -54,14 +57,13 @@ namespace ToyShop.Pages
             }
             try
             {
-                await _contractService.CreateContractAsync(contract);
-
+                await _contractService.CreateContractAsync(createNewContract);
             }
-            catch(BaseException ex)
+            catch (BaseException ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Content("Th阭 th鄋h c鬾g");
+            return Content("Th锚m th脿nh c么ng");
         }
     }
 }

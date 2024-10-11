@@ -19,31 +19,27 @@ namespace ToyShop.Pages.Account
 
         [BindProperty]
         [Required(ErrorMessage = "Hãy nhập Email tài khoản.")]
-
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string Email { get; set; }
 
         [BindProperty]
         [Required(ErrorMessage = "Hãy nhập mật khẩu.")]
+        [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
         public string Password { get; set; }
-        [BindProperty]
-        public bool RememberMe { get; set; }
-
 
         public string ErrorMessage { get; set; }
-
-
         public void OnGet()
         {
 
         }
-
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+
+
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    // Tạo model LoginModel từ thông tin người dùng
                     var loginModel = new LoginModel
                     {
                         Email = Email,
@@ -52,21 +48,22 @@ namespace ToyShop.Pages.Account
 
                     string redirectUrl = await _userService.LoginAsync(loginModel);
 
+                    Response.Cookies.Append("UserName", Email, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(7),
+                        HttpOnly = true
+                    });
+
                     // Chuyển hướng đến đường dẫn nhận được
                     return Redirect(redirectUrl);
                 }
                 catch (Exception ex)
                 {
                     ErrorMessage = ex.Message;
-                    return Page();
                 }
             }
+
             return Page();
         }
-
     }
-
 }
-
-
-

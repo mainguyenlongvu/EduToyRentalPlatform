@@ -10,6 +10,7 @@ namespace ToyShop.Repositories.Mapper
         {
             CreateMap<FeedBack, ResponeFeedBackModel>().ReverseMap();
             CreateMap<CreateFeedBackModel, FeedBack>().ReverseMap();
+            CreateMap<CreateFeedBackModel, ResponeFeedBackModel>().ReverseMap();
         }
     }
 }

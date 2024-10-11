@@ -1,0 +1,44 @@
+﻿@page "{id?}"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ToyShop.Pages.Admin.FeedBack.DetailsModel
+@{
+    ViewData["Title"] = "FeedBack Details";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+
+<div class="row shadow rounded p-3">
+    <div class="form-group">
+        <label>User ID:</label>
+        <p>@Model.Feedback.UserId</p>
+    </div>
+
+    <div class="form-group">
+        <label>Toy ID:</label>
+        <p>@Model.Feedback.ToyId</p>
+    </div>
+
+    <div class="form-group">
+        <label>Content:</label>
+        <p>@Model.Feedback.Content</p>
+    </div>
+
+    <div class="form-group">
+        <label>Created Time:</label>
+        <p>@Model.Feedback.CreatedTime</p>
+    </div>
+
+    <div class="form-group">
+        <label>Last Updated Time:</label>
+        <p>@Model.Feedback.LastUpdatedTime</p>
+    </div>
+
+    <div class="form-group">
+        <label>DeletedTime:</label>
+        <p>@Model.Feedback.DeletedTime</p>
+    </div>
+
+    <div class="form-group">
+        <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@Model.Feedback.Id">Edit</a>
+        <a class="btn btn-success" asp-page="./Index">Back to List</a>
+    </div>
+</div>

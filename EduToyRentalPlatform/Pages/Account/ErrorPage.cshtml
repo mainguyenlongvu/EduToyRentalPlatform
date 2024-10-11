@@ -1,0 +1,22 @@
+﻿@page
+@model ToyShop.Pages.Account.ErrorPageModel
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>@ViewData["Title"]</h1>
+        <p>Bạn không có quyền truy cập vào đây.</p>
+        <a href="/Home/Index">Quay lại trang chủ</a>
+    </div>
+</body>
+</html>
