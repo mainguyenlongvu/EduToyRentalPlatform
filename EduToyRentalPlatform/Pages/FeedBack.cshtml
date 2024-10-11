@@ -1,4 +1,5 @@
 ﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model ToyShop.Pages.FeedBackModel
 @{
     Layout = "~/Pages/Shared/_Layout.cshtml";
@@ -9,10 +10,10 @@
 <div class="feedback-container">
     <div class="feedback-form">
         <h2>Gửi Phản Hồi</h2>
-        <form method="post" asp-page-handler="Create">
-            @* <input type="hidden" name="UserId" value="@Model.UserId" />
-            <input type="hidden" name="ToyId" value="@Model.ToyId" /> *@
-            <textarea name="Content" placeholder="Nội dung phản hồi" required></textarea>
+        <form method="post">
+            <input type="hidden" name="FeedBack.UserId" value="2F8B3243-FFF9-4ACB-8A76-7E0A4F739270" />
+            <input type="hidden" name="FeedBack.ToyId" value="0C91447E-A1F2-4FB5-B1E5-52AC81D10E30" />
+            <textarea asp-for="Feedback.Content" placeholder="Nội dung phản hồi" required></textarea>
             <button type="submit">Gửi Phản Hồi</button>
         </form>
         @if (TempData["SuccessMessage"] != null)
@@ -28,16 +29,25 @@
             <li class="feedback-item">
                 <strong>@feedback.UserId</strong> - @feedback.CreatedTime.ToString("g")
                 <p>@feedback.Content</p>
-                @*  <form method="post" asp-page-handler="Delete" asp-route-id="@feedback.Id" class="feedback-delete-form" style="display:inline;">
-            <button type="submit" class="btn-danger">Delete</button>
-            </form>
-            <form method="post" asp-page-handler="Edit" asp-route-id="@feedback.Id" class="feedback-edit-form" style="display:inline;">
-            <textarea name="Content">@feedback.Content</textarea>
-            <button type="submit">Edit</button>
-            </form> *@
             </li>
         }
     </ul>
+    <div class="pagination">
+        @if (Model.PageNumber > 1)
+        {
+            <a asp-page="FeedBack" asp-route-pageNumber="@(Model.PageNumber - 1)" class="btn btn-secondary"><i class="fas fa-chevron-left"></i></a>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a asp-page="FeedBack" asp-route-pageNumber="@i" class="@(i == Model.PageNumber ? "btn btn-primary" : "btn btn-light")">@i</a>
+        }
+
+        @if (Model.PageNumber < Model.TotalPages)
+        {
+            <a asp-page="FeedBack" asp-route-pageNumber="@(Model.PageNumber + 1)" class="btn btn-secondary"><i class="fas fa-chevron-right"></i></a>
+        }
+    </div>
 </div>
 
 <style>
@@ -129,43 +139,5 @@
         color: #555;
     }
 
-    .feedback-edit-form textarea {
-        width: 100%;
-        height: 60px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        resize: none;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-
-    .feedback-container .btn-danger {
-        background-color: #dc3545;
-        margin-left: 10px;
-    }
-
-    .feedback-container .btn-danger:hover {
-        background-color: #c82333;
-    }
-
 </style>
 
-<script>
-    document.querySelector('.feedback-form form').addEventListener('submit', function (event) {
-        const content = document.querySelector('.feedback-form textarea[name="Content"]');
-        if (content.value.trim() === "") {
-            alert("Please enter feedback!");
-            event.preventDefault();
-        }
-    });
-
-    document.querySelectorAll('.feedback-delete-form').forEach(form => {
-        form.addEventListener('submit', function (event) {
-            const confirmation = confirm("Are you sure you want to delete this comment?");
-            if (!confirmation) {
-                event.preventDefault();
-            }
-        });
-    });
-</script>
