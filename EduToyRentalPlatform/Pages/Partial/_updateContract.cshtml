@@ -4,46 +4,50 @@
     <div class="right-0 text-right"><i class="fs fa-close fw-3"></i></div>
     <div class="row d-flex justify-content-center">
         <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
-            <div class="card position-absolute">
-                <div class="text-right"><a class="close-form"><i class="fa fa-times text-dark fs-3" aria-hidden="true"></i></a></div>
+            <div class="card fixed-top">
+                <div class="text-right">
+                    <a class="close-form" onclick="document.querySelector('[id^=\'contractUpdate\']').classList.toggle('d-none')">
+                        <i class="fa fa-times text-dark fs-3" aria-hidden="true"></i>
+                    </a>
+                </div>
                 <h3>Cập nhật hợp đồng</h3>
-                <form class="form-card p-3" onsubmit="event.preventDefault()" asp-page="Contract">
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <input type="hidden" name="_method" value="PUT" />
-                    <div class="row justify-content-between text-left">
-                        <div class="form-group col-sm-6 flex-column d-flex">
-                            @Html.LabelFor(Model => Model.DateStart, new { @class = "text-dark fw-bold" })
-                            @Html.EditorFor(Model => Model.DateStart)
-                            @Html.ValidationMessageFor(Model => Model.DateStart, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-sm-6 flex-column d-flex">
-                            @Html.LabelFor(Model => Model.DateEnd, new { @class = "text-dark fw-bold" })
-                            @Html.EditorFor(Model => Model.DateEnd)
-                            @Html.ValidationMessageFor(Model => Model.DateEnd, "", new { @class = "text-danger" })
-                        </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <input type="hidden" name="_method" value="PUT" />
+                <div class="row justify-content-between text-left">
+                    <div class="form-group col-sm-6 flex-column d-flex">
+                        @Html.LabelFor(Model => Model.DateStart, new { @class = "text-dark fw-bold" })
+                        @Html.DisplayFor(Model => Model.DateStart)
+                        @Html.EditorFor(Model => Model.DateStart)
+                        @Html.ValidationMessageFor(Model => Model.DateStart, "", new { @class = "text-danger" })
                     </div>
-                    <div class="row justify-content-between text-left">
-                        <div class="form-group col-sm-6 flex-column d-flex">
-                            @Html.LabelFor(Model => Model.Status, new { @class = "text-dark fw-bold" })
-                            @Html.DropDownListFor(
-                                     model => model.Status,
-                                     new List<SelectListItem>
-                            {
-                            new SelectListItem { Text = "Active", Value = "Van a" },
-                            new SelectListItem { Text = "Complete", Value = "Nguyen b" }
-                            })
-                            @Html.ValidationMessageFor(Model => Model.Status, "", new { @class = "text-danger" })
-                        </div>
+                    <div class="form-group col-sm-6 flex-column d-flex">
+                        @Html.LabelFor(Model => Model.DateEnd, new { @class = "text-dark fw-bold" })
+                        @Html.DisplayFor(Model => Model.DateEnd)
+                        @Html.EditorFor(Model => Model.DateEnd)
+                        @Html.ValidationMessageFor(Model => Model.DateEnd, "", new { @class = "text-danger" })
                     </div>
-                    <div class="row justify-content-end">
-                        <div class="form-group col-sm-6 flex-column d-flex">
-                            @Html.LabelFor(Model => Model.TotalValue, new { @class = "text-dark fw-bold", htmlAttributes = new { @placeholder = "Nhập giá trị" } })
-                            @Html.EditorFor(Model => Model.TotalValue)
-                            @Html.ValidationMessageFor(Model => Model.TotalValue, "", new { @class = "text-danger" })
-                        </div>
+                </div>
+                <div class="row justify-content-between text-left">
+                    <div class="form-group col-sm-6 flex-column d-flex">
+                        @Html.LabelFor(Model => Model.Status, new { @class = "text-dark fw-bold" })
+                        @Html.DropDownListFor(
+                                 model => model.Status,
+                                 new List<SelectListItem>
+                        {
+                        new SelectListItem { Text = "Active", Value = "Van a" },
+                        new SelectListItem { Text = "Complete", Value = "Nguyen b" }
+                        })
+                        @Html.ValidationMessageFor(Model => Model.Status, "", new { @class = "text-danger" })
                     </div>
-                    <button type="submit" class="px-5 fs-4 fw-bold button btn-outline-warning">Cập nhật</button>
-                </form>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="form-group col-sm-6 flex-column d-flex">
+                        @Html.LabelFor(Model => Model.TotalValue, new { @class = "text-dark fw-bold", htmlAttributes = new { @placeholder = "Nhập giá trị" } })
+                        @Html.EditorFor(Model => Model.TotalValue)
+                        @Html.ValidationMessageFor(Model => Model.TotalValue, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <button type="submit" class="px-5 fs-4 fw-bold button btn-outline-warning">Cập nhật</button>
             </div>
         </div>
     </div>

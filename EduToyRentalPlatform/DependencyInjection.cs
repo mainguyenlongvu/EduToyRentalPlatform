@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ToyShop.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 using ToyShop.Repositories.Entity;
+using Microsoft.AspNet.Identity;
+using ToyShop.Contract.Repositories.Interface;
 
 namespace ToyShop
 {
@@ -28,6 +30,22 @@ namespace ToyShop
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
+            // Đăng ký dịch vụ IConfiguration
+            services.AddSingleton<IConfiguration>(configuration);
+
+            // Đăng ký IUserService và UserService
+            services.AddScoped<IUserService, UserService>();
+
+            // Đăng ký IUnitOfWork và UnitOfWork
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Đăng ký AutoMapper
+            services.AddAutoMapper(typeof(Program));
+
+
+            // Đăng ký PasswordHasher
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+            services.AddHttpContextAccessor();
         }
         public static void ConfigRoute(this IServiceCollection services)
         {
@@ -65,7 +83,6 @@ namespace ToyShop
 
             services.AddRazorPages();
         }
-
 
         public static void AddAutoMapper(this IServiceCollection services)
         {

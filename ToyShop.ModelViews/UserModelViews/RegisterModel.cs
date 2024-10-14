@@ -23,7 +23,9 @@ namespace ToyShop.ModelViews.UserModelViews
 
         [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
         public string Phone { get; set; }
-        public string RoleName { get; set; }
+
+        [Required(ErrorMessage = "Vai trò là bắt buộc.")]
+        public string RoleId { get; set; }
     }
 
 }

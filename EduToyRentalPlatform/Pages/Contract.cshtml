@@ -1,234 +1,223 @@
-﻿@page "/hop-dong"
+﻿@page "/Home/Contract/"
 @using System.Collections;
 @using AutoMapper;
 @using ToyShop.ModelViews.ContractModelView;
-@using ToyShop.Repositories.Base;
+@using ToyShop.Repositories.Base
 @model ToyShop.Pages.ContractModel;
 @inject IMapper _mapper
-@section css{
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link href="~/css/contract.css" rel="stylesheet">
-}
 @{
-    int index = int.TryParse(Request.Query["index"].ToString(), out index) ? index:1;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Hợp đồng";
+    int index = int.TryParse(Request.Query["index"].ToString(), out index) ? index : 1;
     int pageSize = int.TryParse(Request.Query["index"].ToString(), out pageSize) ? pageSize : 5;
     int size = Model.Contracts?.TotalItems ?? 1;
 }
-<body>
-    <div class="container-xl">
-        <div class="table-responsive">
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <h2>Order <b>Details</b></h2>
-                        </div>
-                        <div class="col-sm-8">
-                            <a href="#" class="btn btn-primary"><i class="material-icons">&#xE863;</i> <span>Làm mới</span></a>
-                            <button href="#" class="btn btn-secondary" id="addContractBtn"><i class="fa fa-plus"></i> <span>Thêm hợp đồng</span></button>
-                        </div>
-                        @await Html.PartialAsync("Partial/_contractCreateFormPartial.cshtml")
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h2>Order <b>Details</b></h2>
                     </div>
+                    <div class="col-sm-8">
+                        <a href="#" onclick="location.reload()" class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i> <span>Làm mới</span></a>
+                        <button href="#" class="btn btn-secondary" id="addContractBtn"><i class="fa fa-plus"></i> <span>Thêm hợp đồng</span></button>
+                    </div>
+                    @await Html.PartialAsync("Partial/_contractCreateFormPartial.cshtml", new ResponseContractModel())
                 </div>
-                <div class="table-filter">
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <div class="show-entries">
-                                <span>Xem</span>
-                                <select class="form-control" id="pagingOption">
-                                    <option disabled selected value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="15">15</option>
-                                    <option value="20">20</option>
-                                </select>
-                                <span>entries</span>
-                            </div>
-                        </div>
-                        <div class="col-sm-9">
-                            <button type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
-                            <div class="filter-group">
-                                <label>Mã</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="filter-group">
-                                <label>Loại</label>
-                                <select class="form-control" id="typeOption">
-                                    <option selected disabled>Chọn loại HD</option>
-                                    <option value="rent">Thuê</option>
-                                    <option value="buy">Mua</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label>Tình trạng</label>
-                                <select class="form-control" id="statusOption">
-                                    <option selected disabled>Chọn status</option>
-                                    <option value="active">Còn hạn</option>
-                                    <option value="expired">Hết hạn</option>
-                                    <option value="pass">Duyệt</option>
-                                </select>
-                            </div>
-                            <span class="filter-icon"><i class="fa fa-filter"></i></span>
+            </div>
+            <div class="table-filter">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="show-entries">
+                            <span>Xem</span>
+                            <select class="form-control" id="pagingOption">
+                                <option disabled selected value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                            </select>
+                            <span>entries</span>
                         </div>
                     </div>
-                </div>
-                <table class="table table-striped table-hover overflow-x-scroll">
-                    <thead>
-                        <tr>
-                            <th>Mã hợp đồng</th>
-                            <th>Ngày tạo</th>
-                            <th>Đồ chơi</th>
-                            <th>Tình trạng</th>
-                            <th>Loại hợp đồng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if(Model.Contracts != null)
-                        {
-                            @foreach (ToyShop.Contract.Repositories.Entity.ContractEntity con in Model.Contracts.Items)
-                            {
-                                if (size >= 0 && con != null)
-                                {
-                                    ResponseContractModel view = _mapper.Map<ResponseContractModel>(con);
-                                    <tr class='@(view.ContractType=="Thuê"?"rent":"buy")'>
-                                        <td>@con.Id</td>
-                                        <td>@con.DateCreated</td>
-                                        <td>@view.ToyName</td>
-                                        <td>@view.ContractType</td>
-                                        <td>
-                                            <select class="form-control min-vw-10" id="editOption-@con.Id">
-                                                <option selected disabled>Chọn</option>
-                                                <option value="1">Cập nhật</option>
-                                                <option value="2">Xóa</option>
-                                                <option value="0">Xem</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                                <div id="contractUpdate-@con.Id" class="d-none">
-                                                    @await Html.PartialAsync("Partial/_updateContract.cshtml", view)
-                                                </div>
-                                                <div id="contractView-@con.Id" class="d-none">
-                                                    @await Html.PartialAsync("Partial/_contractPartial.cshtml", view)
-                                                </div>
-                                        </td>
-                                    </tr>
-                                    
-                                    size--;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-
-                            }
-                        }
-                    </tbody>
-                </table>
-                <div class="clearfix">
-                    <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                    <ul class="pagination">
-                        @if(index == 1)
-                        {
-                            <li class="page-item disabled"><a href="">Previous</a></li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a href="/hop-dong/(@index - 1)/(@pageSize)">Previous</a></li>
-                        }
-                        @for(int count = 1; count <= (size/index); count++)
-                        {
-                            if(index == count)
-                            {
-                                <li class="page-item active"><a href="/hop-dong/(@count)/(@pageSize)" class="page-link">@count</a></li>
-                            }
-                            else{
-                                <li class="page-item"><a href="/hop-dong/(@count)/(@pageSize)" class="page-link">@count</a></li>
-                            }
-                        }
-                        @if (index * pageSize > size)
-                        {
-                            <li class="page-item disabled"><a href="#">Next</a></li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a href="/hop-dong/(@index + 1)/(@pageSize)">Next</a></li>
-                        }
-                    </ul>
+                    <div class="filter-group">
+                        <label>Loại</label>
+                        <select class="form-control" id="typeOption">
+                            <option selected disabled>Chọn loại HD</option>
+                            <option value="rent">Thuê</option>
+                            <option value="buy">Mua</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Tình trạng</label>
+                        <select class="form-control" id="statusOption">
+                            <option selected disabled>Chọn status</option>
+                            <option value="active">Còn hạn</option>
+                            <option value="expired">Hết hạn</option>
+                            <option value="pass">Duyệt</option>
+                        </select>
+                    </div>
+                    <span class="filter-icon"><i class="fa fa-filter"></i></span>
                 </div>
             </div>
         </div>
+        <table class="table table-striped table-hover overflow-x-scroll">
+            <thead>
+                <tr>
+                    <th>Mã hợp đồng</th>
+                    <th>Ngày tạo</th>
+                    <th>Đồ chơi</th>
+                    <th>Tình trạng</th>
+                    <th>Loại hợp đồng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Contracts != null)
+                {
+                    @foreach (ToyShop.Contract.Repositories.Entity.ContractEntity con in Model.Contracts.Items)
+                    {
+                        if (size >= 0 && con != null)
+                        {
+                            ResponseContractModel view = _mapper.Map<ResponseContractModel>(con);
+                            UpdateContractModel update = _mapper.Map<UpdateContractModel>(con);
+                            <tr id="@con.Id" class='@(view.ContractType=="Thuê"?"rent":"buy")'>
+                                <td>@con.Id</td>
+                                <td>@con.DateCreated</td>
+                                <td>@view.ToyName</td>
+                                <td>@view.ContractType</td>
+                                <td>
+                                    <select class="form-control min-vw-10" id="editOption-@con.Id">
+                                        <option selected disabled>Chọn</option>
+                                        <option value="1">Cập nhật</option>
+                                        <option value="2">Xóa</option>
+                                        <option value="0">Xem</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div id="contractUpdate-@con.Id" class="d-none">
+                                        <form onclick="Update()" class="form-card p-3" action="/home/contract/?handler=OnPutAsync">
+                                            <input type="hidden" name="id" id="id" value="@con.Id" />
+                                            @await Html.PartialAsync("Partial/_updateContract.cshtml", update)
+                                        </form>
+                                    </div>
+                                    <div id="contractView-@con.Id" onclick="this.classList.toggle('d-none')" class="d-none">
+                                        @await Html.PartialAsync("Partial/_contractPartial.cshtml", view)
+                                    </div>
+                                </td>
+                            </tr>
+
+                            size--;
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="clearfix">
+            <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+            <ul class="pagination">
+                @if (index == 1)
+                {
+                    <li class="page-item disabled"><a href="">Previous</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a href="/hop-dong/(@index - 1)/(@pageSize)">Previous</a></li>
+                }
+                @for (int count = 1; count <= (size / index); count++)
+                {
+                    if (index == count)
+                    {
+                        <li class="page-item active"><a href="/hop-dong/(@count)/(@pageSize)" class="page-link">@count</a></li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a href="/hop-dong/(@count)/(@pageSize)" class="page-link">@count</a></li>
+                    }
+                }
+                @if (index * pageSize > size)
+                {
+                    <li class="page-item disabled"><a href="#">Next</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a href="/hop-dong/(@index + 1)/(@pageSize)">Next</a></li>
+                }
+            </ul>
+        </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            $('#addContractBtn').click(function () {
-                $('#createContractForm').removeClass('d-none');
-            });
-            $('.close-form').click(function(){
-                if (!$('#createContractForm').hasClass('d-none')){
-                    $('#createContractForm').addClass('d-none');
-                }
-                if (!$('div[id^="contractUpdate"]').hasClass('d-none')) {
-                    $('div[id^="contractUpdate"]').addClass('d-none');
-                }
-                if (!$('div[id^="contractView"]').hasClass('d-none')) {
-                    $('div[id^="contractView"]').addClass('d-none');
-                }
-            });
-            $('#pageItem').change(() => {
-                $.ajax({
-                    url: '/hop-dong?handler=Paging/1/' + $(this).val(),    // URL
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                    },
-                    error: function (xhr, status, error) {
-                        console.log("Error: " + error);
-                    }
-                });
-            });
-            $('#typeOption').change(function(){
-                var optValue = $(this).val();
-                var getAllContract = $(".contractItem");
-                for (let i = 0; i < getAllContract.Length; i++){
-                    // xoa contract
-                    if (getAllContract[i].attr("class") == optValue) {
-                        //getAllContract[i].delete();
-                    }
-                }
-            });
-            $('select[id^="editOption"]').change(function(){
-                var parts = $(this).attr("id").split('-');
-                const optionValue = $(this).val();
-                const idValue = parts.slice(1).join('-');
-                const contractView = $('#contractView-' + idValue);
-                const contractUpdate = $('#contractUpdate-' + idValue);
-                if (optionValue == 1) {
-                    contractUpdate.removeClass("d-none");
-                } else if (optionValue == 2) {
-                    var result = confirm("Bạn có chắc chắn muốn xóa ?");
-                    if (result === true) {
-                        $.ajax({
-                            url: '/hop-dong/' + idValue,    // URL
-                            method: 'DELETE',       // Phương thức HTTP (GET, POST, v.v.)
-                            dataType: 'json',
-                            success: function (data) {
-                                alert(data);
-                            },
-                            error: function (xhr, status, error) {
-                                alert("Khong xoa duoc");
-                            }
-                        });
-                    }
-                } else {
-                    contractView.removeClass('d-none');
-                }
-            })
+</div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#addContractBtn').click(function () {
+            $('#createContractForm').removeClass('d-none');
         });
-    </script>
-</body>
-</html>
+
+        $('.close-form').click(function () {
+            if (!$('#createContractForm').hasClass('d-none')) {
+                $('#createContractForm').addClass('d-none');
+            }
+        });
+
+        $('#pageItem').change(() => {
+            $.ajax({
+                url: '/home/contract?handler=OnGet/1/' + $(this).val(),    // URL
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
+        $('#typeOption').change(function () {
+            var optValue = $(this).val();
+            var getAllContract = $(".contractItem");
+            for (let i = 0; i < getAllContract.Length; i++) {
+                // xoa contract
+                if (getAllContract[i].attr("class") == optValue) {
+                    //getAllContract[i].delete();
+                }
+            }
+        });
+        $('select[id^="editOption"]').change(function () {
+            var parts = $(this).attr("id").split('-');
+            const optionValue = $(this).val();
+            const idValue = parts.slice(1).join('-');
+            const contractView = $('#contractView-' + idValue);
+            const contractUpdate = $('#contractUpdate-' + idValue);
+            if (optionValue == 1) {
+                contractUpdate.removeClass("d-none");
+            } else if (optionValue == 2) {
+                var result = confirm("Bạn có chắc chắn muốn xóa ?");
+                $(idValue).remove();
+                if (result === true) {
+                    $.ajax({
+                        url: '/home/contract?handler=OnDeleteAsync',    // URL
+                        method: 'DELETE',
+                        data: { id: idValue },
+                        dataType: 'json',
+                        success: function (data) {
+                            confirm("Thành công");
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Khong xoa duoc");
+                        }
+                    });
+                }
+            } else {
+                contractView.removeClass('d-none');
+            }
+        })
+    });
+</script>

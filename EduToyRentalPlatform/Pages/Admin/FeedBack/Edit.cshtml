@@ -1,0 +1,23 @@
+﻿@page "{id?}"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ToyShop.Pages.Admin.FeedBack.EditModel
+@{
+    ViewData["Title"] = "Edit FeedBack";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+
+<form method="post" class="row shadow rounded p-3">
+    <input type="hidden" asp-for="Feedback.Id" />
+    <input type="hidden" asp-for="Feedback.UserId" />
+    <input type="hidden" asp-for="Feedback.ToyId" />
+    <div class="form-group">
+        <label for="Content" class="control-label">Content:</label>
+        <textarea asp-for="@Model.Feedback.Content" class="form-control" required></textarea>
+        <span asp-validation-for="@Model.Feedback.Content" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a class="btn btn-success" asp-page="./Index">Back to List</a>
+    </div>
+</form>
+

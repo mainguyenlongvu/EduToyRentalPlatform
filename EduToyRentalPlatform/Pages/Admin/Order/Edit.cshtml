@@ -1,0 +1,115 @@
+﻿@page
+@model ToyShopRentalPlatform.Pages.Admin.Order.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ContractEntity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.UserId" class="control-label"></label>
+                <select asp-for="ContractEntity.UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="ContractEntity.UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.ToyId" class="control-label"></label>
+                <select asp-for="ContractEntity.ToyId" class="form-control" asp-items="ViewBag.ToyId"></select>
+                <span asp-validation-for="ContractEntity.ToyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.RestoreToyId" class="control-label"></label>
+                <input asp-for="ContractEntity.RestoreToyId" class="form-control" />
+                <span asp-validation-for="ContractEntity.RestoreToyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.StaffConfirmed" class="control-label"></label>
+                <input asp-for="ContractEntity.StaffConfirmed" class="form-control" />
+                <span asp-validation-for="ContractEntity.StaffConfirmed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.TotalValue" class="control-label"></label>
+                <input asp-for="ContractEntity.TotalValue" class="form-control" />
+                <span asp-validation-for="ContractEntity.TotalValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.NumberOfRentals" class="control-label"></label>
+                <input asp-for="ContractEntity.NumberOfRentals" class="form-control" />
+                <span asp-validation-for="ContractEntity.NumberOfRentals" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.DateCreated" class="control-label"></label>
+                <input asp-for="ContractEntity.DateCreated" class="form-control" />
+                <span asp-validation-for="ContractEntity.DateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.ContractType" class="control-label"></label>
+                <input asp-for="ContractEntity.ContractType" class="form-control" />
+                <span asp-validation-for="ContractEntity.ContractType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.DateStart" class="control-label"></label>
+                <input asp-for="ContractEntity.DateStart" class="form-control" />
+                <span asp-validation-for="ContractEntity.DateStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.DateEnd" class="control-label"></label>
+                <input asp-for="ContractEntity.DateEnd" class="form-control" />
+                <span asp-validation-for="ContractEntity.DateEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.Status" class="control-label"></label>
+                <input asp-for="ContractEntity.Status" class="form-control" />
+                <span asp-validation-for="ContractEntity.Status" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="ContractEntity.Id" />
+            <div class="form-group">
+                <label asp-for="ContractEntity.CreatedBy" class="control-label"></label>
+                <input asp-for="ContractEntity.CreatedBy" class="form-control" />
+                <span asp-validation-for="ContractEntity.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="ContractEntity.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="ContractEntity.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.DeletedBy" class="control-label"></label>
+                <input asp-for="ContractEntity.DeletedBy" class="form-control" />
+                <span asp-validation-for="ContractEntity.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.CreatedTime" class="control-label"></label>
+                <input asp-for="ContractEntity.CreatedTime" class="form-control" />
+                <span asp-validation-for="ContractEntity.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="ContractEntity.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="ContractEntity.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContractEntity.DeletedTime" class="control-label"></label>
+                <input asp-for="ContractEntity.DeletedTime" class="form-control" />
+                <span asp-validation-for="ContractEntity.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
