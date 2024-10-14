@@ -31,6 +31,17 @@
             <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại của bạn" />
             <span asp-validation-for="Phone" class="text-danger"></span>
         </div>
+        <div class="form-group role-select">
+            <label for="RoleId">Vai trò</label>
+            <select id="RoleId" name="RoleId" class="form-control">
+                <option value="">Chọn vai trò</option>
+                @foreach (var item in Model.Quyen)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+            <span style="float: right; margin-top: -15px">@Html.ValidationMessage("RoleId", "", new { @class = "text-danger" })</span>
+        </div>
 
         <button type="submit" class="btn btn-primary">Đăng Ký</button>
     </form>

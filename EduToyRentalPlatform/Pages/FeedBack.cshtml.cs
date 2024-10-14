@@ -1,4 +1,4 @@
-using ToyShop.Contract.Services.Interface;
+﻿using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.FeedBackModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,10 +14,42 @@ namespace ToyShop.Pages
             _feedBackService = feedBackService;
         }
 
+        [BindProperty]
+        public CreateFeedBackModel Feedback { get; set; }
         public List<ResponeFeedBackModel> Feedbacks { get; set; } = new List<ResponeFeedBackModel>();
-        public async Task OnGet()
+
+        // Phân trang
+        public int TotalItems { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
+
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 4)
         {
-            Feedbacks = (await _feedBackService.GetFeedBacksAsync(1, int.MaxValue, null)).Items.ToList();
+            var feedbackList = await _feedBackService.GetFeedBacksAsync(pageNumber, pageSize, null);
+            Feedbacks = feedbackList.Items.ToList();
+            TotalItems = feedbackList.TotalItems;
+            PageNumber = pageNumber;
+            PageSize = pageSize;
+            TotalPages = feedbackList.TotalPages; // Set total pages
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid || Feedback == null)
+            {
+                return Page();
+            }
+
+            var feedback = new CreateFeedBackModel
+            {
+                UserId = Feedback.UserId, 
+                ToyId = Feedback.ToyId,
+                Content = Feedback.Content
+            };
+
+            await _feedBackService.CreateFeedBackAsync(feedback);
+            return RedirectToPage("FeedBack");
         }
     }
 }

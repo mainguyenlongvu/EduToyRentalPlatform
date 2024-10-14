@@ -1,0 +1,97 @@
+﻿@page
+@model ToyShopRentalPlatform.Pages.Admin.User.IndexModel
+
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Toy.css">
+
+<div class="section-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <form method="get" asp-page-handler="Search" class="d-flex">
+                                <input type="text" name="searchName" placeholder="Search by name" class="form-control" />
+                                <button type="submit" class="btn btn-primary custom-search-btn">Search</button>
+                            </form>
+                        </div>
+
+                        <div>
+                            <a href="/Admin/Create" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add New User
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(model => model.ApplicationUser[0].FullName)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ApplicationUser[0].UserName)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ApplicationUser[0].Email)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ApplicationUser[0].CreatedTime)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ApplicationUser[0].LastUpdatedTime)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ApplicationUser != null && Model.ApplicationUser.Any())
+                                {
+                                    foreach (var item in Model.ApplicationUser)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CreatedTime.ToString("dd-MM-yyyy"))</td>
+                                            <td>@Html.DisplayFor(modelItem => item.LastUpdatedTime.ToString("dd-MM-yyyy"))</td>
+                                            <td>
+                                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                                <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm" onClick="return confirm('Are you sure?');">Delete</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">No users found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                       @*  <div class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="/Admin/Product?pageNumber=@(Model.PageNumber - 1)" class="btn btn-secondary prev-btn">Previous</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary prev-btn" disabled>Previous</button>
+                            }
+
+                            <span class="page-number">@Model.PageNumber</span>
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <a href="/Admin/Product?pageNumber=@(Model.PageNumber + 1)" class="btn btn-secondary next-btn">Next</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary next-btn" disabled>Next</button>
+                            }
+                        </div> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

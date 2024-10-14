@@ -29,7 +29,7 @@ namespace ToyShop.Services.Service
 			}
 			try
             {
-                Contract.Repositories.Entity.ContractEntity contract = await _unitOfWork.GetRepository<ToyShop.Contract.Repositories.Entity.ContractEntity>().GetByIdAsync(deliveryDTO.ContractId) ?? throw new KeyNotFoundException("Contract not found.");
+                ContractEntity contract = await _unitOfWork.GetRepository<ContractEntity>().GetByIdAsync(deliveryDTO.ContractId) ?? throw new KeyNotFoundException("Contract not found.");
 				Delivery delivery = _mapper.Map<Delivery>(deliveryDTO);
 				delivery.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
@@ -78,7 +78,7 @@ namespace ToyShop.Services.Service
 			try
 			{
 				var deliveries = await _unitOfWork.GetRepository<Delivery>().GetAllAsync();
-				return deliveries.Where(d => d.DeletedTime.HasValue).Select(d => _mapper.Map<ResponseDeliveryModel>(d));
+				return deliveries.Where(d => !d.DeletedTime.HasValue).Select(d => _mapper.Map<ResponseDeliveryModel>(d));
 			}
 			catch (Exception ex)
 			{
@@ -92,7 +92,7 @@ namespace ToyShop.Services.Service
 			try
 			{
                 var delivery = await _unitOfWork.GetRepository<Delivery>().GetByIdAsync(id);
-                if (delivery is null || delivery.DeletedTime == null)
+                if (delivery is null || delivery.DeletedTime.HasValue)
                 {
                     throw new KeyNotFoundException("Delivery not found or has been deleted.");
                 }
@@ -147,7 +147,7 @@ namespace ToyShop.Services.Service
 				var existingDelivery = _unitOfWork.GetRepository<Delivery>().Entities.AsNoTracking().FirstOrDefault(d => d.Id == id)
 					?? throw new KeyNotFoundException("Delivery not found.");
 
-				var contract = await _unitOfWork.GetRepository<Contract.Repositories.Entity.ContractEntity>()
+				var contract = await _unitOfWork.GetRepository<ContractEntity>()
 					.GetByIdAsync(deliveryDTO.ContractId)
 					?? throw new KeyNotFoundException($"Contract with id {deliveryDTO.ContractId} not found.");
 

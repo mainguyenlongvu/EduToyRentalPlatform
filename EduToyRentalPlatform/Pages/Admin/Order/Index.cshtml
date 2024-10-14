@@ -1,0 +1,149 @@
+﻿@page
+@model ToyShopRentalPlatform.Pages.Admin.Order.IndexModel
+
+@{
+    ViewData["Title"] = "Order Management";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/Toy.css">
+
+<div class="section-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <form method="get" asp-page-handler="Search" class="d-flex">
+                                <input type="text" name="searchTerm" placeholder="Search by ID or User" class="form-control" />
+                                <button type="submit" class="btn btn-primary custom-search-btn">Search</button>
+                            </form>
+                        </div>
+                        <div>
+                            <a href="/Admin/Create" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Create New
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="example1">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].RestoreToyId)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].StaffConfirmed)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].TotalValue)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].NumberOfRentals)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DateCreated)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].ContractType)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DateStart)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DateEnd)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].Status)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].ApplicationUser)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].Toy)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].CreatedBy)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].LastUpdatedBy)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DeletedBy)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].CreatedTime)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].LastUpdatedTime)</th>
+                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DeletedTime)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ContractEntity != null && Model.ContractEntity.Any()) // Check if the collection is not null and has items
+                                {
+                                    foreach (var item in Model.ContractEntity)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.RestoreToyId)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.StaffConfirmed)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TotalValue)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.NumberOfRentals)</td>
+                                            <td>@(item.DateCreated.HasValue ? item.DateCreated.Value.ToString("dd-MM-yyyy") : "N/A")</td>
+                                            <td>@Html.DisplayFor(modelItem => item.ContractType)</td>
+                                            <td>@(item.DateStart.HasValue ? item.DateStart.Value.ToString("dd-MM-yyyy") : "N/A")</td>
+                                            <td>@(item.DateEnd.HasValue ? item.DateEnd.Value.ToString("dd-MM-yyyy") : "N/A")</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                                            <td>@(item.ApplicationUser != null ? item.ApplicationUser.FullName : "N/A")</td>
+                                            <td>@(item.Toy != null ? item.Toy.Id.ToString() : "N/A")</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.LastUpdatedBy)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.DeletedBy)</td>
+
+                                            <td>
+                                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
+                                                <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_@item.Id">Details</a> |
+                                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger" onClick="return confirm('Are you sure?');">Delete</a>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Modal for details -->
+                                        <div class="modal fade" id="modal_@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Order Details</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group row mb-2">
+                                                            <div class="col-md-4"><label class="form-label">Restore Toy ID:</label></div>
+                                                            <div class="col-md-8">@item.RestoreToyId</div>
+                                                        </div>
+                                                        <div class="form-group row mb-2">
+                                                            <div class="col-md-4"><label class="form-label">Total Value:</label></div>
+                                                            <div class="col-md-8">@item.TotalValue</div>
+                                                        </div>
+                                                        <div class="form-group row mb-2">
+                                                            <div class="col-md-4"><label class="form-label">Date Created:</label></div>
+                                                            <div class="col-md-8">@((item.DateCreated.HasValue ? item.DateCreated.Value.ToString("dd-MM-yyyy") : "N/A"))</div>
+                                                        </div>
+                                                        <div class="form-group row mb-2">
+                                                            <div class="col-md-4"><label class="form-label">Status:</label></div>
+                                                            <div class="col-md-8">@item.Status</div>
+                                                        </div>
+                                                        <!-- Add any other details you want to show here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="14" class="text-center">No records found.</td> <!-- Inform the user if no records are available -->
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        @* <div class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="/Admin/Order?pageNumber=@(Model.PageNumber - 1)" class="btn btn-secondary prev-btn">Previous</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary prev-btn" disabled>Previous</button>
+                            }
+
+                            <span class="page-number">@Model.PageNumber</span>
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <a href="/Admin/Order?pageNumber=@(Model.PageNumber + 1)" class="btn btn-secondary next-btn">Next</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary next-btn" disabled>Next</button>
+                            }
+                        </div> *@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -83,7 +83,7 @@ namespace ToyShop.Pages
                 option = Toy.option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
                 ToyQuantitySold = Toy.ToyQuantitySold,
-            };
+                };
 
             // Call the service to update the toy
             await _toyService.UpdateToyAsync(Toy.Id, toyUpdateModel);
