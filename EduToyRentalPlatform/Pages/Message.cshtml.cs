@@ -41,9 +41,9 @@ namespace ToyShop.Pages
 
                 try
                 {
-					await _messageHub.SendMessage(newMessage, ClaimTypes.NameIdentifier);
+					await _messageHub.ReceiveMessage(newMessage, ClaimTypes.NameIdentifier);
 					await _messageService.AddAsync(newMessage); // Gọi dịch vụ để thêm tin nhắn
-					
+					 
                 }
                 catch (Exception ex)
                 {

@@ -4,7 +4,8 @@ namespace EduToyRentalPlatform.SignalR.Interfaces
 {
     public interface IMessageHub
     {
-        Task OnConnectedAsync();
-        Task SendMessage(CreateMessageModel message, string receiverID);
-    }
+        Task ReceiveMessage(string message);
+        Task ReceiveMessage(CreateMessageModel message);
+		Task ReceiveMessage(CreateMessageModel message, string receiverID);
+	}
 }

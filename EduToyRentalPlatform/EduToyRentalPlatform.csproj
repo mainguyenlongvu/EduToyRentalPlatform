@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SignalRSwaggerGen" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ToyShop.Contract.Services\ToyShop.Contract.Services.csproj" />
     <ProjectReference Include="..\ToyShop.Services\ToyShop.Services.csproj" />
   </ItemGroup>

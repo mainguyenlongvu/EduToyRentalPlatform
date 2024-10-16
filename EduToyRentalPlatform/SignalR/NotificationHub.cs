@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using EduToyRentalPlatform.SignalR.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EduToyRentalPlatform.SignalR
 {
-	public class NotificationHub : Hub
+	public class NotificationHub : Hub<INotificationHub>
 	{
 		public override async Task OnConnectedAsync()
 		{
-			await Clients.All.SendAsync("ReceiveNotification", $"{Context.ConnectionId} has connected to notification hub.");
+			await Clients.Client(Context.ConnectionId).Notify($"{Context.ConnectionId} has connected to notification hub.");
 		}
 
-		public async Task PushNotificationToAll()
+		public async Task PushNotificationToAll(string message)
 		{
-			await Clients.All.SendAsync("ReceiveNotification", "Notification Sent To All");
+			await Clients.All.NotifyAll(message);
 		}
 	}
 }
