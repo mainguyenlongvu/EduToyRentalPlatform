@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 
 public class ApplicationDbContextInitializer
 {
-    private readonly RentalToyDbContext _context;
+    private readonly ToyShopDBContext _context;
 
-    public ApplicationDbContextInitializer(RentalToyDbContext context)
+    public ApplicationDbContextInitializer(ToyShopDBContext context)
     {
         _context = context;
     }
@@ -66,6 +68,7 @@ public class ApplicationDbContextInitializer
         };
 
         _context.ApplicationRoles.AddRange(roles);
+        _context.SaveChanges();
     }
 
     private void SeedUsers()
@@ -84,6 +87,7 @@ public class ApplicationDbContextInitializer
         };
 
         _context.ApplicationUsers.AddRange(users);
+        _context.SaveChanges();
     }
 
     //private void SeedDefectCodes()
@@ -196,11 +200,12 @@ public class ApplicationDbContextInitializer
         };
 
         _context.Toys.AddRange(toys);
+        _context.SaveChanges();
     }
 
     private void SeedContracts()
     {
-        if (_context.Contracts.Any()) return;
+        if (_context.ContractEntitys.Any()) return;
 
         var users = _context.ApplicationUsers.ToList();
         var toys = _context.Toys.ToList();
@@ -295,23 +300,78 @@ public class ApplicationDbContextInitializer
         }
         };
 
-        _context.Contracts.AddRange(contracts);
+        _context.ContractEntitys.AddRange(contracts);
+        _context.SaveChanges();
+
     }
 
     private void SeedRestoreToys()
     {
         if (_context.RestoreToys.Any()) return;
 
+        var contracts = _context.ContractEntitys.ToList(); // Lấy tất cả các ContractEntity
+
         var restoreToys = new RestoreToy[]
         {
-        new RestoreToy { ToyName = "Restored Toy 1", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new RestoreToy { ToyName = "Restored Toy 2", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new RestoreToy { ToyName = "Restored Toy 3", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new RestoreToy { ToyName = "Restored Toy 4", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new RestoreToy { ToyName = "Restored Toy 5", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
+        new RestoreToy
+        {
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow,
+            ContractId = contracts[0]?.Id, // Lấy ContractId từ danh sách contracts
+            ToyQuality = 90.5,
+            Reward = 50,
+            OverdueTime = 2.5, // Giả sử là số giờ bị trễ
+            TotalMoney = 150.00,
+            ContractEntity = contracts[0]
+        },
+        new RestoreToy
+        {
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow,
+            ContractId = contracts[1]?.Id,
+            ToyQuality = 80.0,
+            Reward = 40,
+            OverdueTime = 1.0,
+            TotalMoney = 120.00,
+            ContractEntity = contracts[1]
+        },
+        new RestoreToy
+        {
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow,
+            ContractId = contracts[2]?.Id,
+            ToyQuality = 85.0,
+            Reward = 45,
+            OverdueTime = 3.0,
+            TotalMoney = 140.00,
+            ContractEntity = contracts[2]
+        },
+        new RestoreToy
+        {
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow,
+            ContractId = contracts[3]?.Id,
+            ToyQuality = 75.0,
+            Reward = 35,
+            OverdueTime = 4.0,
+            TotalMoney = 110.00,
+            ContractEntity = contracts[3]
+        },
+        new RestoreToy
+        {
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow,
+            ContractId = contracts[4]?.Id,
+            ToyQuality = 95.0,
+            Reward = 60,
+            OverdueTime = 0.5,
+            TotalMoney = 160.00,
+            ContractEntity = contracts[4]
+        }
         };
 
         _context.RestoreToys.AddRange(restoreToys);
+        _context.SaveChanges();
     }
 
     private void SeedChats()
@@ -332,6 +392,7 @@ public class ApplicationDbContextInitializer
         };
 
         _context.Chats.AddRange(chats);
+        _context.SaveChanges();
     }
 
 }
