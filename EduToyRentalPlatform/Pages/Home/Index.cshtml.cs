@@ -20,8 +20,8 @@ namespace ToyShop.Pages.Home
 
         public async Task OnGet()
         {
-            //var toys = await _toyService.GetToysAsync(1, 10, null);
-            //ToysList = toys.Items.ToList();
+            var toys = await _toyService.GetToysAsync(1, 10, null);
+            ToysList = toys.Items.ToList();
         }
     }
 }
