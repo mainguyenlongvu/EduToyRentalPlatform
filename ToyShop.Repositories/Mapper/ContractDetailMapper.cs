@@ -13,7 +13,7 @@ namespace ToyShop.Repositories.Mapper
                 .ForMember(d => d.ToyName, opt => opt.MapFrom(src => src.Toy.Id == src.ToyId ? src.Toy.ToyName : ""));
 
             CreateMap<ContractDetail, UpdateContractModel>().ReverseMap();
-            CreateMap<ResponseContractModel, CreateContractDetailModel>().ReverseMap();
+            CreateMap<ResponseContractModel, CreateContractModel>().ReverseMap();
 
         }
     }

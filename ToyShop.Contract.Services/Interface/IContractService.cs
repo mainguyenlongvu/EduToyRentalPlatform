@@ -8,7 +8,7 @@ namespace ToyShop.Contract.Services.Interface
     {
         Task<ResponseContractModel> GetContractAsync(string id);
         Task<BasePaginatedList<ContractEntity>> GetContractsAsync(int pageNumber, int pageSize);
-        Task CreateContractAsync(CreateContractDetailModel model);
+        Task CreateContractAsync(CreateContractModel model);
         Task UpdateContractAsync(string id, UpdateContractModel model);
         Task DeleteContractAsync(string id);
 

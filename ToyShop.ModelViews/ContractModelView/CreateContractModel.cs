@@ -9,7 +9,7 @@ using static ToyShop.Core.Base.BaseException;
 using ToyShop.Core.Constants;
 namespace ToyShop.ModelViews.ContractModelView
 {
-    public class CreateContractDetailModel
+    public class CreateContractModel
     {
         [Required(ErrorMessage = "Phải nhập tên khách hàng")]
         [DisplayName("Tên khách hàng")]
