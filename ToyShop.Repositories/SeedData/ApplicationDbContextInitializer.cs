@@ -48,12 +48,12 @@ public class ApplicationDbContextInitializer
     {
         SeedRoles();
         SeedUsers();
-        //SeedDefectCodes();
         SeedToys();
         SeedContracts();
         SeedRestoreToys();
         SeedChats();
         SeedFeedBacks();
+        SeedTransactions();
         _context.SaveChanges();
     }
 
@@ -445,5 +445,61 @@ public class ApplicationDbContextInitializer
         // Thêm các phản hồi vào context và lưu lại
         _context.Feedbacks.AddRange(feedbacks);
         _context.SaveChanges();
+    }
+    private void SeedTransactions()
+    {
+        if (_context.Transactions.Any()) return; // Check if transactions already exist
+
+        var contracts = _context.ContractEntitys.ToList(); // Get all contracts
+
+        if (!contracts.Any())
+        {
+            Console.WriteLine("No contracts available for seeding transactions.");
+            return; // Ensure that there are contracts to reference
+        }
+
+        var transactions = new List<Transaction>
+    {
+        new Transaction
+        {
+            TranCode = 1001,
+            DateCreated = DateTime.UtcNow,
+            Status = "Completed",
+            Method = true, // Online payment
+            ContractId = contracts[0].Id.ToString(), // Reference the first contract
+            ContractEntity = contracts[0] // Optional: direct navigation property
+        },
+        new Transaction
+        {
+            TranCode = 1002,
+            DateCreated = DateTime.UtcNow.AddDays(-3),
+            Status = "Pending",
+            Method = false, // Offline payment
+            ContractId = contracts[1].Id.ToString(), // Reference the second contract
+            ContractEntity = contracts[1] // Optional: direct navigation property
+        },
+        new Transaction
+        {
+            TranCode = 1003,
+            DateCreated = DateTime.UtcNow.AddDays(-1),
+            Status = "Failed",
+            Method = true, // Online payment
+            ContractId = contracts[2].Id.ToString(), // Reference the third contract
+            ContractEntity = contracts[2] // Optional: direct navigation property
+        },
+        new Transaction
+        {
+            TranCode = 1004,
+            DateCreated = DateTime.UtcNow.AddDays(-5),
+            Status = "Completed",
+            Method = false, // Offline payment
+            ContractId = contracts[3].Id.ToString(), // Reference the fourth contract
+            ContractEntity = contracts[3] // Optional: direct navigation property
+        }
+    };
+
+        _context.Transactions.AddRange(transactions);
+        _context.SaveChanges();
+        Console.WriteLine($"{transactions.Count} transactions seeded successfully.");
     }
 }
