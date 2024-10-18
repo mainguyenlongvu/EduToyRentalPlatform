@@ -1,0 +1,143 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Admin.FeedbackManage.IndexModel
+
+@{
+    ViewData["Title"] = "Feedback Management";
+    Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Feedback.css">
+
+<div class="section-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <form method="get" asp-page-handler="Search" class="d-flex">
+                                <input type="text" name="searchContent" placeholder="Search by feedback content" class="form-control" />
+                                <button type="submit" class="btn btn-primary custom-search-btn">Search</button>
+                            </form>
+                        </div>
+
+                        <div>
+                            <a href="/Admin/FeedbackManage/Create" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add New Feedback
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="feedbackTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Toy</th>
+                                    <th>Content</th>
+                                    <th>Created By</th>
+                                    <th>Last Updated By</th>
+                                    <th>Deleted By</th>
+                                    <th>Created Time</th>
+                                    <th>Last Updated Time</th>
+                                    <th>Deleted Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.FeedBack != null && Model.FeedBack.Any())
+                                {
+                                    foreach (var item in Model.FeedBack)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.UserId)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Content)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CreatedTime.ToString("dd-MM-yyyy"))</td>
+                                            <td>@Html.DisplayFor(modelItem => item.LastUpdatedTime.ToString("dd-MM-yyyy"))</td>
+                                            <td class="pt_10 pb_10">
+                                                <a href="" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_@item.Id">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="/Admin/FeedbackManage/Edit/@item.Id" class="btn btn-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="/Admin/FeedbackManage/Delete/@item.Id" class="btn btn-danger" onClick="return confirm('Are you sure you want to delete this feedback?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Modal for each feedback -->
+                                        <div class="modal fade" id="modal_@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Feedback Details</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">User ID</label></div>
+                                                            <div class="col-md-8">@item.UserId</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Toy ID</label></div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Content</label></div>
+                                                            <div class="col-md-8">@item.Content</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Created Time</label></div>
+                                                            <div class="col-md-8">@item.CreatedTime.ToString("dd-MM-yyyy")</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Last Updated Time</label></div>
+                                                            <div class="col-md-8">@item.LastUpdatedTime.ToString("dd-MM-yyyy")</div>
+                                                        </div>
+                                                        <div class="form-group row bdb1 pt_10 mb_0">
+                                                            <div class="col-md-4"><label class="form-label">Deleted Time</label></div>
+                                                            <div class="col-md-8">@item.DeletedTime?.ToString("dd-MM-yyyy")</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">No feedback available.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="/Admin/FeedbackManage?pageNumber=@(Model.PageNumber - 1)" class="btn btn-secondary prev-btn">Previous</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary prev-btn" disabled>Previous</button>
+                            }
+
+                            <span class="page-number">@Model.PageNumber</span>
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <a href="/Admin/FeedbackManage?pageNumber=@(Model.PageNumber + 1)" class="btn btn-secondary next-btn">Next</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary next-btn" disabled>Next</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
