@@ -53,6 +53,7 @@ public class ApplicationDbContextInitializer
         SeedContracts();
         SeedRestoreToys();
         SeedChats();
+        SeedFeedBacks();
         _context.SaveChanges();
     }
 
@@ -89,23 +90,6 @@ public class ApplicationDbContextInitializer
         _context.ApplicationUsers.AddRange(users);
         _context.SaveChanges();
     }
-
-    //private void SeedDefectCodes()
-    //{
-    //    if (_context.DefectCodes.Any()) return;
-
-    //    var defectCodes = new DefectCode[]
-    //    {
-    //    new DefectCode { Code = "0", Name = "No Defect", Description = "Toy is in good condition.", BackGroundColor = "#A2E7AA", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    new DefectCode { Code = "1", Name = "Missing Part", Description = "A part is missing from the toy.", BackGroundColor = "#EF9A9A", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    new DefectCode { Code = "2", Name = "Broken", Description = "The toy is broken and unusable.", BackGroundColor = "#E078D5", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    new DefectCode { Code = "3", Name = "Discoloration", Description = "The toy has faded colors.", BackGroundColor = "#88DF4A", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    new DefectCode { Code = "4", Name = "Scratches", Description = "The toy has visible scratches.", BackGroundColor = "#F0B90B", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    new DefectCode { Code = "5", Name = "Dented", Description = "The toy has dents or damage.", BackGroundColor = "#E67F6D", CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-    //    };
-
-    //    _context.DefectCodes.AddRange(defectCodes);
-    //}
 
     private void SeedToys()
     {
@@ -202,114 +186,62 @@ public class ApplicationDbContextInitializer
         _context.Toys.AddRange(toys);
         _context.SaveChanges();
     }
-
     private void SeedContracts()
     {
-        if (_context.ContractEntitys.Any()) return;
+        if (_context.ContractEntitys.Any())
+        {
+            Console.WriteLine("Contracts already seeded.");
+            return; // Check if contracts already exist
+        }
 
         var users = _context.ApplicationUsers.ToList();
         var toys = _context.Toys.ToList();
 
-        if (users.Count == 0 || toys.Count == 0) return;
-
-        var contracts = new ContractEntity[]
+        if (!users.Any() || !toys.Any())
         {
-        new ContractEntity
-        {
-            ContractType = true, // Rental contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[0].Id,
-            UserId = users[0].Id,
-            Status = "Active",
-            TotalValue = 150,
-            NumberOfRentals = 1,
-            DateStart = DateOnly.FromDateTime(DateTime.Now),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
-            RestoreToyId = null
-        },
-        new ContractEntity
-        {
-            ContractType = false, // Return contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[1].Id,
-            UserId = users[1].Id,
-            Status = "Completed",
-            TotalValue = 100,
-            NumberOfRentals = 0,
-            DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
-            RestoreToyId = null
-        },
-        new ContractEntity
-        {
-            ContractType = true, // Rental contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[2].Id,
-            UserId = users[2].Id,
-            Status = "Active",
-            TotalValue = 75,
-            NumberOfRentals = 2,
-            DateStart = DateOnly.FromDateTime(DateTime.Now),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
-            RestoreToyId = null
-        },
-        new ContractEntity
-        {
-            ContractType = false, // Return contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[3].Id,
-            UserId = users[3].Id,
-            Status = "Completed",
-            TotalValue = 60,
-            NumberOfRentals = 0,
-            DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-            RestoreToyId = null
-        },
-        new ContractEntity
-        {
-            ContractType = true, // Rental contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[4].Id,
-            UserId = users[4].Id,
-            Status = "Active",
-            TotalValue = 150,
-            NumberOfRentals = 1,
-            DateStart = DateOnly.FromDateTime(DateTime.Now),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
-            RestoreToyId = null
-        },
-        new ContractEntity
-        {
-            ContractType = false, // Return contract
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[5].Id,
-            UserId = users[5].Id,
-            Status = "Completed",
-            TotalValue = 50,
-            NumberOfRentals = 0,
-            DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
-            DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-            RestoreToyId = null
+            Console.WriteLine("No users or toys available for seeding contracts.");
+            return; // Ensure that there are users and toys to create contracts
         }
-        };
+
+        var contracts = new List<ContractEntity>
+    {
+        new ContractEntity
+        {
+            UserId = users[0].Id,
+            ToyId = toys[0].Id,
+            RestoreToyId = null,
+            StaffConfirmed = "Staff A",
+            TotalValue = 150.00,
+            NumberOfRentals = 1,
+            DateCreated = DateOnly.FromDateTime(DateTime.UtcNow),
+            ContractType = true,
+            DateStart = DateOnly.FromDateTime(DateTime.UtcNow),
+            DateEnd = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
+            Status = "Active"
+        },
+        // Additional contracts...
+    };
 
         _context.ContractEntitys.AddRange(contracts);
         _context.SaveChanges();
-
+        Console.WriteLine($"{contracts.Count} contracts seeded successfully.");
     }
 
     private void SeedRestoreToys()
     {
-        if (_context.RestoreToys.Any()) return;
+        if (_context.RestoreToys.Any())
+        {
+            Console.WriteLine("Restore toys already seeded.");
+            return; // Check if restore toys already exist
+        }
 
-        var contracts = _context.ContractEntitys.ToList(); // Lấy tất cả các ContractEntity
+        var contracts = _context.ContractEntitys.ToList();
+
+        if (!contracts.Any())
+        {
+            Console.WriteLine("No contracts available for seeding restore toys.");
+            return; // Ensure that there are contracts to reference
+        }
 
         var restoreToys = new RestoreToy[]
         {
@@ -317,62 +249,21 @@ public class ApplicationDbContextInitializer
         {
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ContractId = contracts[0]?.Id, // Lấy ContractId từ danh sách contracts
+            ContractId = contracts[0]?.Id,
             ToyQuality = 90.5,
             Reward = 50,
-            OverdueTime = 2.5, // Giả sử là số giờ bị trễ
+            OverdueTime = 2.5,
             TotalMoney = 150.00,
             ContractEntity = contracts[0]
         },
-        new RestoreToy
-        {
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ContractId = contracts[1]?.Id,
-            ToyQuality = 80.0,
-            Reward = 40,
-            OverdueTime = 1.0,
-            TotalMoney = 120.00,
-            ContractEntity = contracts[1]
-        },
-        new RestoreToy
-        {
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ContractId = contracts[2]?.Id,
-            ToyQuality = 85.0,
-            Reward = 45,
-            OverdueTime = 3.0,
-            TotalMoney = 140.00,
-            ContractEntity = contracts[2]
-        },
-        new RestoreToy
-        {
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ContractId = contracts[3]?.Id,
-            ToyQuality = 75.0,
-            Reward = 35,
-            OverdueTime = 4.0,
-            TotalMoney = 110.00,
-            ContractEntity = contracts[3]
-        },
-        new RestoreToy
-        {
-            CreatedTime = DateTimeOffset.UtcNow,
-            LastUpdatedTime = DateTimeOffset.UtcNow,
-            ContractId = contracts[4]?.Id,
-            ToyQuality = 95.0,
-            Reward = 60,
-            OverdueTime = 0.5,
-            TotalMoney = 160.00,
-            ContractEntity = contracts[4]
-        }
+            // Additional restore toys...
         };
 
         _context.RestoreToys.AddRange(restoreToys);
         _context.SaveChanges();
+        Console.WriteLine($"{restoreToys.Length} restore toys seeded successfully.");
     }
+
 
     private void SeedChats()
     {
@@ -394,5 +285,72 @@ public class ApplicationDbContextInitializer
         _context.Chats.AddRange(chats);
         _context.SaveChanges();
     }
+    private void SeedFeedBacks()
+    {
+        // Kiểm tra nếu đã có dữ liệu FeedBack trong DB thì không thêm nữa
+        if (_context.Feedbacks.Any()) return;
 
+        // Lấy danh sách người dùng và đồ chơi để sử dụng cho việc thêm phản hồi
+        var users = _context.ApplicationUsers.ToList();
+        var toys = _context.Toys.ToList();
+
+        if (users.Count == 0 || toys.Count == 0) return;
+
+        // Tạo một danh sách các phản hồi giả định
+        var feedbacks = new FeedBack[]
+        {
+        new FeedBack
+        {
+            UserId = users[0].Id.ToString(),
+            ToyId = toys[0].Id.ToString(),
+            Content = "This superhero action figure is amazing!",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        },
+        new FeedBack
+        {
+            UserId = users[1].Id.ToString(),
+            ToyId = toys[1].Id.ToString(),
+            Content = "We had a lot of fun playing this classic board game.",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        },
+        new FeedBack
+        {
+            UserId = users[2].Id.ToString(),
+            ToyId = toys[2].Id.ToString(),
+            Content = "The wooden dollhouse is beautifully made, my kids love it.",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        },
+        new FeedBack
+        {
+            UserId = users[3].Id.ToString(),
+            ToyId = toys[3].Id.ToString(),
+            Content = "Good quality soccer ball, perfect for outdoor play.",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        },
+        new FeedBack
+        {
+            UserId = users[4].Id.ToString(),
+            ToyId = toys[4].Id.ToString(),
+            Content = "The building blocks set is great for my kids' creativity.",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        },
+        new FeedBack
+        {
+            UserId = users[5].Id.ToString(),
+            ToyId = toys[5].Id.ToString(),
+            Content = "My son loves this remote control car, very fast!",
+            CreatedTime = DateTimeOffset.UtcNow,
+            LastUpdatedTime = DateTimeOffset.UtcNow
+        }
+        };
+
+        // Thêm các phản hồi vào context và lưu lại
+        _context.Feedbacks.AddRange(feedbacks);
+        _context.SaveChanges();
+    }
 }
