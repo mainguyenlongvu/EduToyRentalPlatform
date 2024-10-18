@@ -48,7 +48,7 @@ namespace ToyShop.Pages
         }
 
         [BindProperty]
-        private CreateContractModel createNewContract { get; set; }
+        private CreateContractDetailModel createNewContract { get; set; }
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

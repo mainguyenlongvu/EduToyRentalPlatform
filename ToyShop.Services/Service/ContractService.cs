@@ -20,7 +20,7 @@ namespace ToyShop.Contract.Services.Interface
             _mapper = mapper;
         }
 
-        public async Task CreateContractAsync(CreateContractModel model)
+        public async Task CreateContractAsync(CreateContractDetailModel model)
         {
             model.CheckValidate();
             ContractEntity newContract = _mapper.Map<ContractEntity>(model);

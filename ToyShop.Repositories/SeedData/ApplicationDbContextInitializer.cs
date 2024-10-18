@@ -203,7 +203,6 @@ public class ApplicationDbContextInitializer
             ContractType = true, // Rental contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[0].Id,
             UserId = users[0].Id,
             Status = "Active",
             TotalValue = 150,
@@ -217,7 +216,6 @@ public class ApplicationDbContextInitializer
             ContractType = false, // Return contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[1].Id,
             UserId = users[1].Id,
             Status = "Completed",
             TotalValue = 100,
@@ -231,7 +229,6 @@ public class ApplicationDbContextInitializer
             ContractType = true, // Rental contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[2].Id,
             UserId = users[2].Id,
             Status = "Active",
             TotalValue = 75,
@@ -245,7 +242,6 @@ public class ApplicationDbContextInitializer
             ContractType = false, // Return contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[3].Id,
             UserId = users[3].Id,
             Status = "Completed",
             TotalValue = 60,
@@ -259,7 +255,6 @@ public class ApplicationDbContextInitializer
             ContractType = true, // Rental contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[4].Id,
             UserId = users[4].Id,
             Status = "Active",
             TotalValue = 150,
@@ -273,7 +268,6 @@ public class ApplicationDbContextInitializer
             ContractType = false, // Return contract
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow,
-            ToyId = toys[5].Id,
             UserId = users[5].Id,
             Status = "Completed",
             TotalValue = 50,

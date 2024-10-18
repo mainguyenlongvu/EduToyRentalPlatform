@@ -7,7 +7,7 @@ using ToyShop.Core.Utils;
 
 using static ToyShop.Core.Base.BaseException;
 using ToyShop.Core.Constants;
-namespace ToyShop.ModelViews.ContractModelView
+namespace ToyShop.ModelViews.ContractDetailModelView
 {
     public class CreateContractDetailModel
     {
