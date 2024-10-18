@@ -7,12 +7,12 @@ namespace ToyShop.Pages.Admin
     {
         public IActionResult OnGet()
         {
-            // Ki?m tra quy?n truy c?p
-            if (!UserHasAccess())
-            {
-                // N?u không có quy?n, chuy?n h??ng v? trang khác
-                return RedirectToPage("/Account/ErrorPage");
-            }
+            //// Ki?m tra quy?n truy c?p
+            //if (!UserHasAccess())
+            //{
+            //    // N?u không có quy?n, chuy?n h??ng v? trang khác
+            //    return RedirectToPage("/Account/ErrorPage");
+            //}
 
             return Page();
         }

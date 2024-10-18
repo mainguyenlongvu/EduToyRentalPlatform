@@ -39,6 +39,9 @@ namespace ToyShop
             // Đăng ký IUnitOfWork và UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            //Đăbg ký IToySerivce và ToyService
+            services.AddScoped<IToyService, ToyService>();
+
             // Đăng ký AutoMapper
             services.AddAutoMapper(typeof(Program));
 
@@ -46,6 +49,7 @@ namespace ToyShop
             // Đăng ký PasswordHasher
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
             services.AddHttpContextAccessor();
+
         }
         public static void ConfigRoute(this IServiceCollection services)
         {
