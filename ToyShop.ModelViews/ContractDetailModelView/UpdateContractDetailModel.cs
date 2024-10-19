@@ -5,26 +5,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ToyShop.Core.Constants;
+using ToyShop.Core.Store;
+using static ToyShop.Core.Base.BaseException;
 
 namespace ToyShop.ModelViews.ContractDetailModelView
 {
     public class UpdateContractDetailModel
     {
 
-        [DataType(DataType.Currency)]
-        [Range(100000, double.MaxValue, ErrorMessage = "Giá trị phải lớn hơn 100000.")]
-        [DisplayName("Tổng giá trị")]
-        public decimal  TotalValue { get; set; }   // Total value of the contract (decimal)
+        [Required(ErrorMessage = "Phải nhập số lượng")]
+        [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0.")]
+        [DisplayName("Số lượng")]
+        public int Quantity { get; set; }   // Số lượng đồ chơi
 
-        [DataType(DataType.Date)]
-        [DisplayName("Ngày bắt đầu")]
-        public DateOnly? DateStart { get; set; }   // Start date of the contract (DateTime)
-
-        [DataType(DataType.Date)]
-        [DisplayName("Ngày hết hạn")]
-        public DateOnly? DateEnd { get; set; }   // End date of the contract (DateTime)
-
-        [DisplayName("Trạng thái")]
-        public string?   Status { get; set; }   // Status of the contract (string)
     }
+
+
 }

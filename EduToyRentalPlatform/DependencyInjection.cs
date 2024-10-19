@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using ToyShop.Repositories.Entity;
 using Microsoft.AspNet.Identity;
 using ToyShop.Contract.Repositories.Interface;
+using ToyShop.Contract.Repositories.Entity;
 
 namespace ToyShop
 {
@@ -45,10 +46,14 @@ namespace ToyShop
             // Đăng ký AutoMapper
             services.AddAutoMapper(typeof(Program));
 
+            services.AddSession();
 
             // Đăng ký PasswordHasher
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
             services.AddHttpContextAccessor();
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            .AddEntityFrameworkStores<ToyShopDBContext>()
+            .AddDefaultTokenProviders();
 
         }
         public static void ConfigRoute(this IServiceCollection services)
