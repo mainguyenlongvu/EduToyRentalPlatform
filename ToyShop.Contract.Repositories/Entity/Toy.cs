@@ -21,7 +21,7 @@ namespace ToyShop.Contract.Repositories.Entity
         public int ToyQuantitySold { get; set; }
         public string? Option { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
-        public virtual ICollection<ContractEntity>? ContractEntitys { get; set; }
+        public virtual ICollection<ContractDetail>? ContractDetails { get; set; }
 
     }
 }

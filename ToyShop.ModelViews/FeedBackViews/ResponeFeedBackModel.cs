@@ -11,7 +11,7 @@ namespace ToyShop.ModelViews.FeedBackModelViews
         public string Id { get; set; } = null!;
         public string UserId { get; set; } = null!;
         public string ToyId { get; set; } = null!;
-        public bool IsDeleted { get; set; }
+        public DateTimeOffset? DeletedTime { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public string? Content { get; set; }

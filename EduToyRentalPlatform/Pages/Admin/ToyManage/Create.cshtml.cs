@@ -1,15 +1,22 @@
-﻿using ToyShop.Contract.Services.Interface;
-using ToyShop.ModelViews.ToyModelViews;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.ToyModelViews;
+using ToyShop.Repositories.Base;
 
-namespace ToyShop.Pages.Admin
+namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
-    public class CreateProductModel : PageModel
+    public class CreateModel : PageModel
     {
         private readonly IToyService _toyService;
 
-        public CreateProductModel(IToyService toyService)
+        public CreateModel(IToyService toyService)
         {
             _toyService = toyService;
         }
@@ -77,7 +84,7 @@ namespace ToyShop.Pages.Admin
                 ToyDescription = Toy.ToyDescription,
                 ToyImg = Toy.ToyImg,
                 ToyPrice = Toy.ToyPrice,
-                option = Toy.option, 
+                option = Toy.option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
                 ToyQuantitySold = Toy.ToyQuantitySold
             };

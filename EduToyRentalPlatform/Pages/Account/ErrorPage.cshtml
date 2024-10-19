@@ -1,0 +1,68 @@
+﻿@page
+@model ToyShop.Pages.Account.ErrorPageModel
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        body {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .error-container {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        .error-container h1 {
+            font-size: 3rem;
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+        .error-container p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .btn-custom {
+            background-color: rgb(129, 196, 8);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+        }
+        .btn-custom:hover {
+                background-color: rgb(100, 150, 10);
+                ;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>@ViewData["Title"]</h1>
+        <p>Bạn không có quyền truy cập vào trang này.</p>
+        <a href="/Home/Index" class="btn btn-custom">Quay lại trang chủ</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

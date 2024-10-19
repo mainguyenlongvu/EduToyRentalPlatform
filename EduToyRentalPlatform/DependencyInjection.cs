@@ -6,6 +6,11 @@ using ToyShop.Services;
 using ToyShop.Services.Service;
 using Microsoft.EntityFrameworkCore;
 using ToyShop.Repositories.Base;
+using Microsoft.AspNetCore.Identity;
+using ToyShop.Repositories.Entity;
+using Microsoft.AspNet.Identity;
+using ToyShop.Contract.Repositories.Interface;
+using ToyShop.Contract.Repositories.Entity;
 
 namespace ToyShop
 {
@@ -26,6 +31,30 @@ namespace ToyShop
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
+            // Đăng ký dịch vụ IConfiguration
+            services.AddSingleton<IConfiguration>(configuration);
+
+            // Đăng ký IUserService và UserService
+            services.AddScoped<IUserService, UserService>();
+
+            // Đăng ký IUnitOfWork và UnitOfWork
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            //Đăbg ký IToySerivce và ToyService
+            services.AddScoped<IToyService, ToyService>();
+
+            // Đăng ký AutoMapper
+            services.AddAutoMapper(typeof(Program));
+
+            services.AddSession();
+
+            // Đăng ký PasswordHasher
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+            services.AddHttpContextAccessor();
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            .AddEntityFrameworkStores<ToyShopDBContext>()
+            .AddDefaultTokenProviders();
+
         }
         public static void ConfigRoute(this IServiceCollection services)
         {
@@ -53,6 +82,13 @@ namespace ToyShop
             services.AddScoped<IFeedBackService, FeedBackService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IDeliveryService, DeliveryService>();
+
+            // Đăng ký PasswordHasher cho ApplicationUser
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
             services.AddRazorPages();
 			services.AddSignalR();

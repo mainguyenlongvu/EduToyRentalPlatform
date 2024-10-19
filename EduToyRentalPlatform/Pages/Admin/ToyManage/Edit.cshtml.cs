@@ -1,15 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ToyShop.ModelViews.ToyModelViews;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.ToyModelViews;
+using ToyShop.Repositories.Base;
 
-namespace ToyShop.Pages
+namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
-    public class EditToyModel : PageModel
+    public class EditModel : PageModel
     {
         private readonly IToyService _toyService;
 
-        public EditToyModel(IToyService toyService)
+        public EditModel(IToyService toyService)
         {
             _toyService = toyService;
         }
@@ -74,7 +82,7 @@ namespace ToyShop.Pages
                 }
             }
 
-                var toyUpdateModel = new UpdateToyModel
+            var toyUpdateModel = new UpdateToyModel
             {
                 ToyName = Toy.ToyName,
                 ToyDescription = Toy.ToyDescription,

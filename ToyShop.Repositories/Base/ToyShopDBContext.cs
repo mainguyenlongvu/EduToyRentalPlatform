@@ -31,6 +31,7 @@ namespace ToyShop.Repositories.Base
         public virtual DbSet<Message> Messages => Set<Message>();
         public virtual DbSet<RestoreToy> RestoreToys => Set<RestoreToy>();
         public virtual DbSet<Transaction> Transactions => Set<Transaction>();
+        public virtual DbSet<ContractDetail> ContractDetails => Set<ContractDetail>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,12 @@ namespace ToyShop.Repositories.Base
                 .WithMany(u => u.ContractEntitys)  // Assuming 'Contracts' in 'ApplicationUser'
                 .HasForeignKey(c => c.UserId)  // Foreign key in 'Contract' table
                 .OnDelete(DeleteBehavior.Restrict);  // Prevent cascading delete
+                                                     // Configure relationships for Contract -> ApplicationUser
+            modelBuilder.Entity<ContractDetail>()
+                .HasOne(c => c.Contract)  
+                .WithMany(u => u.ContractDetails) 
+                .HasForeignKey(c => c.ContractId)  
+                .OnDelete(DeleteBehavior.Restrict);  
 
             // Configure relationships for Feedback -> Toy
             modelBuilder.Entity<FeedBack>()
