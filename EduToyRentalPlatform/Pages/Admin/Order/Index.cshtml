@@ -40,7 +40,7 @@
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DateEnd)</th>
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].Status)</th>
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].ApplicationUser)</th>
-                                    <th>@Html.DisplayNameFor(model => model.ContractEntity[0].Toy)</th>
+                                    @* <th>@Html.DisplayNameFor(model => model.ContractEntity[0].Toy)</th> *@
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].CreatedBy)</th>
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].LastUpdatedBy)</th>
                                     <th>@Html.DisplayNameFor(model => model.ContractEntity[0].DeletedBy)</th>
@@ -66,7 +66,7 @@
                                             <td>@(item.DateEnd.HasValue ? item.DateEnd.Value.ToString("dd-MM-yyyy") : "N/A")</td>
                                             <td>@Html.DisplayFor(modelItem => item.Status)</td>
                                             <td>@(item.ApplicationUser != null ? item.ApplicationUser.FullName : "N/A")</td>
-                                            <td>@(item.Toy != null ? item.Toy.Id.ToString() : "N/A")</td>
+                                            @* <td>@(item.Toy != null ? item.Toy.Id.ToString() : "N/A")</td> *@
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
                                             <td>@Html.DisplayFor(modelItem => item.LastUpdatedBy)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DeletedBy)</td>
