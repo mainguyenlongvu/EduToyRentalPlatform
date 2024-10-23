@@ -13,7 +13,9 @@ namespace ToyShop.ModelViews.ToyModelViews
         public string? ToyDescription { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than or equal to 0!")]
-        public int ToyPrice { get; set; }
+        public int ToyPriceSale { get; set; }
+        [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than or equal to 0!")]
+        public int ToyPriceRent { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "The remaining quantity must be greater than or equal to 0!")]
         public int ToyRemainingQuantity { get; set; }

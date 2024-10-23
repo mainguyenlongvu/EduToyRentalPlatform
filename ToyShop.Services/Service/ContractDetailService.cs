@@ -52,7 +52,7 @@ namespace ToyShop.Contract.Services.Interface
                 contractDetail.CreatedTime = CoreHelper.SystemTimeNows;
                 contractDetail.CreatedBy = userId;
                 contractDetail.ContractId = newContract.Id;
-                contractDetail.Price = model.Quantity * toy.ToyPrice;
+                contractDetail.Price = model.Quantity * toy.ToyPriceSale;
                 await _unitOfWork.GetRepository<ContractDetail>().InsertAsync(contractDetail);
                 await _unitOfWork.SaveAsync();
             }
@@ -62,7 +62,7 @@ namespace ToyShop.Contract.Services.Interface
                 newContractDetail.CreatedTime = CoreHelper.SystemTimeNows;
                 newContractDetail.CreatedBy = userId;
                 newContractDetail.ContractId = contractEntity.Id;
-                newContractDetail.Price = model.Quantity * toy.ToyPrice;
+                newContractDetail.Price = model.Quantity * toy.ToyPriceSale;
                 await _unitOfWork.GetRepository<ContractDetail>().InsertAsync(newContractDetail);
                 await _unitOfWork.SaveAsync();
             }
@@ -147,7 +147,7 @@ namespace ToyShop.Contract.Services.Interface
             _mapper.Map(model, contractDetail);
             contractDetail.LastUpdatedTime = CoreHelper.SystemTimeNows;
             //Cập nhập lại giá
-            contractDetail.Price = contractDetail.Quantity * toy.ToyPrice;
+            contractDetail.Price = contractDetail.Quantity * toy.ToyPriceSale;
             _unitOfWork.GetRepository<ContractDetail>().Update(contractDetail);
             await _unitOfWork.SaveAsync();
         }
