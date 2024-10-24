@@ -16,6 +16,7 @@ namespace ToyShop.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
+        public int Money { get; set; }
         public virtual ICollection<ContractEntity>? ContractEntitys { get; set; }
         public virtual ICollection<Chat>? Chats { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
