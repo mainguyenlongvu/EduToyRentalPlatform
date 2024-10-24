@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.Services", "ToyShop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EduToyRentalPlatform", "EduToyRentalPlatform\EduToyRentalPlatform.csproj", "{9DA4B01B-F27C-4640-984E-82E31A8E54C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyShop.ModelViews", "ToyShop.ModelViews\ToyShop.ModelViews.csproj", "{5E3744B4-F8BD-48CB-9639-594CA18EF391}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToyShop.ModelViews", "ToyShop.ModelViews\ToyShop.ModelViews.csproj", "{5E3744B4-F8BD-48CB-9639-594CA18EF391}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
