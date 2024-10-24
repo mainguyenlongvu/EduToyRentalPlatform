@@ -18,6 +18,6 @@ namespace ToyShop.Contract.Repositories.Entity
         public DateOnly? DateEnd { get; set; }
         public virtual Toy? Toy { get; set; }
         public int Quantity { get; set; }
-        public decimal Price { get; set; }
+        public int Price { get; set; }
     }
 }
