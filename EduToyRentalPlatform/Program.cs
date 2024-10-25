@@ -27,7 +27,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-
+app.UseSession();
 app.MapRazorPages();
 
 // Thêm điều hướng đến Home/Index khi truy cập root URL

@@ -1,26 +1,72 @@
 ﻿@model List<ToyShop.ModelViews.ToyModelViews.ResponeToyModel>
 
+<style>
+    .toy-item {
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Ensures the item stretches to fit its container */
+        min-height: 400px; /* Adjusts for minimum height */
+        transition: transform 0.3s ease; /* Add smooth scaling on hover */
+    }
+
+        .toy-item:hover {
+            transform: scale(1.02); /* Scale up slightly on hover for effect */
+        }
+
+    .toy-img img {
+        height: 200px; /* Set a fixed height for the image */
+        object-fit: cover; /* Ensures the image covers the area without distortion */
+    }
+
+    .p-4 {
+        flex-grow: 1; /* Allows the container to grow and fill space */
+    }
+
+    .price {
+        transition: color 0.3s ease;
+    }
+
+    .toy-item:hover .price {
+        color: #007bff; /* Change to your desired hover color */
+    }
+</style>
+
 @if (Model != null && Model.Count > 0)
 {
-    @foreach (var toy in Model)
-    {
-        <div class="col-md-6 col-lg-4 col-xl-3">
-            <div class="rounded position-relative fruite-item">
-                <div class="fruite-img">
-                    <img src="@Url.Content("~/img/" + toy.ToyImg)" class="img-fluid custom-img w-100 rounded-top" alt="" >
-                </div>
-                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">ToyShop</div>
-                <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                    <h4>@toy.ToyName</h4>
-                    <p>@toy.ToyDescription</p>
-                    <div class="d-flex justify-content-between flex-lg-wrap">
-                        <p class="text-dark fs-5 fw-bold mb-0">@toy.ToyPrice/sp </p>
-                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary">
-                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                        </a>
+    <div class="row g-4">
+        @foreach (var toy in Model)
+        {
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="rounded position-relative toy-item shadow-sm overflow-hidden">
+                    <div class="toy-img">
+                        <img src="@Url.Content("~/img/" + toy.ToyImg)"
+                             class="img-fluid custom-img w-100 rounded-top"
+                             alt="@toy.ToyName">
+                    </div>
+                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+                        ToyShop
+                    </div>
+                    <div class="p-4 border border-secondary border-top-0 rounded-bottom d-flex flex-column" style="height: 100%;">
+                        <h4 class="text-dark">@toy.ToyName</h4>
+                        <p class="text-muted flex-grow-1">@toy.ToyDescription</p>
+                        <div class="text-center">
+                            <p class="text-dark fs-5 fw-bold mb-0 price">
+                                @String.Format("{0:C}", toy.ToyPriceSale) <!-- Format price -->
+                            </p>
+                            <a href="@Url.Action("Details", "Toy", new { id = toy.Id })"
+                               class="btn btn-outline-primary rounded-pill px-3 mt-2">
+                                <i class="fa fa-shopping-bag me-2"></i> Add to cart
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
+}
+else
+{
+    <div class="col-12 text-center">
+        <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+    </div>
 }

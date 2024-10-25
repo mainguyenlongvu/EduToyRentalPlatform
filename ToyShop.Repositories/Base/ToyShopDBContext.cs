@@ -30,7 +30,9 @@ namespace ToyShop.Repositories.Base
         public virtual DbSet<FeedBack> Feedbacks => Set<FeedBack>();
         public virtual DbSet<Message> Messages => Set<Message>();
         public virtual DbSet<RestoreToy> RestoreToys => Set<RestoreToy>();
+        public virtual DbSet<RestoreToyDetail> RestoreToyDetails=> Set<RestoreToyDetail>();
         public virtual DbSet<Transaction> Transactions => Set<Transaction>();
+        public virtual DbSet<ContractDetail> ContractDetails => Set<ContractDetail>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +52,12 @@ namespace ToyShop.Repositories.Base
                 .WithMany(u => u.ContractEntitys)  // Assuming 'Contracts' in 'ApplicationUser'
                 .HasForeignKey(c => c.UserId)  // Foreign key in 'Contract' table
                 .OnDelete(DeleteBehavior.Restrict);  // Prevent cascading delete
+                                                     // Configure relationships for Contract -> ApplicationUser
+            modelBuilder.Entity<ContractDetail>()
+                .HasOne(c => c.Contract)  
+                .WithMany(u => u.ContractDetails) 
+                .HasForeignKey(c => c.ContractId)  
+                .OnDelete(DeleteBehavior.Restrict);  
 
             // Configure relationships for Feedback -> Toy
             modelBuilder.Entity<FeedBack>()
@@ -79,6 +87,12 @@ namespace ToyShop.Repositories.Base
                 .HasForeignKey<RestoreToy>(r => r.ContractId)  // Corrected syntax for Foreign Key
                 .OnDelete(DeleteBehavior.Cascade);  // Cascade delete RestoreToy if Contract is deleted
 
+            modelBuilder.Entity<RestoreToyDetail>()
+                .HasOne(c => c.RestoreToy)
+                .WithMany(u => u.RestoreToyDetails)
+                .HasForeignKey(c => c.RestoreToyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Configure relationships for Message -> Chat
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)  // Message has a Chat
@@ -102,7 +116,8 @@ namespace ToyShop.Repositories.Base
                     ToyName = "Stacking Rings",
                     ToyImg = "stacking_rings.webp",
                     ToyDescription = "Classic colorful stacking rings toy for toddlers.",
-                    ToyPrice = 150000000,
+                    ToyPriceSale = 150000000,
+                    ToyPriceRent = 1500,
                     ToyRemainingQuantity = 20,
                     ToyQuantitySold = 5,
                     Option = "Stackable Rings",
@@ -118,7 +133,8 @@ namespace ToyShop.Repositories.Base
                     ToyName = "Wooden Puzzle",
                     ToyImg = "wooden_puzzle.webp",
                     ToyDescription = "A wooden puzzle with animal shapes and numbers.",
-                    ToyPrice = 120000,
+                    ToyPriceSale = 120000,
+                    ToyPriceRent = 100,
                     ToyRemainingQuantity = 15,
                     ToyQuantitySold = 6,
                     Option = "Puzzle",
@@ -134,7 +150,8 @@ namespace ToyShop.Repositories.Base
                     ToyName = "Educational Toy Set",
                     ToyImg = "1.webp",
                     ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.",
-                    ToyPrice = 200000000,
+                    ToyPriceSale = 200000000,
+                    ToyPriceRent = 1000,
                     ToyRemainingQuantity = 12,
                     ToyQuantitySold = 8,
                     Option = "Interactive Learning",

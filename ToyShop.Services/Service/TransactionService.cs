@@ -71,33 +71,47 @@ namespace ToyShop.Services.Service
 			}
 		}
 
-		public async Task<BasePaginatedList<ResponseTransactionModel>> GetPaging(int page, int pageSize)
-		{
-			try
-			{
-				if (page < 1 || pageSize < 1)
-				{
-					throw new ArgumentException("Invalid page or pageSize value.");
-				}
-				var query = _unitOfWork.GetRepository<Transaction>().Entities;
-				var totalItems = query.CountAsync();
-				var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-				var transactionResponses = items.Select(_mapper.Map<ResponseTransactionModel>).ToList();
+        public async Task<BasePaginatedList<ResponseTransactionModel>> GetPaging(int page, int pageSize)
+        {
+            try
+            {
+                // Validate input parameters
+                if (page < 1 || pageSize < 1)
+                {
+                    throw new ArgumentException("Invalid page or pageSize value.");
+                }
 
-				return new BasePaginatedList<ResponseTransactionModel>
-					(transactionResponses , totalItems.Result, page, pageSize);
-			}
-			catch (ArgumentException)
-			{
-				throw;
-			}
-			catch (Exception ex)
-			{
-				throw new InvalidOperationException("An error occurred while fetching paginated deliveries.", ex);
-			}
-		}
+                // Get the repository and prepare the query
+                var query = _unitOfWork.GetRepository<Transaction>().Entities;
 
-		public async Task<CreateTransactionModel> Insert(CreateTransactionModel transactionCreate)
+                // Get total count asynchronously
+                var totalItems = await query.CountAsync();
+
+                // Get the paginated items
+                var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                // Map items to response model
+                var transactionResponses = items.Select(_mapper.Map<ResponseTransactionModel>).ToList();
+
+                // Return the paginated list
+                return new BasePaginatedList<ResponseTransactionModel>(transactionResponses, totalItems, page, pageSize);
+            }
+            catch (ArgumentException)
+            {
+                // Rethrow ArgumentExceptions to preserve the stack trace
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Log exception details if necessary (optional)
+                // Log.Error("An error occurred while fetching paginated deliveries.", ex); // Example logging
+
+                throw new InvalidOperationException("An error occurred while fetching paginated deliveries.", ex);
+            }
+        }
+
+
+        public async Task<CreateTransactionModel> Insert(CreateTransactionModel transactionCreate)
 		{
 			ArgumentNullException.ThrowIfNull(transactionCreate);
 			if (transactionCreate.ContractId == null)

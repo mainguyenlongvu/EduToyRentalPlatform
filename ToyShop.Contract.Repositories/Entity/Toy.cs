@@ -16,12 +16,13 @@ namespace ToyShop.Contract.Repositories.Entity
         public string? ToyName { get; set; }
         public string? ToyImg { get; set; }
         public string? ToyDescription { get; set; }
-        public int ToyPrice { get; set; }
+        public int ToyPriceRent { get; set; }
+        public int ToyPriceSale { get; set; }
         public int ToyRemainingQuantity { get; set; }
         public int ToyQuantitySold { get; set; }
         public string? Option { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
-        public virtual ICollection<ContractEntity>? ContractEntitys { get; set; }
+        public virtual ICollection<ContractDetail>? ContractDetails { get; set; }
 
     }
 }
