@@ -8,45 +8,39 @@
     <div class="container h-100 py-5">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-10">
-
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-normal mb-0">Shopping Cart</h3>
-                    <div>
-                        @*<p class="mb-0">
-                            <span class="text-muted">Sort by:</span> <a href="#!" class="text-body">
-                                price <i class="fas fa-angle-down mt-1"></i>
-                            </a>
-                        </p>*@
-                    </div>
                 </div>
 
+                @* Repeat this block for each product in the cart *@
                 <div class="card rounded-3 mb-4">
                     <div class="card-body p-4">
                         <div class="row d-flex justify-content-between align-items-center">
                             <div class="col-md-2 col-lg-2 col-xl-2">
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTl7_5kHtFLHA2t5Zwb6QRpeiX8URyAfDJmyA&s"
-                                     class="img-fluid rounded-3" alt="Cotton T-shirt">
+                                     class="img-fluid rounded-3" alt="Toy Image">
                             </div>
                             <div class="col-md-3 col-lg-3 col-xl-3">
                                 <p class="lead fw-normal mb-2">Toy 1</p>
-                                <p><span class="text-muted">Amazing toy for kid to study english</p>
+                                <p><span class="text-muted">Amazing toy for kid to study English</span></p>
                             </div>
                             <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                                     <i class="fas fa-minus"></i>
                                 </button>
-
-                                <input id="form1" min="0" name="quantity" value="2" type="number"
-                                       class="form-control form-control-sm" />
-
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                <input min="0" name="quantity" value="2" type="number" class="form-control form-control-sm" />
+                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                             <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h5 class="mb-0">150.000/h</h5>
+                                <div>
+                                    <input type="radio" id="rent1" name="purchaseOption1" checked onclick="updatePrice('price1', '150.000', '200000')" />
+                                    <label for="rent1">Rent</label>
+                                    <input type="radio" id="buy1" name="purchaseOption1" onclick="updatePrice('price1', '150.000', '200.000')" />
+                                    <label for="buy1">Buy</label>
+                                </div>
+                                <h5 class="mb-0" id="price1">150.000/h</h5>
                             </div>
                             <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                 <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
@@ -60,28 +54,29 @@
                         <div class="row d-flex justify-content-between align-items-center">
                             <div class="col-md-2 col-lg-2 col-xl-2">
                                 <img src="https://down-vn.img.susercontent.com/file/8b80b4774839c0850ba376bc4c8c144c"
-                                     class="img-fluid rounded-3" alt="Cotton T-shirt">
+                                     class="img-fluid rounded-3" alt="Toy Image">
                             </div>
                             <div class="col-md-3 col-lg-3 col-xl-3">
                                 <p class="lead fw-normal mb-2">Toy 2</p>
-                                <p><span class="text-muted">Amazing toy for kid to learn alphabet</p>
+                                <p><span class="text-muted">Amazing toy for kid to learn alphabet</span></p>
                             </div>
                             <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                                     <i class="fas fa-minus"></i>
                                 </button>
-
-                                <input id="form1" min="0" name="quantity" value="2" type="number"
-                                       class="form-control form-control-sm" />
-
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                <input min="0" name="quantity" value="1" type="number" class="form-control form-control-sm" />
+                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                             <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h5 class="mb-0">240.000/h</h5>
+                                <div>
+                                    <input type="radio" id="rent2" name="purchaseOption2" checked onclick="updatePrice('price2', '120.000', '180000')" />
+                                    <label for="rent2">Rent</label>
+                                    <input type="radio" id="buy2" name="purchaseOption2" onclick="updatePrice('price2', '120.000', '180.000')" />
+                                    <label for="buy2">Buy</label>
+                                </div>
+                                <h5 class="mb-0" id="price2">120.000/h</h5>
                             </div>
                             <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                 <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
@@ -89,77 +84,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card rounded-3 mb-4">
-                    <div class="card-body p-4">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img src="https://v-toys.vn/wp-content/uploads/2020/07/su-du-ku.jpg"
-                                     class="img-fluid rounded-3" alt="Cotton T-shirt">
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-3">
-                                <p class="lead fw-normal mb-2">Toy 3</p>
-                                <p><span class="text-muted">Amazing toy for kid to learn logic</p>
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-
-                                <input id="form1" min="0" name="quantity" value="2" type="number"
-                                       class="form-control form-control-sm" />
-
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h5 class="mb-0">230.000k/h</h5>
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card rounded-3 mb-4">
-                    <div class="card-body p-4">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img src="https://bizweb.dktcdn.net/100/317/763/products/ke-chu-a-bang-go-1.png?v=1682048336223"
-                                     class="img-fluid rounded-3" alt="Cotton T-shirt">
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-3">
-                                <p class="lead fw-normal mb-2">Toy 4</p>
-                                <p><span class="text-muted">Amazing Toy for kid to learn math</p>
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-
-                                <input id="form1" min="0" name="quantity" value="2" type="number"
-                                       class="form-control form-control-sm" />
-
-                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h5 class="mb-0">400.000/h</h5>
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                @* Add similar blocks for other products *@
 
                 <div class="card mb-4">
                     <div class="card-body p-4 d-flex flex-row align-items-center">
@@ -172,11 +97,22 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-block btn-lg" style="width: 100%;">Checkout</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block btn-lg"
+                                style="width: 100%;"
+                                onclick="window.location.href = '@Url.Page("/Cart/Checkout")';">
+                            Checkout
+                        </button>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    function updatePrice(priceId, rentPrice, buyPrice) {
+        const priceElement = document.getElementById(priceId);
+        priceElement.innerText = document.getElementById(priceId.replace('price', 'rent')).checked ? `${rentPrice}/h` : `${buyPrice}/h`;
+    }
+</script>
