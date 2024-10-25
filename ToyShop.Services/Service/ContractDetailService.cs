@@ -315,6 +315,34 @@ namespace ToyShop.Contract.Services.Interface
             else//còn false là thuê lấy giá của thuê
             {
                 contractDetail.Price = model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2);
+                //Tìm xem có sẵn đơn trả chưa
+                RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractDetail.ContractId && !x.DeletedTime.HasValue);
+                //Nếu có restoreToy
+                if (restoreToy != null)
+                {
+                    //Tìm xem đơn trả đó có Đồ chơi này chưa
+                    RestoreToyDetail restoreDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.RestoreToyId == restoreToy.Id && x.ToyId == toy.Id);
+                    //Nếu có
+                    if (restoreDetail != null)
+                    {
+                        restoreDetail.ToyQuality = model.Quantity;
+                        restoreDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                        //Cập nhật lại
+                        await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreDetail);
+                    }
+                    //Nếu ko có
+                    else
+                    {
+                        RestoreToyDetail restoreToyDetail = new RestoreToyDetail();
+                        restoreToyDetail.RestoreToyId = restoreToy.Id;
+                        restoreToyDetail.ToyQuality = model.Quantity;
+                        restoreToyDetail.ToyName = toy.ToyName;
+                        restoreToyDetail.ToyId = toy.Id;
+                        restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                        //thêm vào Db
+                        await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
+                    }
+                }
             }
             await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
