@@ -647,7 +647,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d7aed8d4cc1d4c40a85c97a333242a12",
+                            Id = "fe90c5812f6e4ecc9e1b43c7eaa9d312",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -663,7 +663,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "5a5fc0f48eae4c2faa7ebe311cfc182b",
+                            Id = "c4aaad1f740d4c56b176afbc9cc9a087",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -679,7 +679,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "c1375a1719e54ca7ac2b31270cf6ed0f",
+                            Id = "ef4d744e80994df7b5b6c8e348c676f7",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",

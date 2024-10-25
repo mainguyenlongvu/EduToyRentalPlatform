@@ -1,0 +1,158 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Cart.CheckoutModel
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/css/Checkout.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-body">
+                    <ol class="activity-checkout mb-0 px-4 mt-3">
+                        <!-- Billing Info Section -->
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-receipt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <h5 class="font-size-16 mb-1">Billing Info</h5>
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12 mb-3">
+                                            <label class="form-label" for="billing-name">Name</label>
+                                            <input type="text" class="form-control" id="billing-name">
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 mb-3">
+                                            <label class="form-label" for="billing-phone">Phone</label>
+                                            <input type="text" class="form-control" id="billing-phone">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="billing-email-address">Email</label>
+                                        <input type="email" class="form-control" id="billing-email-address">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="billing-address">Address</label>
+                                        <textarea class="form-control" id="billing-address" rows="1"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <!-- Shipping Info Section -->
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-truck text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <h5 class="font-size-16 mb-1">Shipping Info</h5>
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <label class="card-radio-label w-100">
+                                            <input type="radio" name="address" id="info-address1" class="card-radio-input" checked>
+                                            <div class="card-radio text-truncate p-2 d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="d-block fs-14 fw-bold mb-1">Tommy Shelbey</span>
+                                                    <span class="text-muted fs-13 d-block">D1 Khu Công Nghệ Cao, Phường Tân Phú, TP. Thủ Đức</span>
+                                                    <span class="text-muted fs-13 d-block">09012345689</span>
+                                                </div>
+                                                <button class="btn btn-sm p-0 text-muted" data-bs-toggle="tooltip" title="Edit">
+                                                    <i class="bx bx-pencil font-size-16"></i>
+                                                </button>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Payment Info Section -->
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                <h5 class="font-size-14 mb-3">Payment method:</h5>
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6">
+                                        <label class="card-radio-label">
+                                            <input type="radio" name="pay-method" id="pay-methodoption2" class="card-radio-input">
+                                            <div class="card-radio py-3 text-center text-truncate">
+                                                <i class="bx bxl-paypal d-block h2 mb-3"></i>Paypal
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row my-4">
+                <div class="col">
+                    <a href="ecommerce-products.html" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                </div>
+                <div class="col text-end">
+                    <button class="btn btn-success">
+                        <i class="mdi mdi-cart-outline me-1"></i> Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-xl-4">
+            <div class="card checkout-order-summary">
+                <div class="card-body">
+                    <div class="p-3 bg-light mb-3">
+                        <h5 class="font-size-16 mb-0">Order Summary <span class="float-end">#MN0124</span></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th style="width: 110px;">Product</th>
+                                    <th>Product Desc</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="https://m.media-amazon.com/images/I/71ZZYpDE4VL._AC_UF894,1000_QL80_.jpg" alt="product-img" class="avatar-lg rounded"></td>
+                                    <td>
+                                        <h5 class="font-size-16"><a href="#" class="text-dark">Sudoku Toy</a></h5>
+                                        <div><i class="bx bxs-star text-warning"></i> <i class="bx bxs-star text-warning"></i> <i class="bx bxs-star text-warning"></i> <i class="bx bxs-star text-warning"></i> <i class="bx bxs-star-half text-warning"></i></div>
+                                        <p class="text-muted mb-0 mt-1">$260 x 2</p>
+                                    </td>
+                                    <td>$520</td>
+                                </tr>
+                                <!-- More product rows as needed -->
+                                <tr class="bg-light">
+                                    <td colspan="2">Total:</td>
+                                    <td>$745.2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
