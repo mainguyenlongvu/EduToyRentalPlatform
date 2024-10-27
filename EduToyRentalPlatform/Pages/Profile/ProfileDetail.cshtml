@@ -1,0 +1,123 @@
+﻿@page
+@model ToyShop.Pages.Account.AccountDetailModel
+
+<h1 class="title">Thông tin tài khoản</h1>
+
+@if (Model.User != null)
+{
+    <div class="profile-card">
+        <div class="profile-header">
+            <img src="/images/profile-placeholder.png" alt="Profile Picture" class="profile-image" />
+            <h2 class="username">@Model.User.UserName</h2>
+        </div>
+
+        <div class="profile-info">
+            <p><strong>Email:</strong> @Model.User.Email</p>
+            <p><strong>Số điện thoại:</strong> @Model.User.Phone</p>
+            <p>
+                <strong>Trạng thái:</strong>
+                <span class="status @(Model.User.DeletedTime.HasValue ? "inactive" : "active")">
+                    @(Model.User.DeletedTime.HasValue ? "Đã xóa" : "Hoạt động")
+                </span>
+            </p>
+        </div>
+
+        @* Uncomment if edit functionality is available *@
+        @* <a href="./Edit?id=@Model.User.Id" class="btn btn-primary">Chỉnh sửa</a> *@
+    </div>
+}
+else
+{
+    <p class="error-message">Không tìm thấy thông tin người dùng.</p>
+}
+
+<div class="back-button-container">
+    <a href="/Profile/ProfileDetail" class="btn btn-secondary">Quay lại</a>
+</div>
+
+<!-- Add your CSS for styling the page -->
+<style>
+    .title {
+        text-align: center;
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .profile-card {
+        max-width: 500px;
+        margin: 0 auto;
+        background: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    .username {
+        font-size: 1.5em;
+        margin: 0;
+        color: #555;
+    }
+
+    .profile-info p {
+        font-size: 1.1em;
+        color: #666;
+        margin: 10px 0;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .status.active {
+        color: green;
+    }
+
+    .status.inactive {
+        color: red;
+    }
+
+    .error-message {
+        color: red;
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .back-button-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+    }
+</style>
