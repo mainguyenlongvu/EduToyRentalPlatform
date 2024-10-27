@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToyShop.ModelViews.PaymentModelView
 {
-	public class PaymentResponseModel
+	public class VnPayResponseModel
 	{
 		public bool	Success {  get; set; }
 		public string PaymentMethod {  get; set; }

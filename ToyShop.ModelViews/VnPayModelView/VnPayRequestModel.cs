@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToyShop.ModelViews.PaymentModelView
 {
-	public class PaymentInformationModel
+	public class VnPayRequestModel
 	{
 		public string OrderType { get; set; }
 		public double Amount { get; set; }

@@ -19,7 +19,7 @@ namespace ToyShop.Services.Service
 			_configuration = config;
         }
 
-        public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
+        public string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
 		{
 			var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
 			var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
@@ -46,7 +46,7 @@ namespace ToyShop.Services.Service
 			return paymentUrl;
 		}
 
-		public PaymentResponseModel PaymentExecute(IQueryCollection collections)
+		public VnPayResponseModel PaymentExecute(IQueryCollection collections)
 		{
 			var pay = new VnPayLibrary();
 
@@ -66,12 +66,12 @@ namespace ToyShop.Services.Service
 			var checkSignature = pay.ValidateSignature(vnpSecureHash, _configuration["Vnpay:HashSecret"]); //check Signature
 
 			if (!checkSignature)
-				return new PaymentResponseModel()
+				return new VnPayResponseModel()
 				{
 					Success = false
 				};
 
-			return new PaymentResponseModel()
+			return new VnPayResponseModel()
 			{
 				Success = true,
 				PaymentMethod = "VnPay",
