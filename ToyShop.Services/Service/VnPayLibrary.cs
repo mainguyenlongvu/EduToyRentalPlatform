@@ -112,47 +112,6 @@ namespace ToyShop.Services.Service
 			return data.ToString();
 		}
 
-		public PaymentResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
-		{
-			//var vnPay = new VnPayLibrary();
-
-			foreach (var (key, value) in collection)
-			{
-				if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
-				{
-					this.AddResponseData(key, value);
-				}
-			}
-
-			var orderId = Convert.ToInt64(this.GetResponseData("vnp_TxnRef"));
-			var vnPayTranId = Convert.ToInt64(this.GetResponseData("vnp_TransactionNo"));
-			var vnpResponseCode = this.GetResponseData("vnp_ResponseCode");
-			var vnpSecureHash =
-				collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
-			var orderInfo = this.GetResponseData("vnp_OrderInfo");
-
-			var checkSignature =
-				this.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
-
-			if (!checkSignature)
-				return new PaymentResponseModel()
-				{
-					Success = false
-				};
-
-			return new PaymentResponseModel()
-			{
-				Success = true,
-				PaymentMethod = "VnPay",
-				OrderDescription = orderInfo,
-				OrderId = orderId.ToString(),
-				PaymentId = vnPayTranId.ToString(),
-				TransactionId = vnPayTranId.ToString(),
-				Token = vnpSecureHash,
-				VnPayResponseCode = vnpResponseCode
-			};
-		}
-
 		#endregion
 
 
