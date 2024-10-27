@@ -1,0 +1,75 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Admin.FeedbackManage.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>FeedBack</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FeedBack.UserId" class="control-label"></label>
+                <input asp-for="FeedBack.UserId" class="form-control" />
+                <span asp-validation-for="FeedBack.UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.ToyId" class="control-label"></label>
+                <select asp-for="FeedBack.ToyId" class="form-control" asp-items="ViewBag.ToyId"></select>
+                <span asp-validation-for="FeedBack.ToyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.Content" class="control-label"></label>
+                <input asp-for="FeedBack.Content" class="form-control" />
+                <span asp-validation-for="FeedBack.Content" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="FeedBack.Id" />
+            <div class="form-group">
+                <label asp-for="FeedBack.CreatedBy" class="control-label"></label>
+                <input asp-for="FeedBack.CreatedBy" class="form-control" />
+                <span asp-validation-for="FeedBack.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.LastUpdatedBy" class="control-label"></label>
+                <input asp-for="FeedBack.LastUpdatedBy" class="form-control" />
+                <span asp-validation-for="FeedBack.LastUpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.DeletedBy" class="control-label"></label>
+                <input asp-for="FeedBack.DeletedBy" class="form-control" />
+                <span asp-validation-for="FeedBack.DeletedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.CreatedTime" class="control-label"></label>
+                <input asp-for="FeedBack.CreatedTime" class="form-control" />
+                <span asp-validation-for="FeedBack.CreatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.LastUpdatedTime" class="control-label"></label>
+                <input asp-for="FeedBack.LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="FeedBack.LastUpdatedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeedBack.DeletedTime" class="control-label"></label>
+                <input asp-for="FeedBack.DeletedTime" class="form-control" />
+                <span asp-validation-for="FeedBack.DeletedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

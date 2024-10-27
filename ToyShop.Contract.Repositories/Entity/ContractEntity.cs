@@ -11,7 +11,6 @@ namespace ToyShop.Contract.Repositories.Entity
     public partial class ContractEntity : BaseEntity
     {
         public Guid? UserId { get; set; }
-        public string? ToyId { get; set; }
         public string? RestoreToyId { get; set; }
         public string? StaffConfirmed { get; set; }
         public double? TotalValue { get; set; }
@@ -24,9 +23,9 @@ namespace ToyShop.Contract.Repositories.Entity
 
         public virtual ICollection<Transaction>? Transactions { get; set; } = new List<Transaction>();
         public virtual ICollection<Delivery>? Deliveries { get; set; } = new List<Delivery>();
+        public virtual ICollection<ContractDetail>? ContractDetails { get; set; } = new List<ContractDetail>();
         public virtual ApplicationUser? ApplicationUser { get; set; }
         public virtual RestoreToy? RestoreToy { get; set; }
-        public virtual Toy? Toy { get; set; }
 
     }
 

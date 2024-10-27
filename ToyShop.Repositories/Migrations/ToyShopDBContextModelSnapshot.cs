@@ -18,6 +18,9 @@ namespace ToyShop.Repositories.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -246,6 +249,51 @@ namespace ToyShop.Repositories.Migrations
                     b.ToTable("Chats");
                 });
 
+            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ContractId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("ToyId");
+
+                    b.ToTable("ContractDetails");
+                });
+
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -296,15 +344,10 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<double?>("TotalValue")
                         .HasColumnType("float");
 
-                    b.Property<string>("ToyId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ToyId");
 
                     b.HasIndex("UserId");
 
@@ -383,9 +426,18 @@ namespace ToyShop.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ToyId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("FeedBack");
                 });
@@ -531,6 +583,53 @@ namespace ToyShop.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Toy");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "87b34c9830334f83b78c28b6497982ad",
+                            CreatedBy = "Admin",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedBy = "Admin",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Option = "Stackable Rings",
+                            ToyDescription = "Classic colorful stacking rings toy for toddlers.",
+                            ToyImg = "stacking_rings.webp",
+                            ToyName = "Stacking Rings",
+                            ToyPrice = 150000000,
+                            ToyQuantitySold = 5,
+                            ToyRemainingQuantity = 20
+                        },
+                        new
+                        {
+                            Id = "ffefbd4170054f91891918f442e7fad5",
+                            CreatedBy = "Admin",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedBy = "Admin",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Option = "Puzzle",
+                            ToyDescription = "A wooden puzzle with animal shapes and numbers.",
+                            ToyImg = "wooden_puzzle.webp",
+                            ToyName = "Wooden Puzzle",
+                            ToyPrice = 120000,
+                            ToyQuantitySold = 6,
+                            ToyRemainingQuantity = 15
+                        },
+                        new
+                        {
+                            Id = "bd01c39be0554c0eb0aa7d7c0eeed582",
+                            CreatedBy = "Admin",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedBy = "Admin",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Option = "Interactive Learning",
+                            ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.",
+                            ToyImg = "1.webp",
+                            ToyName = "Educational Toy Set",
+                            ToyPrice = 200000000,
+                            ToyQuantitySold = 8,
+                            ToyRemainingQuantity = 12
+                        });
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Transaction", b =>
@@ -633,6 +732,11 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -723,20 +827,31 @@ namespace ToyShop.Repositories.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractEntity", b =>
+            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractDetail", b =>
                 {
+                    b.HasOne("ToyShop.Contract.Repositories.Entity.ContractEntity", "Contract")
+                        .WithMany("ContractDetails")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ToyShop.Contract.Repositories.Entity.Toy", "Toy")
-                        .WithMany("ContractEntitys")
+                        .WithMany("ContractDetails")
                         .HasForeignKey("ToyId");
 
+                    b.Navigation("Contract");
+
+                    b.Navigation("Toy");
+                });
+
+            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractEntity", b =>
+                {
                     b.HasOne("ToyShop.Repositories.Entity.ApplicationUser", "ApplicationUser")
                         .WithMany("ContractEntitys")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUser");
-
-                    b.Navigation("Toy");
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Delivery", b =>
@@ -757,7 +872,13 @@ namespace ToyShop.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ToyShop.Repositories.Entity.ApplicationUser", "User")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("UserId1");
+
                     b.Navigation("Toy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Message", b =>
@@ -803,6 +924,8 @@ namespace ToyShop.Repositories.Migrations
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.ContractEntity", b =>
                 {
+                    b.Navigation("ContractDetails");
+
                     b.Navigation("Deliveries");
 
                     b.Navigation("RestoreToy");
@@ -812,7 +935,7 @@ namespace ToyShop.Repositories.Migrations
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Toy", b =>
                 {
-                    b.Navigation("ContractEntitys");
+                    b.Navigation("ContractDetails");
 
                     b.Navigation("FeedBacks");
                 });
@@ -822,6 +945,8 @@ namespace ToyShop.Repositories.Migrations
                     b.Navigation("Chats");
 
                     b.Navigation("ContractEntitys");
+
+                    b.Navigation("FeedBacks");
 
                     b.Navigation("Messages");
                 });

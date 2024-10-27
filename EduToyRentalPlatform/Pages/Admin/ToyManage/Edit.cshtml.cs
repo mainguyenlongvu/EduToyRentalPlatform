@@ -1,25 +1,39 @@
-﻿using ToyShop.Contract.Services.Interface;
-using ToyShop.ModelViews.ToyModelViews;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.ToyModelViews;
+using ToyShop.Repositories.Base;
 
-namespace ToyShop.Pages.Admin
+namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
-    public class CreateProductModel : PageModel
+    public class EditModel : PageModel
     {
         private readonly IToyService _toyService;
 
-        public CreateProductModel(IToyService toyService)
+        public EditModel(IToyService toyService)
         {
             _toyService = toyService;
         }
 
         [BindProperty]
-        public CreateToyModel Toy { get; set; }
+        public ResponeToyModel Toy { get; set; }
 
-
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync(string id)
         {
+            Toy = await _toyService.GetToyAsync(id);
+            if (Toy == null)
+            {
+                return NotFound();
+            }
+
+            return Page();
         }
 
         [ValidateAntiForgeryToken]
@@ -30,7 +44,6 @@ namespace ToyShop.Pages.Admin
             {
                 return Page();
             }
-
 
             // Handle the image file upload
             if (Toy.ImageFile != null)
@@ -69,23 +82,21 @@ namespace ToyShop.Pages.Admin
                 }
             }
 
-
-            // Map the form data to a CreateToyModel for service call
-            var toyCreateModel = new CreateToyModel
+            var toyUpdateModel = new UpdateToyModel
             {
                 ToyName = Toy.ToyName,
                 ToyDescription = Toy.ToyDescription,
                 ToyImg = Toy.ToyImg,
                 ToyPrice = Toy.ToyPrice,
-                option = Toy.option, 
+                option = Toy.option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
-                ToyQuantitySold = Toy.ToyQuantitySold
+                ToyQuantitySold = Toy.ToyQuantitySold,
             };
 
-            // Call the service to create a new toy
-            await _toyService.CreateToyAsync(toyCreateModel);
+            // Call the service to update the toy
+            await _toyService.UpdateToyAsync(Toy.Id, toyUpdateModel);
 
-            // Redirect to the ToyManagement page after a successful creation
+            // Redirect to the ToyManagement page after a successful update
             return RedirectToPage("/Admin/Product");
         }
     }

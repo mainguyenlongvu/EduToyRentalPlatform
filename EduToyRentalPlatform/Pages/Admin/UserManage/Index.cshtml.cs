@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using ToyShop.Contract.Services.Interface;
 using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 
@@ -12,18 +13,18 @@ namespace ToyShopRentalPlatform.Pages.Admin.User
 {
     public class IndexModel : PageModel
     {
-        private readonly ToyShop.Repositories.Base.ToyShopDBContext _context;
+        private readonly IUserService _userService;
 
-        public IndexModel(ToyShop.Repositories.Base.ToyShopDBContext context)
+        public IndexModel(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         public IList<ApplicationUser> ApplicationUser { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            //ApplicationUser = await _context.ApplicationUsers.ToListAsync();
+    
         }
     }
 }

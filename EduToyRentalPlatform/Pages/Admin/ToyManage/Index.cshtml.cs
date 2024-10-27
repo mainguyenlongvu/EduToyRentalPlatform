@@ -1,15 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ToyModelViews;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc;
+using ToyShop.Repositories.Base;
 
-namespace ToyShop.Pages.Admin
+namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
-    public class ProductModel : PageModel
+    public class IndexModel : PageModel
     {
         private readonly IToyService _toyService;
 
-        public ProductModel(IToyService toyService)
+        public IndexModel(IToyService toyService)
         {
             _toyService = toyService;
         }
@@ -34,7 +41,7 @@ namespace ToyShop.Pages.Admin
                 Toys = toys.Items.ToList();
                 PageNumber = toys.CurrentPage;
                 TotalPages = toys.TotalPages;
-            }           
+            }
         }
 
         public async Task<IActionResult> OnGetDeleteAsync(string id)

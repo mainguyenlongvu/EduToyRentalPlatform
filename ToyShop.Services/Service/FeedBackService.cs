@@ -48,7 +48,7 @@ namespace ToyShop.Services.Service
             IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
-                //.Where(p => !p.IsDeleted)
+                .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(p => p.CreatedTime);
 
             // Sort by CreatedTime if specified
