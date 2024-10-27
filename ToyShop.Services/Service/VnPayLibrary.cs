@@ -114,25 +114,25 @@ namespace ToyShop.Services.Service
 
 		public PaymentResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
 		{
-			var vnPay = new VnPayLibrary();
+			//var vnPay = new VnPayLibrary();
 
 			foreach (var (key, value) in collection)
 			{
 				if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
 				{
-					vnPay.AddResponseData(key, value);
+					this.AddResponseData(key, value);
 				}
 			}
 
-			var orderId = Convert.ToInt64(vnPay.GetResponseData("vnp_TxnRef"));
-			var vnPayTranId = Convert.ToInt64(vnPay.GetResponseData("vnp_TransactionNo"));
-			var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
+			var orderId = Convert.ToInt64(this.GetResponseData("vnp_TxnRef"));
+			var vnPayTranId = Convert.ToInt64(this.GetResponseData("vnp_TransactionNo"));
+			var vnpResponseCode = this.GetResponseData("vnp_ResponseCode");
 			var vnpSecureHash =
 				collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
-			var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
+			var orderInfo = this.GetResponseData("vnp_OrderInfo");
 
 			var checkSignature =
-				vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
+				this.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
 
 			if (!checkSignature)
 				return new PaymentResponseModel()
