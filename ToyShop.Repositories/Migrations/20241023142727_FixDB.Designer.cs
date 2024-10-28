@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToyShop.Repositories.Base;
 
@@ -11,9 +12,11 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    partial class ToyShopDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241023142727_FixDB")]
+    partial class FixDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -285,8 +288,8 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -541,9 +544,6 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("Compensation")
-                        .HasColumnType("int");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -574,17 +574,14 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<int?>("Reward")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalMoney")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ToyId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double?>("TotalMoney")
+                        .HasColumnType("float");
 
                     b.Property<string>("ToyName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ToyQuality")
-                        .HasColumnType("int");
+                    b.Property<double?>("ToyQuality")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -647,7 +644,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fe90c5812f6e4ecc9e1b43c7eaa9d312",
+                            Id = "4074b81ea0f74052922780749d74bfce",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -663,7 +660,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "c4aaad1f740d4c56b176afbc9cc9a087",
+                            Id = "166ee3e4648d428799e27e2d8dfa1eb3",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -679,7 +676,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "ef4d744e80994df7b5b6c8e348c676f7",
+                            Id = "79b8a98793284650ba81456317dbe3fc",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",

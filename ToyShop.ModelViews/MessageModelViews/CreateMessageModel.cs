@@ -12,7 +12,11 @@ namespace ToyShop.ModelViews.MessageModelViews
         [Display(Name = "Sender ID")]
         public string SenderId { get; set; }
 
-        [Required]
+		[Required]
+		[Display(Name = "Receiver Id")]
+		public string ReceiverId  { get; set; }
+
+		[Required]
         [Display(Name = "Message Text")]
         public string MessageText { get; set; }
     }

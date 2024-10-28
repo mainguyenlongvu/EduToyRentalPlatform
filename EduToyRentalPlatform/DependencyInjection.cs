@@ -91,6 +91,8 @@ namespace ToyShop
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
             services.AddRazorPages();
+			services.AddSignalR();
+
         }
 
         public static void AddAutoMapper(this IServiceCollection services)

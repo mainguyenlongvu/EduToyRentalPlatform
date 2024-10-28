@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToyShop.Repositories.Base;
 
@@ -11,9 +12,11 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    partial class ToyShopDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241024082301_FixContractDetail")]
+    partial class FixContractDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -647,7 +650,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fe90c5812f6e4ecc9e1b43c7eaa9d312",
+                            Id = "d7aed8d4cc1d4c40a85c97a333242a12",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -663,7 +666,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "c4aaad1f740d4c56b176afbc9cc9a087",
+                            Id = "5a5fc0f48eae4c2faa7ebe311cfc182b",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -679,7 +682,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "ef4d744e80994df7b5b6c8e348c676f7",
+                            Id = "c1375a1719e54ca7ac2b31270cf6ed0f",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",

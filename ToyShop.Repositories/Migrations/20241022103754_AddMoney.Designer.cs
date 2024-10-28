@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToyShop.Repositories.Base;
 
@@ -11,9 +12,11 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    partial class ToyShopDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241022103754_AddMoney")]
+    partial class AddMoney
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,20 +261,11 @@ namespace ToyShop.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool?>("ContractType")
-                        .HasColumnType("bit");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<DateOnly?>("DateEnd")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly?>("DateStart")
-                        .HasColumnType("date");
 
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
@@ -285,8 +279,8 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -308,6 +302,9 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool?>("ContractType")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -315,6 +312,12 @@ namespace ToyShop.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateOnly?>("DateCreated")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("DateEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("DateStart")
                         .HasColumnType("date");
 
                     b.Property<string>("DeletedBy")
@@ -515,16 +518,16 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("TotalMoney")
+                    b.Property<double>("OverdueTime")
                         .HasColumnType("float");
 
-                    b.Property<int?>("TotalReward")
+                    b.Property<int>("Reward")
                         .HasColumnType("int");
 
-                    b.Property<double?>("TotalToyQuality")
+                    b.Property<double>("TotalMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ToyQuality")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
@@ -534,63 +537,6 @@ namespace ToyShop.Repositories.Migrations
                         .HasFilter("[ContractId] IS NOT NULL");
 
                     b.ToTable("RestoreToys");
-                });
-
-            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.RestoreToyDetail", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Compensation")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool?>("IsReturn")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<double?>("OverdueTime")
-                        .HasColumnType("float");
-
-                    b.Property<string>("RestoreToyId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Reward")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TotalMoney")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ToyId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ToyQuality")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RestoreToyId");
-
-                    b.ToTable("RestoreToyDetails");
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Toy", b =>
@@ -628,10 +574,7 @@ namespace ToyShop.Repositories.Migrations
                     b.Property<string>("ToyName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ToyPriceRent")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToyPriceSale")
+                    b.Property<int>("ToyPrice")
                         .HasColumnType("int");
 
                     b.Property<int>("ToyQuantitySold")
@@ -647,7 +590,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fe90c5812f6e4ecc9e1b43c7eaa9d312",
+                            Id = "e98713ac01064ffa870839bb1418172c",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -656,14 +599,13 @@ namespace ToyShop.Repositories.Migrations
                             ToyDescription = "Classic colorful stacking rings toy for toddlers.",
                             ToyImg = "stacking_rings.webp",
                             ToyName = "Stacking Rings",
-                            ToyPriceRent = 1500,
-                            ToyPriceSale = 150000000,
+                            ToyPrice = 150000000,
                             ToyQuantitySold = 5,
                             ToyRemainingQuantity = 20
                         },
                         new
                         {
-                            Id = "c4aaad1f740d4c56b176afbc9cc9a087",
+                            Id = "db45c2f51a1d46bcbbb18ed68459dbea",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -672,14 +614,13 @@ namespace ToyShop.Repositories.Migrations
                             ToyDescription = "A wooden puzzle with animal shapes and numbers.",
                             ToyImg = "wooden_puzzle.webp",
                             ToyName = "Wooden Puzzle",
-                            ToyPriceRent = 100,
-                            ToyPriceSale = 120000,
+                            ToyPrice = 120000,
                             ToyQuantitySold = 6,
                             ToyRemainingQuantity = 15
                         },
                         new
                         {
-                            Id = "ef4d744e80994df7b5b6c8e348c676f7",
+                            Id = "a7946ba90f514af58c7e9a0be3d0437a",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -688,8 +629,7 @@ namespace ToyShop.Repositories.Migrations
                             ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.",
                             ToyImg = "1.webp",
                             ToyName = "Educational Toy Set",
-                            ToyPriceRent = 1000,
-                            ToyPriceSale = 200000000,
+                            ToyPrice = 200000000,
                             ToyQuantitySold = 8,
                             ToyRemainingQuantity = 12
                         });
@@ -973,16 +913,6 @@ namespace ToyShop.Repositories.Migrations
                     b.Navigation("ContractEntity");
                 });
 
-            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.RestoreToyDetail", b =>
-                {
-                    b.HasOne("ToyShop.Contract.Repositories.Entity.RestoreToy", "RestoreToy")
-                        .WithMany("RestoreToyDetails")
-                        .HasForeignKey("RestoreToyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("RestoreToy");
-                });
-
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Transaction", b =>
                 {
                     b.HasOne("ToyShop.Contract.Repositories.Entity.ContractEntity", "ContractEntity")
@@ -1007,11 +937,6 @@ namespace ToyShop.Repositories.Migrations
                     b.Navigation("RestoreToy");
 
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.RestoreToy", b =>
-                {
-                    b.Navigation("RestoreToyDetails");
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Toy", b =>
