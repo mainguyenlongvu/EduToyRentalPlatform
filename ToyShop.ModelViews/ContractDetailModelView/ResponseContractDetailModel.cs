@@ -20,5 +20,8 @@ namespace ToyShop.ModelViews.ContractDetailModelView
         public int Quantity { get; set; }   // Số lượng đồ chơi
         [DisplayName("Giá")]
         public decimal Price { get; set; }   // Giá của đồ chơi
+        public bool? ContractType { get; set; }
+        public DateOnly? DateStart { get; set; }
+        public DateOnly? DateEnd { get; set; }
     }
 }

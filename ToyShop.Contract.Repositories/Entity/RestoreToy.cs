@@ -12,15 +12,12 @@ namespace ToyShop.Contract.Repositories.Entity
     public class RestoreToy : BaseEntity
     {
         public string? ContractId { get; set; }
-
-        public double ToyQuality { get; set; }
-
-        public int Reward { get; set; }
-
-        public double OverdueTime { get; set; }
-
-        public double TotalMoney { get; set; }
+        public double? TotalToyQuality { get; set; }
+        public int? TotalReward { get; set; }
+        public double? TotalMoney { get; set; }
+        public string? Status { get; set; }
 
         public virtual ContractEntity? ContractEntity { get; set; }
+        public virtual ICollection<RestoreToyDetail>? RestoreToyDetails { get; set; } = new List<RestoreToyDetail>();
     }
 }

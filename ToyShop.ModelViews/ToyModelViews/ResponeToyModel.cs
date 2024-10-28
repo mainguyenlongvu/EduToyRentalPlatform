@@ -10,7 +10,8 @@ namespace ToyShop.ModelViews.ToyModelViews
         public string? ToyName { get; set; }
         public string? ToyImg { get; set; }
         public string? ToyDescription { get; set; }
-        public int ToyPrice { get; set; }
+        public int ToyPriceSale { get; set; }
+        public int ToyPriceRent { get; set; }
         public int ToyRemainingQuantity { get; set; }
         public int ToyQuantitySold { get; set; }
         public string? option { get; set; }

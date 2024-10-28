@@ -133,7 +133,8 @@ namespace ToyShop.Services.Service
             // Cập nhật và lưu sản phẩm vào db
             toy.ToyName = model.ToyName;
             toy.ToyDescription = model.ToyDescription;
-            toy.ToyPrice = model.ToyPrice;
+            toy.ToyPriceSale = model.ToyPriceSale;
+            toy.ToyPriceRent = model.ToyPriceRent;
             toy.ToyRemainingQuantity = model.ToyRemainingQuantity;
             toy.ToyImg = model.ToyImg == null?toy.ToyImg:model.ToyImg;
             toy.ToyQuantitySold = model.ToyQuantitySold;
