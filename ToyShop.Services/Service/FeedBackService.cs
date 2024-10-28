@@ -22,11 +22,16 @@ namespace ToyShop.Services.Service
         public async Task<ResponeFeedBackModel> GetFeedBackAsync(string id)
         {
             // Retrieve feedback with related User and Toy details
-            FeedBack feedback = await _unitOfWork.GetRepository<FeedBack>().Entities
+            var feedback = await _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
-                .FirstOrDefaultAsync(p => p.Id == id)
-                ?? throw new Exception("The feedback cannot be found!");
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            // Check if feedback is null
+            if (feedback == null)
+            {
+                throw new KeyNotFoundException($"Feedback with ID '{id}' cannot be found."); // More specific exception
+            }
 
             // Map feedback data including UserName and ToyName
             var response = new ResponeFeedBackModel
@@ -36,19 +41,20 @@ namespace ToyShop.Services.Service
                 CreatedTime = feedback.CreatedTime,
                 DeletedTime = feedback.DeletedTime,
                 LastUpdatedTime = feedback.LastUpdatedTime,
-                UserId = feedback.User.UserName, // Assuming User has UserName property
-                ToyId = feedback.Toy.ToyName      // Assuming Toy has ToyName property
+                UserId = feedback.User?.UserName ?? "Unknown", // Safely access UserName
+                ToyId = feedback.Toy?.ToyName ?? "Unknown"     // Safely access ToyName
             };
 
             return response;
         }
+
 
         public async Task<BasePaginatedList<ResponeFeedBackModel>> GetFeedBacks_AdminAsync(int pageNumber, int pageSize, bool? sortByDate)
         {
             IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
-                .Where(p => !p.DeletedTime.HasValue)
+                .Where(p => !p.DeletedTime.HasValue || p.DeletedTime.HasValue)
                 .OrderByDescending(p => p.CreatedTime);
 
             // Sort by CreatedTime if specified
@@ -67,6 +73,7 @@ namespace ToyShop.Services.Service
                 .ToListAsync();
 
             // Map to response model
+            // Map to response model
             var responseItems = paginatedFeedbacks.Select(f => new ResponeFeedBackModel
             {
                 Id = f.Id,
@@ -74,19 +81,25 @@ namespace ToyShop.Services.Service
                 CreatedTime = f.CreatedTime,
                 DeletedTime = f.DeletedTime,
                 LastUpdatedTime = f.LastUpdatedTime,
-                UserId = f.User.UserName, // Assuming the User entity has a Name property
-                ToyId = f.Toy.ToyName // Assuming the Toy entity has a ToyName property
+                UserId = f.User != null ? f.User.FullName : "Unknown", // Null check for User
+                ToyId = f.Toy != null ? f.Toy.ToyName : "Unknown"     // Null check for Toy
             }).ToList();
 
+
             return new BasePaginatedList<ResponeFeedBackModel>(responseItems, totalCount, pageNumber, pageSize);
-        }    
+        }
 
         public async Task<BasePaginatedList<ResponeFeedBackModel>> GetFeedBacksAsync(int pageNumber, int pageSize, bool? sortByDate)
         {
+            // Validate pagination parameters
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater than or equal to 1.", nameof(pageNumber));
+            if (pageSize < 1)
+                throw new ArgumentException("Page size must be greater than or equal to 1.", nameof(pageSize));
+
             IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
-                .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(p => p.CreatedTime);
 
             // Sort by CreatedTime if specified
@@ -112,12 +125,13 @@ namespace ToyShop.Services.Service
                 CreatedTime = f.CreatedTime,
                 DeletedTime = f.DeletedTime,
                 LastUpdatedTime = f.LastUpdatedTime,
-                UserId = f.User.UserName, // Assuming the User entity has a Name property
-                ToyId = f.Toy.ToyName // Assuming the Toy entity has a ToyName property
+                UserId = f.User?.FullName ?? "Unknown", // Use null-conditional operator
+                ToyId = f.Toy?.ToyName ?? "Unknown"     // Use null-conditional operator
             }).ToList();
 
             return new BasePaginatedList<ResponeFeedBackModel>(responseItems, totalCount, pageNumber, pageSize);
         }
+
 
         public async Task<BasePaginatedList<ResponeFeedBackModel>> SearchFeedBacksAsync(int pageNumber, int pageSize, string? content, string? userId)
         {
@@ -164,18 +178,10 @@ namespace ToyShop.Services.Service
             newFeedBack.Id = Guid.NewGuid().ToString("N");
             newFeedBack.UserId = model.UserId;
             newFeedBack.ToyId = model.ToyId;
-            newFeedBack.DeletedTime = CoreHelper.SystemTimeNow;
             newFeedBack.CreatedTime = CoreHelper.SystemTimeNow;
             newFeedBack.LastUpdatedTime = CoreHelper.SystemTimeNow;
           
-            // Lưu phản hồi vào DB
-            //FeedBack newFeedBack = _mapper.Map<FeedBack>(model);
-            ////newFeedBack.Id = Guid.NewGuid().ToString("N");
-            //newFeedBack.CreatedTime = CoreHelper.SystemTimeNow;
-            //newFeedBack.LastUpdatedTime = CoreHelper.SystemTimeNow; ;
-            //newFeedBack.IsDeleted = false;
-            //newFeedBack.DeletedTime = null;
-            //newFeedBack.LastUpdatedBy = null;
+            
 
             await _unitOfWork.GetRepository<FeedBack>().InsertAsync(newFeedBack);
             await _unitOfWork.SaveAsync();
@@ -231,5 +237,43 @@ namespace ToyShop.Services.Service
 
             return true;
         }
+
+        public async Task<BasePaginatedList<ResponeFeedBackModel>> GetFeedBacksByToyIdAsync(string toyId, int pageNumber, int pageSize, bool? sortByDate)
+        {
+            IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
+                .Include(f => f.User)
+                .Include(f => f.Toy)
+                .Where(p => !p.DeletedTime.HasValue && p.ToyId == toyId) // Only include feedbacks that are not deleted
+                .OrderByDescending(p => p.CreatedTime);
+
+            // Sort by CreatedTime if specified
+            if (sortByDate.HasValue)
+            {
+                feedbacksQuery = sortByDate.Value ? feedbacksQuery.OrderBy(p => p.CreatedTime) : feedbacksQuery.OrderByDescending(p => p.CreatedTime);
+            }
+
+            // Count total items
+            int totalCount = await feedbacksQuery.CountAsync();
+
+            // Apply pagination
+            List<FeedBack> paginatedFeedbacks = await feedbacksQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Map to response model
+            var responseItems = paginatedFeedbacks.Select(f => new ResponeFeedBackModel
+            {
+                Id = f.Id,
+                Content = f.Content,
+                CreatedTime = f.CreatedTime,
+                LastUpdatedTime = f.LastUpdatedTime,
+                FullName = f.User?.FullName ?? "Unknown",
+                ToyId = f.Toy?.ToyName ?? "Unknown"
+            }).ToList();
+
+            return new BasePaginatedList<ResponeFeedBackModel>(responseItems, totalCount, pageNumber, pageSize);
+        }
+
     }
 }
