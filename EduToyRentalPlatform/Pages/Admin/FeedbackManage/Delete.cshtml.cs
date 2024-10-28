@@ -6,58 +6,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Services.Interface;
 using ToyShop.Repositories.Base;
 
 namespace EduToyRentalPlatform.Pages.Admin.FeedbackManage
 {
     public class DeleteModel : PageModel
     {
-        private readonly ToyShop.Repositories.Base.ToyShopDBContext _context;
+        private readonly IFeedBackService _feedBackService;
 
-        public DeleteModel(ToyShop.Repositories.Base.ToyShopDBContext context)
+        public DeleteModel(IFeedBackService feedBackService)
         {
-            _context = context;
+            _feedBackService = feedBackService;
         }
-
-        [BindProperty]
-        public FeedBack FeedBack { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null)
+            bool isDeleted = await _feedBackService.DeleteFeedBackAsync(id);
+
+            if (isDeleted == true)
             {
-                return NotFound();
+                return RedirectToPage("Index");
             }
 
-            var feedback = await _context.Feedbacks.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (feedback == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                FeedBack = feedback;
-            }
             return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var feedback = await _context.Feedbacks.FindAsync(id);
-            if (feedback != null)
-            {
-                FeedBack = feedback;
-                _context.Feedbacks.Remove(FeedBack);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToPage("./Index");
         }
     }
 }

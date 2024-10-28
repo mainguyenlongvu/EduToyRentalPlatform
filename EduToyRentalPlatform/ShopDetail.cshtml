@@ -1,0 +1,114 @@
+﻿@page "{id?}"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model EduToyRentalPlatform.Pages.ShopDetailModel
+@{
+    ViewData["Title"] = Model.Toy?.ToyName ?? "Details";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+
+<link rel="stylesheet" href="~/css/FeedBack.css">
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Shop</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+        <li class="breadcrumb-item active text-white">Shop Detail</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+<!-- Single Product Start -->
+<div class="container-fluid" style="margin-top: 150px">
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            <a href="#">
+                                <img src="@Url.Content("~/img/" + Model.Toy.ToyImg)" class="img-fluid rounded" alt="Image">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h4 class="fw-bold mb-3">@Model.Toy.ToyName</h4>
+                        <p class="mb-3">Option: @Model.Toy.option</p>
+                        <h5 class="fw-bold mb-3">@Model.Toy.ToyPrice/sp</h5>                       
+                        <p class="mb-4">@Model.Toy.ToyDescription</p>
+                        <div class="input-group quantity mb-5" style="width: 100px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control form-control-sm text-center border-0" value="1">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single Product End -->
+<!-- FeedBack Start -->
+<div class="feedback-container">
+    <div class="feedback-form">
+        <h2>Gửi Phản Hồi</h2>
+        <form method="post">
+            <input type="hidden" name="FeedBack.UserId" value="FeedBack.UserId" />
+            <input type="hidden" name="FeedBack.ToyId" value="@Model.Toy.Id" />
+            <textarea asp-for="Feedback.Content" placeholder="Nội dung phản hồi" required></textarea>
+            <button type="submit">Gửi Phản Hồi</button>
+        </form>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="feedback-alert">@TempData["SuccessMessage"]</div>
+        }
+    </div>
+
+    <h2>Danh Sách Phản Hồi</h2>
+    <ul class="feedback-list">
+        @if (Model.Feedbacks.Any())
+        {
+            foreach (var feedback in Model.Feedbacks)
+            {
+                <li class="feedback-item">
+                    <strong>@feedback.UserId.UserName</strong> - @feedback.CreatedTime.ToString("g")
+                    <p>@feedback.Content</p>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="feedback-item">
+                <p>There are no comments yet. Write your own!</p>
+            </li>
+        }
+    </ul>
+    <div class="pagination">
+        @if (Model.PageNumber > 1)
+        {
+            <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber - 1)" class="btn btn-secondary"><i class="fas fa-chevron-left"></i></a>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a asp-page="ShopDetail" asp-route-pageNumber="@i" class="@(i == Model.PageNumber ? "btn btn-primary" : "btn btn-light")">@i</a>
+        }
+
+        @if (Model.PageNumber < Model.TotalPages)
+        {
+            <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber + 1)" class="btn btn-secondary"><i class="fas fa-chevron-right"></i></a>
+        }
+    </div>
+</div>
+<!-- FeedBack End -->
