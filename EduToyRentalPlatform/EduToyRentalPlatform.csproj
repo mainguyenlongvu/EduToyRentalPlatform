@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ShopDetail.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="ShopDetail.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\js\.DS_Store" />
     <None Include="wwwroot\tinymce\.DS_Store" />
     <None Include="wwwroot\tinymce\plugins\.DS_Store" />

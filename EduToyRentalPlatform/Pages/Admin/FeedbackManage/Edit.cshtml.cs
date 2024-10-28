@@ -7,72 +7,53 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.FeedBackModelViews;
 using ToyShop.Repositories.Base;
 
 namespace EduToyRentalPlatform.Pages.Admin.FeedbackManage
 {
     public class EditModel : PageModel
     {
-        private readonly ToyShop.Repositories.Base.ToyShopDBContext _context;
+        private readonly IFeedBackService _feedBackService;
 
-        public EditModel(ToyShop.Repositories.Base.ToyShopDBContext context)
+        public EditModel(IFeedBackService feedBackService)
         {
-            _context = context;
+            _feedBackService = feedBackService;
         }
-
         [BindProperty]
-        public FeedBack FeedBack { get; set; } = default!;
+        public ResponeFeedBackModel Feedback { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null)
+            var responseFeedback = await _feedBackService.GetFeedBackAsync(id);
+
+            if (responseFeedback == null)
             {
                 return NotFound();
             }
 
-            var feedback =  await _context.Feedbacks.FirstOrDefaultAsync(m => m.Id == id);
-            if (feedback == null)
-            {
-                return NotFound();
-            }
-            FeedBack = feedback;
-           ViewData["ToyId"] = new SelectList(_context.Toys, "Id", "Id");
+            Feedback = responseFeedback;
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || Feedback == null)
             {
                 return Page();
             }
 
-            _context.Attach(FeedBack).State = EntityState.Modified;
-
-            try
+            // Tạo đối tượng feedbackToUpdate từ Feedback
+            var feedbackToUpdate = new ResponeFeedBackModel
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FeedBackExists(FeedBack.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                Content = Feedback.Content
+            };
 
-            return RedirectToPage("./Index");
-        }
-
-        private bool FeedBackExists(string id)
-        {
-            return _context.Feedbacks.Any(e => e.Id == id);
+            // Gọi phương thức cập nhật
+            await _feedBackService.UpdateFeedBackAsync(Feedback.Id, feedbackToUpdate);
+            return RedirectToPage("Index");
         }
     }
 }

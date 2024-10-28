@@ -12,25 +12,39 @@ namespace EduToyRentalPlatform.Pages.Admin.FeedbackManage
 {
     public class IndexModel : PageModel
     {
-        private readonly IFeedBackService _feedbackService;
+        private readonly IFeedBackService _feedBackService;
 
-        public IndexModel(IFeedBackService feedbackService)
+        public IndexModel(IFeedBackService feedBackService)
         {
-            _feedbackService = feedbackService;
+            _feedBackService = feedBackService;
         }
 
+        public IList<ResponeFeedBackModel> Feedbacks { get; set; }
+
+        public int TotalItems { get; set; }
         public int PageNumber { get; set; }
-        public int TotalPages { get; set; }
-        public IList<ResponeFeedBackModel> FeedBack { get; set; } = default!;
+        public int PageSize { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string SearchName { get; set; }
 
-        public async Task OnGetAsync(int pageNumber = 1)
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 8)
         {
-            // Adjust the feedback retrieval logic to include pagination
-            var feedbacks = await _feedbackService.GetFeedBacksAsync(pageNumber, TotalPages, true);
+            var feedbackList = await _feedBackService.GetFeedBacks_AdminAsync(pageNumber, pageSize, null);
 
-            FeedBack = feedbacks.Items.ToList();
-            PageNumber = feedbacks.CurrentPage;
-            TotalPages = feedbacks.TotalPages;
+            if (!string.IsNullOrEmpty(SearchName))
+            {
+                Feedbacks = feedbackList.Items.Where(t => t.Content.Contains(SearchName, StringComparison.OrdinalIgnoreCase)).ToList();
+                TotalItems = feedbackList.TotalItems;
+                PageNumber = pageNumber;
+                PageSize = pageSize;
+            }
+            else
+            {
+                Feedbacks = feedbackList.Items.ToList();
+                TotalItems = feedbackList.TotalItems;
+                PageNumber = pageNumber;
+                PageSize = pageSize;
+            }
         }
     }
 }
