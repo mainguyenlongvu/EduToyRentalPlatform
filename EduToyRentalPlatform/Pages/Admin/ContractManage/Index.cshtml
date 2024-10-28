@@ -1,4 +1,5 @@
 ﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model EduToyRentalPlatform.Pages.Admin.ContractManage.IndexModel
 
 @{
@@ -6,100 +7,106 @@
     Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/Contract.css">
-
-<div class="section-body">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <form method="get" asp-page-handler="Search" class="d-flex">
-                                <input type="text" name="searchName" placeholder="Search by name" class="form-control" />
-                                <button type="submit" class="btn btn-primary custom-search-btn">Search</button>
-                            </form>
-                        </div>
-
-                        <div>
-                            <a href="/Admin/ContractManage/Create" class="btn btn-success">
-                                <i class="fas fa-plus"></i> Add New Contract
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="example1">
-                            <thead>
-                                <tr>
-                                    <th>Restore Toy ID</th>
-                                    <th>Staff Confirmed</th>
-                                    <th>Total Value</th>
-                                    <th>Number of Rentals</th>
-                                    <th>Date Created</th>
-                                    <th>Contract Type</th>
-                                    <th>Date Start</th>
-                                    <th>Date End</th>
-                                    <th>Status</th>
-                                    <th>Application User</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.ContractEntities != null && Model.ContractEntities.Any())
-                                {
-                                    foreach (var item in Model.ContractEntities)
-                                    {
-                                        <tr>
-                                            <td>@item.RestoreToyId</td>
-                                            <td>@item.StaffConfirmed</td>
-                                            <td>@item.TotalValue</td>
-                                            <td>@item.NumberOfRentals</td>
-                                            <td>@item.ContractType</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.ApplicationUser?.FullName ?? "N/A"</td>
-                                            <td>
-                                                <a href="/Admin/ContractManage/Edit/@item.Id" class="btn btn-primary">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="/Admin/ContractManage/Delete/@item.Id" class="btn btn-danger" onClick="return confirm('Are you sure you want to delete this item?');"><i class="fas fa-trash"></i></a>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td colspan="11" class="text-center">No contracts found.</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-
-                        <div class="pagination">
-                            @if (Model.PageNumber > 1)
-                            {
-                                <a href="/Admin/ContractManage?pageNumber=@(Model.PageNumber - 1)" class="btn btn-secondary prev-btn">Previous</a>
-                            }
-                            else
-                            {
-                                <button class="btn btn-secondary prev-btn" disabled>Previous</button>
-                            }
-
-                            <span class="page-number">@Model.PageNumber</span>
-
-                            @if (Model.PageNumber < Model.TotalPages)
-                            {
-                                <a href="/Admin/ContractManage?pageNumber=@(Model.PageNumber + 1)" class="btn btn-secondary next-btn">Next</a>
-                            }
-                            else
-                            {
-                                <button class="btn btn-secondary next-btn" disabled>Next</button>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="row shadow rounded p-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 w-100">
+        <form method="get" asp-page-handler="Search" class="d-flex" style="max-width: 400px;">
+            <input type="text" name="searchName" placeholder="Search by Contract ID" class="form-control me-2" style="width:600px; height: 50px;" />
+            <button type="submit" class="btn btn-primary custom-search-btn" style="height: 50px;">Search</button>
+        </form>
+        <a asp-page="Create" class="btn btn-primary mb-3">Create New Contract</a>
     </div>
+
+    @foreach (var contractType in new[] { true, false }) // Lấy loại hợp đồng từ ContractEntity
+    {
+        <h3>Contract Type: @(contractType ? "Type A" : "Type B")</h3>
+        <table class="table table-striped table-bordered table-responsive table-hover" style="table-layout: fixed; width: 100%;">
+            <thead class="table-dark">
+                <tr>
+                    @* Define equal width for each column *@
+                    <th style="width: 8%;">Restore Toy ID</th>
+                    <th style="width: 8%;">Staff Confirmed</th>
+                    <th style="width: 8%;">Total Value</th>
+                    <th style="width: 8%;">Number of Rentals</th>
+                    <th style="width: 8%;">Date Created</th>
+                    <th style="width: 8%;">Date Start</th>
+                    <th style="width: 8%;">Date End</th>
+                    <th style="width: 8%;">Applicant User</th>
+                    <th style="width: 8%;">Created By</th>
+                    <th style="width: 8%;">Created Time</th>
+                    <th style="width: 8%;">Last Updated Time</th>
+                    <th style="width: 8%;">Deleted Time</th>
+                    <th style="width: 8%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ContractEntities != null && Model.ContractEntities.Any(c => c.ContractType == contractType))
+                {
+                    var pagedContracts = Model.ContractEntities
+                    .Where(c => c.ContractType == contractType)
+                    .Skip((Model.PageNumber - 1) * Model.PageSize)
+                    .Take(Model.PageSize);
+
+                    foreach (var item in pagedContracts)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.RestoreToyId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StaffConfirmed)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalValue)</td>
+                            <td>@Html.DisplayFor(modelItem => item.NumberOfRentals)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DateStart)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DateEnd)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ApplicationUser.FullName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                            <td>@Html.DisplayFor(modelItem => item.CreatedTime)</td>
+                            <td>@Html.DisplayFor(modelItem => item.LastUpdatedTime)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DeletedTime)</td>
+                            <td>
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_@item.Id">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-success">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this contract?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Modal for contract details -->
+                        <div class="modal fade" id="modal_@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-center">Contract Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-2"><strong>Restore Toy ID:</strong> @item.RestoreToyId</div>
+                                        <div class="mb-2"><strong>Staff Confirmed:</strong> @item.StaffConfirmed</div>
+                                        <div class="mb-2"><strong>Total Value:</strong> @item.TotalValue</div>
+                                        <div class="mb-2"><strong>Number of Rentals:</strong> @item.NumberOfRentals</div>
+                                        <div class="mb-2"><strong>Status:</strong> <span class="badge @(item.Status == "Active" ? "bg-success" : (item.Status == "Inactive" ? "bg-warning" : "bg-danger"))">@item.Status</span></div>
+                                        <div class="mb-2"><strong>Applicant User:</strong> @item.ApplicationUser.FullName</div>
+                                        <div class="mb-2"><strong>Created By:</strong> @item.CreatedBy</div>
+                                        <div class="mb-2"><strong>Last Updated By:</strong> @item.LastUpdatedBy</div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="13" class="text-center">No contracts found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

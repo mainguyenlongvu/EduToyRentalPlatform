@@ -97,7 +97,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
             await _toyService.UpdateToyAsync(Toy.Id, toyUpdateModel);
 
             // Redirect to the ToyManagement page after a successful update
-            return RedirectToPage("/Admin/Product");
+            return RedirectToPage("/Admin/ToyManage/Index");
         }
     }
 }

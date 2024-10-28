@@ -1,4 +1,5 @@
-﻿namespace ToyShop.Core.Base
+﻿
+namespace ToyShop.Core.Base
 {
     public class BasePaginatedList<T>
     {
@@ -32,5 +33,6 @@
         // Phương thức để kiểm tra nếu có trang kế tiếp
         public bool HasNextPage => CurrentPage < TotalPages;
 
+      
     }
 }

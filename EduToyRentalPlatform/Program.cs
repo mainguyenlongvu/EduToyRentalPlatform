@@ -34,7 +34,7 @@ app.MapRazorPages();
 
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/Shop");
+    context.Response.Redirect("/Admin");
     return Task.CompletedTask;
 });
 

@@ -50,7 +50,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
             {
                 await _toyService.DeleteToyAsync(id);
             }
-            return RedirectToPage("/Admin/Product");
+            return RedirectToPage("/Admin/ToyManage");
         }
     }
 

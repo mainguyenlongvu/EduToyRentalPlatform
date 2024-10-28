@@ -37,7 +37,6 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
             }
             ContractEntity = contractentity;
            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "FullName");
-           ViewData["ToyId"] = new SelectList(_context.Toys, "Id", "Id");
             return Page();
         }
 

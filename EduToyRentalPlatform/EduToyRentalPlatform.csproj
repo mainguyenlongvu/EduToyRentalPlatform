@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Admin\FeedBack\**" />
+    <Compile Remove="Pages\Admin\Order\**" />
+    <Content Remove="Pages\Admin\FeedBack\**" />
+    <Content Remove="Pages\Admin\Order\**" />
+    <EmbeddedResource Remove="Pages\Admin\FeedBack\**" />
+    <EmbeddedResource Remove="Pages\Admin\Order\**" />
+    <None Remove="Pages\Admin\FeedBack\**" />
+    <None Remove="Pages\Admin\Order\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="ShopDetail.cshtml.cs" />
   </ItemGroup>
 
@@ -29,6 +40,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
   </ItemGroup>
 
   <ItemGroup>
