@@ -1,10 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ShopDetail.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="ShopDetail.cshtml" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\js\.DS_Store" />
@@ -21,6 +29,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SignalRSwaggerGen" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

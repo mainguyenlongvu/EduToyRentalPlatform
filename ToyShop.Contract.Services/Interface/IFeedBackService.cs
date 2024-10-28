@@ -12,5 +12,7 @@ namespace ToyShop.Contract.Services.Interface
         Task<bool> CreateFeedBackAsync(CreateFeedBackModel model);
         Task<bool> UpdateFeedBackAsync(string id, ResponeFeedBackModel model);
         Task<bool> DeleteFeedBackAsync(string id);
+        Task<BasePaginatedList<ResponeFeedBackModel>> GetFeedBacksByToyIdAsync(string toyId, int pageNumber, int pageSize, bool? sortByDate);
+
     }
 }

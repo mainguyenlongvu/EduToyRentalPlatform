@@ -8,9 +8,13 @@ namespace ToyShop.ModelViews.FeedBackModelViews
 {
     public class ResponeFeedBackModel
     {
+        public string FullName { get; set; } = string.Empty;
+
         public string Id { get; set; } = null!;
         public string UserId { get; set; } = null!;
+
         public string ToyId { get; set; } = null!;
+
         public DateTimeOffset? DeletedTime { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
