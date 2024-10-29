@@ -426,18 +426,14 @@ namespace ToyShop.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId1")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ToyId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("FeedBack");
                 });
@@ -647,7 +643,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fe90c5812f6e4ecc9e1b43c7eaa9d312",
+                            Id = "dd00f7bf0df948dc8a3291f25fef3a73",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -663,7 +659,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "c4aaad1f740d4c56b176afbc9cc9a087",
+                            Id = "3fac416ad0e541179fa983fe64685ad0",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -679,7 +675,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "ef4d744e80994df7b5b6c8e348c676f7",
+                            Id = "7276aac814b84d6bb06af8bf5b21ba7b",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -940,7 +936,9 @@ namespace ToyShop.Repositories.Migrations
 
                     b.HasOne("ToyShop.Repositories.Entity.ApplicationUser", "User")
                         .WithMany("FeedBacks")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Toy");
 

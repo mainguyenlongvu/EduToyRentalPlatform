@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ToyShop.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class inital : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,7 +39,8 @@ namespace ToyShop.Repositories.Migrations
                     ToyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ToyImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ToyDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ToyPrice = table.Column<int>(type: "int", nullable: false),
+                    ToyPriceRent = table.Column<int>(type: "int", nullable: false),
+                    ToyPriceSale = table.Column<int>(type: "int", nullable: false),
                     ToyRemainingQuantity = table.Column<int>(type: "int", nullable: false),
                     ToyQuantitySold = table.Column<int>(type: "int", nullable: false),
                     Option = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -60,9 +63,11 @@ namespace ToyShop.Repositories.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    Money = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -108,31 +113,6 @@ namespace ToyShop.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FeedBack",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ToyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FeedBack", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FeedBack_Toy_ToyId",
-                        column: x => x.ToyId,
-                        principalTable: "Toy",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Chats",
                 columns: table => new
                 {
@@ -163,15 +143,11 @@ namespace ToyShop.Repositories.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ToyId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     RestoreToyId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StaffConfirmed = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalValue = table.Column<double>(type: "float", nullable: true),
                     NumberOfRentals = table.Column<int>(type: "int", nullable: true),
                     DateCreated = table.Column<DateOnly>(type: "date", nullable: true),
-                    ContractType = table.Column<bool>(type: "bit", nullable: true),
-                    DateStart = table.Column<DateOnly>(type: "date", nullable: true),
-                    DateEnd = table.Column<DateOnly>(type: "date", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -184,16 +160,43 @@ namespace ToyShop.Repositories.Migrations
                 {
                     table.PrimaryKey("PK_ContractEntitys", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ContractEntitys_Toy_ToyId",
-                        column: x => x.ToyId,
-                        principalTable: "Toy",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_ContractEntitys_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeedBack",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ToyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedBack", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeedBack_Toy_ToyId",
+                        column: x => x.ToyId,
+                        principalTable: "Toy",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FeedBack_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -327,6 +330,41 @@ namespace ToyShop.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContractDetails",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ContractType = table.Column<bool>(type: "bit", nullable: true),
+                    ToyId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DateStart = table.Column<DateOnly>(type: "date", nullable: true),
+                    DateEnd = table.Column<DateOnly>(type: "date", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContractDetails_ContractEntitys_ContractId",
+                        column: x => x.ContractId,
+                        principalTable: "ContractEntitys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ContractDetails_Toy_ToyId",
+                        column: x => x.ToyId,
+                        principalTable: "Toy",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Deliveries",
                 columns: table => new
                 {
@@ -359,10 +397,10 @@ namespace ToyShop.Repositories.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ToyQuality = table.Column<double>(type: "float", nullable: false),
-                    Reward = table.Column<int>(type: "int", nullable: false),
-                    OverdueTime = table.Column<double>(type: "float", nullable: false),
-                    TotalMoney = table.Column<double>(type: "float", nullable: false),
+                    TotalToyQuality = table.Column<double>(type: "float", nullable: true),
+                    TotalReward = table.Column<int>(type: "int", nullable: true),
+                    TotalMoney = table.Column<double>(type: "float", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -409,14 +447,61 @@ namespace ToyShop.Repositories.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RestoreToyDetails",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RestoreToyId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ToyQuality = table.Column<int>(type: "int", nullable: true),
+                    Reward = table.Column<int>(type: "int", nullable: true),
+                    ToyId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ToyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsReturn = table.Column<bool>(type: "bit", nullable: true),
+                    OverdueTime = table.Column<double>(type: "float", nullable: true),
+                    TotalMoney = table.Column<int>(type: "int", nullable: true),
+                    Compensation = table.Column<int>(type: "int", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RestoreToyDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RestoreToyDetails_RestoreToys_RestoreToyId",
+                        column: x => x.RestoreToyId,
+                        principalTable: "RestoreToys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Toy",
+                columns: new[] { "Id", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "Option", "ToyDescription", "ToyImg", "ToyName", "ToyPriceRent", "ToyPriceSale", "ToyQuantitySold", "ToyRemainingQuantity" },
+                values: new object[,]
+                {
+                    { "3fac416ad0e541179fa983fe64685ad0", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Puzzle", "A wooden puzzle with animal shapes and numbers.", "wooden_puzzle.webp", "Wooden Puzzle", 100, 120000, 6, 15 },
+                    { "7276aac814b84d6bb06af8bf5b21ba7b", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Interactive Learning", "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.", "1.webp", "Educational Toy Set", 1000, 200000000, 8, 12 },
+                    { "dd00f7bf0df948dc8a3291f25fef3a73", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Stackable Rings", "Classic colorful stacking rings toy for toddlers.", "stacking_rings.webp", "Stacking Rings", 1500, 150000000, 5, 20 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Chats_UserId",
                 table: "Chats",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContractEntitys_ToyId",
-                table: "ContractEntitys",
+                name: "IX_ContractDetails_ContractId",
+                table: "ContractDetails",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractDetails_ToyId",
+                table: "ContractDetails",
                 column: "ToyId");
 
             migrationBuilder.CreateIndex(
@@ -435,6 +520,11 @@ namespace ToyShop.Repositories.Migrations
                 column: "ToyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FeedBack_UserId",
+                table: "FeedBack",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_ApplicationUserId",
                 table: "Messages",
                 column: "ApplicationUserId");
@@ -443,6 +533,11 @@ namespace ToyShop.Repositories.Migrations
                 name: "IX_Messages_ChatId",
                 table: "Messages",
                 column: "ChatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RestoreToyDetails_RestoreToyId",
+                table: "RestoreToyDetails",
+                column: "RestoreToyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RestoreToys_ContractId",
@@ -500,6 +595,9 @@ namespace ToyShop.Repositories.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ContractDetails");
+
+            migrationBuilder.DropTable(
                 name: "Deliveries");
 
             migrationBuilder.DropTable(
@@ -509,7 +607,7 @@ namespace ToyShop.Repositories.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "RestoreToys");
+                name: "RestoreToyDetails");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -530,16 +628,19 @@ namespace ToyShop.Repositories.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
+                name: "Toy");
+
+            migrationBuilder.DropTable(
                 name: "Chats");
 
             migrationBuilder.DropTable(
-                name: "ContractEntitys");
+                name: "RestoreToys");
 
             migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Toy");
+                name: "ContractEntitys");
 
             migrationBuilder.DropTable(
                 name: "Users");
