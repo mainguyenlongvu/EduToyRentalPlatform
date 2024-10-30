@@ -12,7 +12,7 @@ namespace ToyShop.Contract.Repositories.Entity
     [Table("FeedBack")]
     public class FeedBack : BaseEntity
     {
-        public virtual string UserId { get; set; }
+        public virtual Guid UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
         public string ToyId { get; set; } = null!;
         public virtual Toy? Toy { get; set; }

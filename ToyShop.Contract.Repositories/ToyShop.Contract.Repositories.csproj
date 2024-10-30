@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ModelViews\**" />
+    <EmbeddedResource Remove="ModelViews\**" />
+    <None Remove="ModelViews\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
@@ -16,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ToyShop.Core\ToyShop.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ModelViews\" />
   </ItemGroup>
 
 </Project>

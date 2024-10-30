@@ -390,48 +390,48 @@ public class ApplicationDbContextInitializer
         {
         new FeedBack
         {
-            UserId = users[0].Id.ToString(),
-            ToyId = toys[0].Id.ToString(),
+            UserId = users[0].Id,
+            ToyId = toys[0].Id,
             Content = "This superhero action figure is amazing!",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
         new FeedBack
         {
-            UserId = users[1].Id.ToString(),
-            ToyId = toys[1].Id.ToString(),
+            UserId = users[1].Id,
+            ToyId = toys[1].Id,
             Content = "We had a lot of fun playing this classic board game.",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
         new FeedBack
         {
-            UserId = users[2].Id.ToString(),
-            ToyId = toys[2].Id.ToString(),
+            UserId = users[2].Id,
+            ToyId = toys[2].Id,
             Content = "The wooden dollhouse is beautifully made, my kids love it.",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
         new FeedBack
         {
-            UserId = users[3].Id.ToString(),
-            ToyId = toys[3].Id.ToString(),
+            UserId = users[3].Id,
+            ToyId = toys[3].Id,
             Content = "Good quality soccer ball, perfect for outdoor play.",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
         new FeedBack
         {
-            UserId = users[4].Id.ToString(),
-            ToyId = toys[4].Id.ToString(),
+            UserId = users[4].Id,
+            ToyId = toys[4].Id,
             Content = "The building blocks set is great for my kids' creativity.",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
         new FeedBack
         {
-            UserId = users[5].Id.ToString(),
-            ToyId = toys[5].Id.ToString(),
+            UserId = users[5].Id,
+            ToyId = toys[5].Id,
             Content = "My son loves this remote control car, very fast!",
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
@@ -462,7 +462,7 @@ public class ApplicationDbContextInitializer
             DateCreated = DateTime.UtcNow,
             Status = "Completed",
             Method = true, // Online payment
-            ContractId = contracts[0].Id.ToString(), // Reference the first contract
+            ContractId = contracts[0].Id, // Reference the first contract
             ContractEntity = contracts[0] // Optional: direct navigation property
         },
         new Transaction
@@ -471,7 +471,7 @@ public class ApplicationDbContextInitializer
             DateCreated = DateTime.UtcNow.AddDays(-3),
             Status = "Pending",
             Method = false, // Offline payment
-            ContractId = contracts[1].Id.ToString(), // Reference the second contract
+            ContractId = contracts[1].Id, // Reference the second contract
             ContractEntity = contracts[1] // Optional: direct navigation property
         },
         new Transaction
@@ -480,7 +480,7 @@ public class ApplicationDbContextInitializer
             DateCreated = DateTime.UtcNow.AddDays(-1),
             Status = "Failed",
             Method = true, // Online payment
-            ContractId = contracts[2].Id.ToString(), // Reference the third contract
+            ContractId = contracts[2].Id, // Reference the third contract
             ContractEntity = contracts[2] // Optional: direct navigation property
         },
         new Transaction
@@ -489,7 +489,7 @@ public class ApplicationDbContextInitializer
             DateCreated = DateTime.UtcNow.AddDays(-5),
             Status = "Completed",
             Method = false, // Offline payment
-            ContractId = contracts[3].Id.ToString(), // Reference the fourth contract
+            ContractId = contracts[3].Id, // Reference the fourth contract
             ContractEntity = contracts[3] // Optional: direct navigation property
         }
     };

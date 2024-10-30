@@ -133,7 +133,7 @@ namespace ToyShop.Services.Service
         }
 
 
-        public async Task<BasePaginatedList<ResponeFeedBackModel>> SearchFeedBacksAsync(int pageNumber, int pageSize, string? content, string? userId)
+        public async Task<BasePaginatedList<ResponeFeedBackModel>> SearchFeedBacksAsync(int pageNumber, int pageSize, string? content, Guid? userId)
         {
             IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
                 .Where(p => !p.DeletedTime.HasValue);
@@ -145,9 +145,9 @@ namespace ToyShop.Services.Service
             }
 
             // Tìm theo UserID
-            if (!string.IsNullOrWhiteSpace(userId))
+            if (userId.HasValue)
             {
-                string userGuid = userId;
+                Guid? userGuid = userId;
                 feedbacksQuery = feedbacksQuery.Where(fb => fb.UserId == userGuid);
             }
 
@@ -176,7 +176,7 @@ namespace ToyShop.Services.Service
 
 
             newFeedBack.Id = Guid.NewGuid().ToString("N");
-            newFeedBack.UserId = model.UserId;
+            newFeedBack.UserId = Guid.Parse(model.UserId);
             newFeedBack.ToyId = model.ToyId;
             newFeedBack.CreatedTime = CoreHelper.SystemTimeNow;
             newFeedBack.LastUpdatedTime = CoreHelper.SystemTimeNow;
