@@ -6,20 +6,24 @@
 
 <div class="login-container">
     <h2 class="text-center">@ViewData["Title"]</h2>
-
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div id="error-message" class="alert alert-danger text-center" style="color:red; margin-bottom: 15px;">
+            @Model.ErrorMessage
+        </div>
+    }
     <form method="post" asp-page-handler="OnPostAsync">
         @Html.AntiForgeryToken()
-
         <div class="form-group">
-            <label asp-for="Email" class="control-label label-bold">Tài khoản</label>
-            <input asp-for="Email" class="form-control" placeholder="Nhập tài khoản của bạn" required />
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label class="control-label" for="Email">Tài khoản</label>
+            <input type="text" name="Email" class="form-control" id="Email" />
+            <span style="float: right; margin-top: -15px">@Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })</span>
         </div>
 
         <div class="form-group">
-            <label asp-for="Password" class="control-label label-bold">Mật khẩu</label>
-            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu của bạn" required />
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label class="control-label" for="Password">Mật khẩu</label>
+            <input type="password" name="Password" class="form-control" id="Password" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })</span>
         </div>
 
         <button type="submit" class="btn btn-primary mt-3">Đăng nhập</button>

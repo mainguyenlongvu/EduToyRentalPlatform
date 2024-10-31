@@ -54,7 +54,7 @@ namespace ToyShop
             services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ToyShopDBContext>()
             .AddDefaultTokenProviders();
-
+            services.IntSeedData();
         }
         public static void ConfigRoute(this IServiceCollection services)
         {
@@ -94,7 +94,7 @@ namespace ToyShop
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
             services.AddRazorPages();
-			services.AddSignalR();
+            services.AddSignalR();
 
         }
 
@@ -102,7 +102,13 @@ namespace ToyShop
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
-
+        public static void IntSeedData(this IServiceCollection services)
+        {
+            using var scope = services.BuildServiceProvider().CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<ToyShopDBContext>();
+            var initialiser = new ApplicationDbContextInitializer(context);
+            initialiser.Initialise();
+        }
     }
 
 }

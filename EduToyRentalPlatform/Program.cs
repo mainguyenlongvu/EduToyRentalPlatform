@@ -1,6 +1,7 @@
 ﻿using EduToyRentalPlatform.SignalR;
 using System.Runtime.CompilerServices;
 using ToyShop;
+using ToyShop.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,19 +27,33 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
-
+app.UseLogoutMiddleware();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 app.UseSession();
 app.MapRazorPages();
 
-// Thêm điều hướng đến Home/Index khi truy cập root URL
-
-app.MapGet("/", context =>
+// Định nghĩa route cho trang chủ
+app.MapGet("/", async context =>
 {
-    context.Response.Redirect("/Admin");
-    return Task.CompletedTask;
+    // Kiểm tra quyền người dùng
+    bool UserHasAccess()
+    {
+        var role = context.Request.Cookies["UserRole"];
+        return role == "Admin";
+    }
+
+    if (UserHasAccess())
+    {
+        context.Response.Redirect("/Admin/Index");
+    }
+    else
+    {
+        context.Response.Redirect("/Shop");
+    }
+
+    await Task.CompletedTask;
 });
 
 app.MapHub<NotificationHub>("notification-hub");

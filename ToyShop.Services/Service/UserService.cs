@@ -42,26 +42,16 @@ namespace ToyShop.Services.Service
 
         public async Task<string> LoginAsync(LoginModel model)
         {
-            var userRepository = _unitOfWork.GetRepository<ApplicationUser>();
-            if (userRepository == null)
-            {
-                throw new Exception("User repository is null.");
-            }
 
             // Tìm người dùng trong cơ sở dữ liệu
-            var user = await userRepository.Entities
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower() && !u.DeletedTime.HasValue);
+            var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+                .FirstOrDefaultAsync(u => u.Email == model.Email && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
 
-            // Kiểm tra nếu người dùng không tồn tại
-            if (user == null)
-            {
-                throw new Exception("Người dùng không tồn tại.");
-            }
 
             // Xác thực mật khẩu
-            bool isPasswordValid = CoreHelper.VerifyPassword(model.Password, user.Password);
+            string passwordValid = CoreHelper.HashPassword(model.Password);
 
-            if (!isPasswordValid)
+            if (user.PasswordHash == passwordValid)
             {
                 throw new Exception("Mật khẩu không chính xác.");
             }
@@ -78,7 +68,7 @@ namespace ToyShop.Services.Service
 
             // Lưu id người dùng vào cookie
             _httpContextAccessor.HttpContext.Response.Cookies.Append("UserId", user.Id.ToString(), cookieOptions);
-            ApplicationUserRoles? userRole = _unitOfWork.GetRepository<ApplicationUserRoles>().Entities.FirstOrDefault(x=>x.UserId == user.Id);
+            ApplicationUserRoles? userRole = _unitOfWork.GetRepository<ApplicationUserRoles>().Entities.FirstOrDefault(x => x.UserId == user.Id && !x.DeletedTime.HasValue);
             ApplicationRole applicationRole = _unitOfWork.GetRepository<ApplicationRole>().Entities.FirstOrDefault(x => x.Id == userRole.RoleId);
             // Lưu quyền người dùng vào cookie
             var role = applicationRole.Name;
@@ -97,12 +87,9 @@ namespace ToyShop.Services.Service
         {
 
             // Kiểm tra xem người dùng đã tồn tại chưa
-            var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower() && !u.DeletedTime.HasValue);
-
-            if (existingUser != null)
-            {
-                throw new InvalidOperationException("User already exists!");
-            }
+            var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(u => (u.Email.ToLower() == model.Email.ToLower() || u.UserName.ToLower() == model.UserName) && !u.DeletedTime.HasValue) ?? throw new InvalidOperationException("User already exists!");
+            //Tìm Role
+            var role = await _unitOfWork.GetRepository<ApplicationRole>().Entities.FirstOrDefaultAsync(x=>x.Name == model.RoleName);
 
             // Mã hóa mật khẩu
             string hashedPassword = CoreHelper.HashPassword(model.Password);
@@ -119,7 +106,7 @@ namespace ToyShop.Services.Service
             ApplicationUserRoles newApplicationUserRole = new ApplicationUserRoles
             {
                 UserId = newUser.Id,
-                RoleId = Guid.Parse(model.RoleId),
+                RoleId = role.Id,
                 CreatedTime = CoreHelper.SystemTimeNow
             };
 

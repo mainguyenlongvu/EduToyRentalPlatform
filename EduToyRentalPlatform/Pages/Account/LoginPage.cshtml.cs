@@ -19,7 +19,7 @@ namespace ToyShop.Pages.Account
 
         [BindProperty]
         [Required(ErrorMessage = "Hãy nhập Email tài khoản.")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        //[EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string Email { get; set; }
 
         [BindProperty]
@@ -36,8 +36,8 @@ namespace ToyShop.Pages.Account
         {
 
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
                     var loginModel = new LoginModel
@@ -53,7 +53,7 @@ namespace ToyShop.Pages.Account
                         Expires = DateTimeOffset.UtcNow.AddDays(7),
                         HttpOnly = true
                     });
-
+                    ErrorMessage = "Đăng nhập thành công!";
                     // Chuyển hướng đến đường dẫn nhận được
                     return Redirect(redirectUrl);
                 }
@@ -61,7 +61,7 @@ namespace ToyShop.Pages.Account
                 {
                     ErrorMessage = ex.Message;
                 }
-            }
+            //}
 
             return Page();
         }
