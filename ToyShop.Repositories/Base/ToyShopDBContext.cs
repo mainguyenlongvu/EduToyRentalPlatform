@@ -107,61 +107,6 @@ namespace ToyShop.Repositories.Base
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);  // Restrict deletion of user if they have chats
 
-            //Seed data of Toy
-
-            modelBuilder.Entity<Toy>().HasData(
-                new Toy
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ToyName = "Stacking Rings",
-                    ToyImg = "stacking_rings.webp",
-                    ToyDescription = "Classic colorful stacking rings toy for toddlers.",
-                    ToyPriceSale = 150000000,
-                    ToyPriceRent = 1500,
-                    ToyRemainingQuantity = 20,
-                    ToyQuantitySold = 5,
-                    Option = "Stackable Rings",
-                    CreatedBy = "Admin",
-                    LastUpdatedBy = "Admin",
-                    CreatedTime = DateTime.Parse("2024-09-29"),
-                    LastUpdatedTime = DateTime.Parse("2024-09-29"),
-                    DeletedTime = null
-                },
-                new Toy
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ToyName = "Wooden Puzzle",
-                    ToyImg = "wooden_puzzle.webp",
-                    ToyDescription = "A wooden puzzle with animal shapes and numbers.",
-                    ToyPriceSale = 120000,
-                    ToyPriceRent = 100,
-                    ToyRemainingQuantity = 15,
-                    ToyQuantitySold = 6,
-                    Option = "Puzzle",
-                    CreatedBy = "Admin",
-                    LastUpdatedBy = "Admin",
-                    CreatedTime = DateTime.Parse("2024-09-29"),
-                    LastUpdatedTime = DateTime.Parse("2024-09-29"),
-                    DeletedTime = null
-                },
-                new Toy
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ToyName = "Educational Toy Set",
-                    ToyImg = "1.webp",
-                    ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.",
-                    ToyPriceSale = 200000000,
-                    ToyPriceRent = 1000,
-                    ToyRemainingQuantity = 12,
-                    ToyQuantitySold = 8,
-                    Option = "Interactive Learning",
-                    CreatedBy = "Admin",
-                    LastUpdatedBy = "Admin",
-                    CreatedTime = DateTime.Parse("2024-09-29"),
-                    LastUpdatedTime = DateTime.Parse("2024-09-29"),
-                    DeletedTime = null
-                }
-            );
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
