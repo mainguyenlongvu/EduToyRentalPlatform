@@ -26,11 +26,8 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 
             if (isDeleted)
             {
-                // Optionally add a success message here if using TempData for user notifications
                 return RedirectToPage("/Admin/ToyManage/Index");
             }
-
-            // If deletion fails, you can return an error message (consider adding a ModelState error or a TempData message)
             return Page();
         }
     }
