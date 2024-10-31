@@ -59,7 +59,9 @@ public class ApplicationDbContextInitializer
         SeedUserRoles();
         SeedToys();
         SeedContracts();
+        SeedContractDetails();
         SeedRestoreToys();
+        SeedRestoreToyDetails();
         SeedChats();
         SeedFeedBacks();
         SeedTransactions();
@@ -164,7 +166,7 @@ public class ApplicationDbContextInitializer
             ToyName = "Wooden Dollhouse",
             ToyImg = "images/wooden_dollhouse.png",
             ToyDescription = "A beautifully crafted wooden dollhouse.",
-            ToyPriceSale = 49, 
+            ToyPriceSale = 49,
             ToyPriceRent = 4,
             ToyRemainingQuantity = 2,
             ToyQuantitySold = 0,
@@ -177,7 +179,7 @@ public class ApplicationDbContextInitializer
             ToyName = "Soccer Ball",
             ToyImg = "images/soccer_ball.png",
             ToyDescription = "A standard size soccer ball for outdoor play.",
-            ToyPriceSale = 15, 
+            ToyPriceSale = 15,
             ToyPriceRent = 4,
             ToyRemainingQuantity = 20,
             ToyQuantitySold = 0,
@@ -203,7 +205,7 @@ public class ApplicationDbContextInitializer
             ToyName = "Remote Control Car",
             ToyImg = "images/remote_control_car.png",
             ToyDescription = "A fast remote control car for kids.",
-            ToyPriceSale = 45, 
+            ToyPriceSale = 45,
             ToyPriceRent = 4,
             ToyRemainingQuantity = 8,
             ToyQuantitySold = 2,
@@ -216,7 +218,7 @@ public class ApplicationDbContextInitializer
             ToyName = "Puzzle Game",
             ToyImg = "images/puzzle_game.png",
             ToyDescription = "A fun puzzle game for all ages.",
-            ToyPriceSale = 20, 
+            ToyPriceSale = 20,
             ToyPriceRent = 4,
             ToyRemainingQuantity = 12,
             ToyQuantitySold = 6,
@@ -224,6 +226,57 @@ public class ApplicationDbContextInitializer
             CreatedTime = DateTimeOffset.UtcNow,
             LastUpdatedTime = DateTimeOffset.UtcNow
         },
+        new Toy
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            ToyName = "Stacking Rings",
+            ToyImg = "stacking_rings.webp",
+            ToyDescription = "Classic colorful stacking rings toy for toddlers.",
+            ToyPriceSale = 150000000,
+            ToyPriceRent = 1500,
+            ToyRemainingQuantity = 20,
+            ToyQuantitySold = 5,
+            Option = "Stackable Rings",
+            CreatedBy = "Admin",
+            LastUpdatedBy = "Admin",
+            CreatedTime = DateTime.Parse("2024-09-29"),
+            LastUpdatedTime = DateTime.Parse("2024-09-29"),
+            DeletedTime = null
+        },
+        new Toy
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            ToyName = "Wooden Puzzle",
+            ToyImg = "wooden_puzzle.webp",
+            ToyDescription = "A wooden puzzle with animal shapes and numbers.",
+            ToyPriceSale = 120000,
+            ToyPriceRent = 100,
+            ToyRemainingQuantity = 15,
+            ToyQuantitySold = 6,
+            Option = "Puzzle",
+            CreatedBy = "Admin",
+            LastUpdatedBy = "Admin",
+            CreatedTime = DateTime.Parse("2024-09-29"),
+            LastUpdatedTime = DateTime.Parse("2024-09-29"),
+            DeletedTime = null
+        },
+        new Toy
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            ToyName = "Educational Toy Set",
+            ToyImg = "1.webp",
+            ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, andcolors.",
+            ToyPriceSale = 200000000,
+            ToyPriceRent = 1000,
+            ToyRemainingQuantity = 12,
+            ToyQuantitySold = 8,
+            Option = "Interactive Learning",
+            CreatedBy = "Admin",
+            LastUpdatedBy = "Admin",
+            CreatedTime = DateTime.Parse("2024-09-29"),
+            LastUpdatedTime = DateTime.Parse("2024-09-29"),
+            DeletedTime = null
+        }
         };
 
         _context.Toys.AddRange(toys);
@@ -327,103 +380,103 @@ public class ApplicationDbContextInitializer
 
     }
 
-	private void SeedContractDetails()
-	{
-		if (_context.ContractDetails.Any()) return;
+    private void SeedContractDetails()
+    {
+        if (_context.ContractDetails.Any()) return;
 
-		var contracts = _context.ContractEntitys.ToList();
-		var toys = _context.Toys.ToList();
-
-		if (contracts.Count == 0 || toys.Count == 0) return;
-
-		var contractDetailsArray = new ContractDetail[]
-		{
-			new ContractDetail()
-			{
-				ContractId = contracts[0].Id,
-				ContractType = false, //rent
+        var contracts = _context.ContractEntitys.ToList();
+        var toys = _context.Toys.ToList();
+        if (contracts.Count < 5 || toys.Count < 6)
+        {
+            throw new InvalidOperationException("Not enough Contracts or Toys to seed ContractDetails.");
+        }
+        var contractDetailsArray = new ContractDetail[]
+        {
+            new ContractDetail()
+            {
+                ContractId = contracts[0].Id,
+                ContractType = false, //rent
 				ToyId = toys[0].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
-				Toy = toys[0],
-				Quantity = 1,
-				Price = toys[0].ToyPriceRent * 1
-			},
+                DateStart = DateOnly.FromDateTime(DateTime.Now),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
+                Toy = toys[0],
+                Quantity = 1,
+                Price = toys[0].ToyPriceRent * 1
+            },
 
-			new ContractDetail()
-			{
-				ContractId = contracts[1].Id,
-				ContractType = true, //buy
+            new ContractDetail()
+            {
+                ContractId = contracts[1].Id,
+                ContractType = true, //buy
 				ToyId = toys[1].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
-				Toy = toys[1],
-				Quantity = 5,
-				Price = toys[1].ToyPriceSale * 5
-			},
+                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
+                Toy = toys[1],
+                Quantity = 5,
+                Price = toys[1].ToyPriceSale * 5
+            },
 
-			new ContractDetail()
-			{
-				ContractId = contracts[2].Id,
-				ContractType = false, //rent
+            new ContractDetail()
+            {
+                ContractId = contracts[2].Id,
+                ContractType = false, //rent
 				ToyId = toys[2].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
-				Toy = toys[2],
-				Quantity = 2,
-				Price = toys[2].ToyPriceRent * 2
-			},
+                DateStart = DateOnly.FromDateTime(DateTime.Now),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
+                Toy = toys[2],
+                Quantity = 2,
+                Price = toys[2].ToyPriceRent * 2
+            },
 
-			new ContractDetail()
-			{
-				ContractId = contracts[3].Id,
-				ContractType = true, //buy
+            new ContractDetail()
+            {
+                ContractId = contracts[3].Id,
+                ContractType = true, //buy
 				ToyId = toys[3].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-				Toy = toys[3],
-				Quantity = 2,
-				Price = toys[3].ToyPriceSale * 2
-			},
+                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
+                Toy = toys[3],
+                Quantity = 2,
+                Price = toys[3].ToyPriceSale * 2
+            },
 
-			new ContractDetail()
-			{
-				ContractId = contracts[4].Id,
-				ContractType = false,  //rent
+            new ContractDetail()
+            {
+                ContractId = contracts[4].Id,
+                ContractType = false,  //rent
 				ToyId = toys[4].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
-				Toy = toys[4],
-				Quantity = 1,
-				Price = toys[4].ToyPriceRent * 1
-			},
+                DateStart = DateOnly.FromDateTime(DateTime.Now),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
+                Toy = toys[4],
+                Quantity = 1,
+                Price = toys[4].ToyPriceRent * 1
+            },
 
-			new ContractDetail()
-			{
-				ContractId = contracts[4].Id,
-				ContractType = false,  //rent
+            new ContractDetail()
+            {
+                ContractId = contracts[4].Id,
+                ContractType = false,  //rent
 				ToyId = toys[5].Id,
-				DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
-				DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-				Toy = toys[5],
-				Quantity = 1,
-				Price = toys[5].ToyPriceRent * 1
-			},
-		};
-
-		_context.ContractDetails.AddRange(contractDetailsArray.ToList());
-		_context.SaveChanges();
-
-	}
+                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
+                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
+                Toy = toys[5],
+                Quantity = 1,
+                Price = toys[5].ToyPriceRent * 1
+            },
+        };
+        _context.ContractDetails.AddRange(contractDetailsArray);
+        _context.SaveChanges();
+    }
 
     private void SeedRestoreToys()
     {
         if (_context.RestoreToys.Any()) return;
 
         var contracts = _context.ContractEntitys.ToList(); // Lấy tất cả các ContractEntity
-
-		if(contracts.Count == 0) return;
-
+        if (contracts.Count < 5)
+        {
+            throw new InvalidOperationException("Not enough Contracts to seed RestoreToys.");
+        }
         var restoreToys = new RestoreToy[]
         {
         new RestoreToy
@@ -462,64 +515,62 @@ public class ApplicationDbContextInitializer
         _context.SaveChanges();
     }
 
-	private void SeedRestoreToyDetails()
-	{
-		if (_context.RestoreToyDetails.Any()) return;
+    private void SeedRestoreToyDetails()
+    {
+        if (_context.RestoreToyDetails.Any()) return;
 
-		var contracts = _context.ContractEntitys.ToList();
-		var restoreToys = _context.RestoreToys.ToList();
-		var toys = _context.Toys.ToList();
+        var contracts = _context.ContractEntitys.ToList();
+        var restoreToys = _context.RestoreToys.ToList();
+        var toys = _context.Toys.ToList();
 
-		if (contracts.Count == 0 || restoreToys.Count == 0 || toys.Count == 0) return;
+        var restoreToyDetails = new RestoreToyDetail[]
+        {
+            new RestoreToyDetail
+            {
+                RestoreToyId = restoreToys[0].Id,
+                RestoreToy = restoreToys[0],
+                ToyQuality = 90,
+                Reward = 1 * toys[0].ToyPriceSale / 2,
+                ToyId = toys[0].Id,
+                ToyName = toys[0].ToyName,
+                IsReturn = true,
+                OverdueTime = 0,
+                TotalMoney = 150,
+                Compensation = 0,
+            },
 
-		var restoreToyDetails = new RestoreToyDetail[]
-		{
-			new RestoreToyDetail
-			{
-				RestoreToyId = restoreToys[0].Id,
-				RestoreToy = restoreToys[0],
-				ToyQuality = 90,
-				Reward = 1 * toys[0].ToyPriceSale / 2,
-				ToyId = toys[0].Id,
-				ToyName = toys[0].ToyName,
-				IsReturn = true,
-				OverdueTime = 0,
-				TotalMoney = 150,
-				Compensation = 0,
-			},
+            new RestoreToyDetail
+            {
+                RestoreToyId = restoreToys[1].Id,
+                RestoreToy = restoreToys[1],
+                ToyQuality = 90,
+                Reward = 1 * toys[2].ToyPriceSale / 2,
+                ToyId = toys[2].Id,
+                ToyName = toys[2].ToyName,
+                IsReturn = false,
+                OverdueTime = 2,
+                TotalMoney = 140,
+                Compensation = 10,
+            },
 
-			new RestoreToyDetail
-			{
-				RestoreToyId = restoreToys[2].Id,
-				RestoreToy = restoreToys[2],
-				ToyQuality = 90,
-				Reward = 1 * toys[2].ToyPriceSale / 2,
-				ToyId = toys[2].Id,
-				ToyName = toys[2].ToyName,
-				IsReturn = false,
-				OverdueTime = 2,
-				TotalMoney = 140,
-				Compensation = 10,
-			},
+            new RestoreToyDetail
+            {
+                RestoreToyId = restoreToys[2].Id,
+                RestoreToy = restoreToys[2],
+                ToyQuality = 10,
+                Reward = 1 * toys[4].ToyPriceSale / 2,
+                ToyId = toys[4].Id,
+                ToyName = toys[4].ToyName,
+                IsReturn = false,
+                OverdueTime = 1,
+                TotalMoney = 160,
+                Compensation = 80,
+            },
+        };
 
-			new RestoreToyDetail
-			{
-				RestoreToyId = restoreToys[4].Id,
-				RestoreToy = restoreToys[4],
-				ToyQuality = 10,
-				Reward = 1 * toys[4].ToyPriceSale / 2,
-				ToyId = toys[4].Id,
-				ToyName = toys[4].ToyName,
-				IsReturn = false,
-				OverdueTime = 1,
-				TotalMoney = 160,
-				Compensation = 80,
-			},
-		};
-
-		_context.RestoreToyDetails.AddRange(restoreToyDetails.ToList());
-		_context.SaveChanges();
-	}
+        _context.RestoreToyDetails.AddRange(restoreToyDetails);
+        _context.SaveChanges();
+    }
 
 
 
@@ -661,25 +712,25 @@ public class ApplicationDbContextInitializer
             ContractId = contracts[3].Id, // Reference the fourth contract
             ContractEntity = contracts[3] // Optional: direct navigation property
         },
-		new Transaction
-		{
-			TranCode = 1005,
-			DateCreated = DateTime.UtcNow.AddDays(-4),
-			Status = "Completed",
-			Method = false, // Offline payment
+        new Transaction
+        {
+            TranCode = 1005,
+            DateCreated = DateTime.UtcNow.AddDays(-4),
+            Status = "Completed",
+            Method = false, // Offline payment
             ContractId = contracts[4].Id, // Reference the fourth contract
             ContractEntity = contracts[4] // Optional: direct navigation property
         },
-		new Transaction
-		{
-			TranCode = 1006,
-			DateCreated = DateTime.UtcNow.AddDays(-2),
-			Status = "Completed",
-			Method = false, // Offline payment
+        new Transaction
+        {
+            TranCode = 1006,
+            DateCreated = DateTime.UtcNow.AddDays(-2),
+            Status = "Completed",
+            Method = false, // Offline payment
             ContractId = contracts[5].Id, // Reference the fourth contract
             ContractEntity = contracts[5] // Optional: direct navigation property
         }
-	};
+    };
 
         _context.Transactions.AddRange(transactions);
         _context.SaveChanges();

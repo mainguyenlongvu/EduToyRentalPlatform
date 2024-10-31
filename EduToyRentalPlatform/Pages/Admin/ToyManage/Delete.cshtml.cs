@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
-using ToyShop.Repositories.Base;
 
 namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
     public class DeleteModel : PageModel
     {
-
         private readonly IToyService _toyService;
 
         public DeleteModel(IToyService toyService)
@@ -32,11 +26,12 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 
             if (isDeleted)
             {
+                // Optionally add a success message here if using TempData for user notifications
                 return RedirectToPage("/Admin/ToyManage/Index");
             }
 
+            // If deletion fails, you can return an error message (consider adding a ModelState error or a TempData message)
             return Page();
         }
-    
-}
+    }
 }
