@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
+using ToyShop.Core.Base;
+using ToyShop.ModelViews.ContractDetailModelView;
 
 namespace EduToyRentalPlatform.Pages.Admin.ContractManage
 {
@@ -21,5 +24,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
         {
             ContractEntities = await _contractService.GetAllContractsAsync();
         }
+
+      
     }
 }

@@ -7,17 +7,17 @@
 }
 
 <div class="row shadow rounded p-3">
-    <div class="d-flex justify-content-between align-items-center mb-4" style="width: 100%;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Contract Management</h1>
         <a asp-page="Create" class="btn btn-primary">Create New Contract</a>
     </div>
 
     <form method="get" asp-page-handler="Search" class="d-flex mb-4" style="max-width: 400px;">
-        <input type="text" name="searchName" placeholder="Search by Toy Name or User Name" class="form-control me-2" style="width:600px; height: 50px;" />
-        <button type="submit" class="btn btn-primary custom-search-btn" style="height: 50px;">Search</button>
+        <input type="text" name="searchName" placeholder="Search by Toy Name or User Name" class="form-control me-2" aria-label="Search by Toy Name or User Name" />
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
-    <table class="table table-success table-striped table-responsive table-hover">
+    <table class="table table-striped table-responsive table-light">
         <thead>
             <tr>
                 <th>Restore Toy ID</th>
@@ -28,7 +28,6 @@
                 <th>Customer Name</th>
                 <th>Created By</th>
                 <th>Created Time</th>
-                <th>Deleted Time</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -38,23 +37,203 @@
                 foreach (var item in Model.ContractEntities)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.RestoreToyId)</td>
-                        <td>@Html.DisplayFor(modelItem => item.TotalValue)</td>
-                        <td>@Html.DisplayFor(modelItem => item.NumberOfRentals)</td>
-                        <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                        <td>@Html.DisplayFor(modelItem => item.ApplicationUser.FullName)</td>
-                        <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
-                        <td>@Html.DisplayFor(modelItem => item.CreatedTime.ToString("hh:mm:ss"))</td>
-                        <td>@Html.DisplayFor(modelItem => item.DeletedTime)</td>
+                        <td>@item.RestoreToyId</td>
+                        <td>@item.TotalValue?.ToString("C")</td>
+                        <td>@item.NumberOfRentals</td>
+                        <td>@item.DateCreated?.ToString("yyyy-MM-dd")</td>
+                        <td>@item.Status</td>
+                        <td>@item.ApplicationUser?.FullName</td>
+                        <td>@item.CreatedBy</td>
+                        <td>@item.CreatedTime.ToString("HH:mm:ss")</td>
                         <td>
                             <div class="btn-group" role="group">
                                 <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
                                 <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
                                 <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                                <a asp-page="./ContractDetail" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Contract Detail</a>
-                                <a asp-page="./Transaction" asp-route-id="@item.Id" class="btn btn-dark btn-sm">Transaction</a>
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">Contract Details</button>
+                                <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="collapse" data-bs-target="#transaction-details-@item.Id" aria-expanded="false" aria-controls="transaction-details-@item.Id">Transaction</button>
+
+                                @* Show Restore button only if any ContractDetail has ContractType = False *@
+                                @if (item.ContractDetails != null && item.ContractDetails.Any(cd => cd.ContractType == true))
+                                {
+                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">Restore</button>
+                                }
                             </div>
+                        </td>
+                    </tr>
+
+                    <!-- Contract Details Section -->
+                    <tr class="collapse" id="contract-details-@item.Id">
+                        <td colspan="9">
+                            <h5>Contract Details</h5>
+                            <table class="table table-bordered mt-2 table-info table-contract-details">
+                                <thead>
+                                    <tr>
+                                        <th>Toy ID</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Subtotal</th>
+                                        <th>Date Start</th>
+                                        <th>Date End</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.ContractDetails != null && item.ContractDetails.Any())
+                                    {
+                                        foreach (var detail in item.ContractDetails)
+                                        {
+                                            <tr>
+                                                <td>@detail.ToyId</td>
+                                                <td>@detail.Quantity</td>
+                                                <td>@detail.Price.ToString("C")</td>
+                                                <td>@((detail.Quantity * detail.Price).ToString("C"))</td>
+                                                <td>@detail.DateStart?.ToString("yyyy-MM-dd")</td>
+                                                <td>@detail.DateEnd?.ToString("yyyy-MM-dd")</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center">No details available</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Transaction Details Section -->
+                    <tr class="collapse" id="transaction-details-@item.Id">
+                        <td colspan="9">
+                            <h5>Transaction Details</h5>
+                            <table class="table table-bordered mt-2 table-warning table-transaction">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction Code</th>
+                                        <th>Date Created</th>
+                                        <th>Payment Method</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.Transactions != null && item.Transactions.Any())
+                                    {
+                                        foreach (var transaction in item.Transactions)
+                                        {
+                                            <tr>
+                                                <td>@transaction.TranCode</td>
+                                                <td>@transaction.DateCreated?.ToString("yyyy-MM-dd")</td>
+                                                <td>@(transaction.Method)</td>
+                                                <td>@transaction.Status</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="4" class="text-center">No transactions available</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Restore Toy Details Section -->
+                    <tr class="collapse" id="restore-details-@item.Id">
+                        <td colspan="10">
+                            <h5>Restore Toy Details</h5>
+                            <form method="post" asp-page-handler="CreateRestore" asp-route-id="@item.Id" enctype="application/x-www-form-urlencoded">
+                                <table class="table table-bordered mt-2 table-success table-restore-details">
+                                    <thead>
+                                        <tr>
+                                            <th>Toy ID</th>
+                                            <th>Toy Name</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Subtotal</th>
+                                            <th>Reward</th>
+                                            <th>Is Return</th>
+                                            <th>Overdue Time (days)</th>
+                                            <th>Total Money</th>
+                                            <th>Compensation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (item.ContractDetails != null && item.ContractDetails.Any())
+                                        {
+                                            double totalToyQuantity = 0; // Initialize total toy quantity
+                                            double totalReward = 0; // Initialize total reward
+                                            double totalMoney = 0; // Initialize total money
+
+                                            foreach (var contractDetail in item.ContractDetails)
+                                            {
+                                                // Calculate values
+                                                int quantity = contractDetail.Quantity;
+                                                double subtotal = quantity * contractDetail.Price;
+                                                double reward = subtotal * 0.5;
+
+                                                // Calculate overdue time
+                                                double overdueTime = 0;
+                                                if (contractDetail.DateEnd.HasValue)
+                                                {
+                                                    DateTime currentDate = DateTime.Now;
+                                                    DateTime dateEndAsDateTime = contractDetail.DateEnd.Value.ToDateTime(TimeOnly.MinValue); // Use TimeOnly.MinValue for midnight
+                                                    overdueTime = (currentDate - dateEndAsDateTime).TotalDays;
+                                                    overdueTime = Math.Max(0, Math.Round(overdueTime)); // Round and ensure it's not negative
+                                                }
+
+                                                // Calculate total money
+                                                double currentCompensation = 0; // Initialize compensation for the current detail
+                                                double overdueFee = overdueTime * quantity * 50; // Calculate overdue money
+                                                double currentTotalMoney = currentCompensation + subtotal - reward + overdueFee;
+
+                                                // Accumulate totals
+                                                totalToyQuantity += quantity;
+                                                totalReward += reward;
+                                                totalMoney += currentTotalMoney;
+
+                                                <tr>
+                                                    <td>@contractDetail.ToyId</td>
+                                                    <td>"Name Toy"</td>
+                                                    <td>@contractDetail.Quantity</td>
+                                                    <td>@contractDetail.Price.ToString("C")</td>
+                                                    <td>@subtotal.ToString("C")</td>
+                                                    <td>@reward.ToString("C")</td>
+                                                    <td>
+                                                        <input type="checkbox" name="IsReturn" value="true" class="form-check-input" />
+                                                    </td>
+                                                    <td>@overdueTime</td>
+                                                    <td>@currentTotalMoney.ToString("C")</td>
+                                                    <td>
+                                                        <input type="number" name="Compensation" class="form-control form-control-sm" />
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td colspan="2" class="text-end"><strong>Total:</strong></td>
+                                                <td>@totalToyQuantity</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>@totalReward.ToString("C")</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>@totalMoney.ToString("C")</td>
+                                                <td></td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="10" class="text-center">No toys to restore</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <button type="submit" class="btn btn-success">Confirm Restore</button>
+                            </form>
                         </td>
                     </tr>
                 }
@@ -62,7 +241,7 @@
             else
             {
                 <tr>
-                    <td colspan="13" class="text-center">No contracts available</td>
+                    <td colspan="9" class="text-center">No contracts available</td>
                 </tr>
             }
         </tbody>

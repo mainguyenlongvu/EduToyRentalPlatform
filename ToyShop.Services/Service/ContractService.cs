@@ -94,7 +94,7 @@ namespace ToyShop.Contract.Services.Interface
         // Fetching all contracts without soft delete filtering (consider if you need this)
         public async Task<List<ContractEntity>> GetAllContractsAsync()
         {
-            return await _unitOfWork.GetRepository<ContractEntity>().Entities.ToListAsync(); // Make sure to use _unitOfWork
+            return await _unitOfWork.GetRepository<ContractEntity>().Entities.ToListAsync(); 
         }
     }
 }
