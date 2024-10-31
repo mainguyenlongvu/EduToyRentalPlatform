@@ -16,23 +16,26 @@ public class ApplicationDbContextInitializer
         _context = context;
     }
 
-    public void Initialize()
+    public void Initialise()
     {
         try
         {
             if (_context.Database.IsSqlServer())
             {
-                if (_context.Database.CanConnect())
+                if (_context.Database.IsSqlServer())
                 {
-                    _context.Database.Migrate();
-                }
-                else
-                {
-                    _context.Database.Migrate();
+                    bool dbExists = _context.Database.CanConnect();
+                    if (dbExists)
+                    {
+                        _context.Database.Migrate();
+                    }
+                    else
+                    {
+                        _context.Database.Migrate();
+                        Seed();
+                    }
                 }
             }
-
-            Seed();
         }
         catch (Exception ex)
         {
@@ -43,11 +46,16 @@ public class ApplicationDbContextInitializer
             _context.Dispose();
         }
     }
+    public class CountResult
+    {
+        public int TableCount { get; set; }
+    }
 
     private void Seed()
     {
         SeedRoles();
         SeedUsers();
+        SeedUserRoles();
         SeedToys();
         SeedContracts();
 		SeedContractDetails();
@@ -81,15 +89,42 @@ public class ApplicationDbContextInitializer
         var passwordHasher = new PasswordHasher<ApplicationUser>();
         var users = new ApplicationUser[]
         {
-        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
-        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow },
+        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
+        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
+        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
+        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
+        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
+        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678"},
         };
 
         _context.ApplicationUsers.AddRange(users);
+        _context.SaveChanges();
+    }
+    private void SeedUserRoles()
+    {
+        if (_context.ApplicationUserRoles.Any()) return;
+
+        var adminUser = _context.ApplicationUsers.SingleOrDefault(u => u.UserName == "admin");
+        var managerUser = _context.ApplicationUsers.SingleOrDefault(u => u.UserName == "manager");
+        var customerUsers = _context.ApplicationUsers.Where(u => u.UserName.StartsWith("customer")).ToList();
+
+        var adminRole = _context.ApplicationRoles.SingleOrDefault(r => r.Name == "Admin");
+        var managerRole = _context.ApplicationRoles.SingleOrDefault(r => r.Name == "Manager");
+        var customerRole = _context.ApplicationRoles.SingleOrDefault(r => r.Name == "Customer");
+
+        var userRoles = new List<ApplicationUserRoles>
+    {
+        new ApplicationUserRoles { UserId = adminUser.Id, RoleId = adminRole.Id },
+        new ApplicationUserRoles { UserId = managerUser.Id, RoleId = managerRole.Id }
+    };
+
+        userRoles.AddRange(customerUsers.Select(customerUser => new ApplicationUserRoles
+        {
+            UserId = customerUser.Id,
+            RoleId = customerRole.Id
+        }));
+
+        _context.ApplicationUserRoles.AddRange(userRoles);
         _context.SaveChanges();
     }
 
