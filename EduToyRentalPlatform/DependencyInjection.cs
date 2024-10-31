@@ -86,6 +86,9 @@ namespace ToyShop
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IDeliveryService, DeliveryService>();
+            services.AddScoped<IRestoreToyService, RestoreToyService>();
+            services.AddScoped<IRestoreToyDetailService, RestoreToyDetailService>();
+
 
             // Đăng ký PasswordHasher cho ApplicationUser
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
