@@ -28,7 +28,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
 
-        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 8)
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 15)
         {
             PageNumber = pageNumber; // Set PageNumber from the parameter
             PageSize = pageSize; // Set PageSize from the parameter

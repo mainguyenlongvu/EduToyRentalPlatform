@@ -29,7 +29,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
         public IList<ContractEntity> ContractEntities { get; set; } = new List<ContractEntity>();
 
-        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 15)
         {
             // Set PageNumber and ensure it is at least 1
             PageNumber = Math.Max(pageNumber, 1);
