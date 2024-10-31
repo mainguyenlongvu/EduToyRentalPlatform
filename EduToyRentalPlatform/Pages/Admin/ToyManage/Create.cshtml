@@ -5,98 +5,91 @@
     Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
 }
 
-
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <form method="post" enctype="multipart/form-data" class="p-4 shadow rounded bg-light" id="createToyForm">
+            <form method="post" enctype="multipart/form-data" class="p-4 shadow rounded bg-light">
+                @Html.AntiForgeryToken() <!-- Anti-forgery token for security -->
                 <!-- Toy Name -->
                 <div class="mb-3 row">
                     <label for="ToyName" class="col-sm-3 col-form-label text-start">Name</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="ToyName" name="Toy.ToyName" placeholder="Enter toy name" required />
-                        <span asp-validation-for="Toy.ToyName" class="text-danger"></span>
+                        <input type="text" class="form-control" id="ToyName" name="Toy.ToyName" placeholder="Enter toy name" />
                     </div>
+                    <span asp-validation-for="Toy.ToyName" class="text-danger"></span>
                 </div>
 
                 <!-- Toy Description -->
                 <div class="mb-3 row">
                     <label for="ToyDescription" class="col-sm-3 col-form-label text-start">Description</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" id="ToyDescription" name="Toy.ToyDescription" rows="4" placeholder="Enter toy description" required></textarea>
-                        <span asp-validation-for="Toy.ToyDescription" class="text-danger"></span>
+                        <textarea class="form-control" id="ToyDescription" name="Toy.ToyDescription" rows="4" placeholder="Enter toy description"></textarea>
                     </div>
+                    <span asp-validation-for="Toy.ToyDescription" class="text-danger"></span>
                 </div>
 
-                <!-- Toy Price Rent -->
+                <!-- Toy Rent Price -->
                 <div class="mb-3 row">
-                    <label for="ToyPriceRent" class="col-sm-3 col-form-label text-start">Price (Rent)</label>
+                    <label for="ToyRentPrice" class="col-sm-3 col-form-label text-start">Rent Price</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyPriceRent" name="Toy.ToyPriceRent" placeholder="Enter toy rent price" min="0" step="0.01" required />
-                        <span asp-validation-for="Toy.ToyPriceRent" class="text-danger"></span>
+                        <input type="number" class="form-control" id="ToyRentPrice" name="Toy.ToyPriceRent" placeholder="Enter rent price" />
                     </div>
+                    <span asp-validation-for="Toy.ToyPriceRent" class="text-danger"></span>
                 </div>
 
-                <!-- Toy Price Sale -->
+                <!-- Toy Sale Price -->
                 <div class="mb-3 row">
-                    <label for="ToyPriceSale" class="col-sm-3 col-form-label text-start">Price (Sale)</label>
+                    <label for="ToySalePrice" class="col-sm-3 col-form-label text-start">Sale Price</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyPriceSale" name="Toy.ToyPriceSale" placeholder="Enter toy sale price" min="0" step="0.01" required />
-                        <span asp-validation-for="Toy.ToyPriceSale" class="text-danger"></span>
+                        <input type="number" class="form-control" id="ToySalePrice" name="Toy.ToyPriceSale" placeholder="Enter Sale price" />
                     </div>
+                    <span asp-validation-for="Toy.ToyPriceSale" class="text-danger"></span>
                 </div>
+
+
 
                 <!-- Remaining Quantity -->
                 <div class="mb-3 row">
                     <label for="ToyRemainingQuantity" class="col-sm-3 col-form-label text-start">Remaining Quantity</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyRemainingQuantity" name="Toy.ToyRemainingQuantity" placeholder="Enter remaining quantity" min="0" required />
-                        <span asp-validation-for="Toy.ToyRemainingQuantity" class="text-danger"></span>
+                        <input type="number" class="form-control" id="ToyRemainingQuantity" name="Toy.ToyRemainingQuantity" placeholder="Enter remaining quantity" />
                     </div>
+                    <span asp-validation-for="Toy.ToyRemainingQuantity" class="text-danger"></span>
                 </div>
 
                 <!-- Quantity Sold -->
                 <div class="mb-3 row">
                     <label for="ToyQuantitySold" class="col-sm-3 col-form-label text-start">Quantity Sold</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyQuantitySold" name="Toy.ToyQuantitySold" placeholder="Enter quantity sold" min="0" required />
-                        <span asp-validation-for="Toy.ToyQuantitySold" class="text-danger"></span>
+                        <input type="number" class="form-control" id="ToyQuantitySold" name="Toy.ToyQuantitySold" placeholder="Enter quantity sold" />
                     </div>
+                    <span asp-validation-for="Toy.ToyQuantitySold" class="text-danger"></span>
                 </div>
 
-                <!-- Toy Option  -->
+                <!-- Toy Option -->
                 <div class="mb-3 row">
                     <label for="ToyOption" class="col-sm-3 col-form-label text-start">Option</label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="ToyOption" name="Toy.Option" placeholder="Enter option" />
-                        <span asp-validation-for="Toy.Option" class="text-danger"></span>
                     </div>
+                    <span asp-validation-for="Toy.Option" class="text-danger"></span>
                 </div>
 
                 <!-- Toy Image -->
                 <div class="mb-3 row">
                     <label for="ToyImg" class="col-sm-3 col-form-label text-start">Image</label>
                     <div class="col-sm-9">
-                        <input type="file" class="form-control" id="ToyImg" name="Toy.ImageFile" accept="image/*" />
-                        <span asp-validation-for="Toy.ImageFile" class="text-danger"></span>
+                        <input type="file" class="form-control" id="ToyImg" name="Toy.ImageFile" />
                     </div>
+                    <span asp-validation-for="Toy.ImageFile" class="text-danger"></span>
                 </div>
 
                 <!-- Buttons -->
                 <div class="mt-4 d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">Create Toy</button>
-                    <a asp-page="/Admin/ToyManage/Index" class="btn btn-secondary px-4">Cancel</a>
+                    <a asp-page="/Admin/ToyMange/Index" class="btn btn-secondary px-4">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
- 
-}

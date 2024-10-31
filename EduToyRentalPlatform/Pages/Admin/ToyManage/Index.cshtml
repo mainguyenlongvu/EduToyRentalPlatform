@@ -24,8 +24,8 @@
             <tr>
                 <th>Name</th>
                 <th>Image</th>
-                <th>Sale Price</th> <!-- Sale Price Column -->
-                <th>Rent Price</th> <!-- Rent Price Column -->
+                <th>Sale Price</th>
+                <th>Rent Price</th>
                 <th>Remaining</th>
                 <th>Sold</th>
                 <th>Actions</th>
@@ -41,11 +41,11 @@
                         <td>
                             <img src="@Url.Content("~/img/" + toy.ToyImg)" alt="Toy Image" style="width:50px;height:50px;" />
                         </td>
-                        <td>@toy.ToyPriceSale.ToString("N0") VND</td> <!-- Display Sale Price -->
-                        <td>@toy.ToyPriceRent.ToString("N0") VND</td> <!-- Display Rent Price -->
+                        <td>@toy.ToyPriceSale.ToString("N0") VND</td>
+                        <td>@toy.ToyPriceRent.ToString("N0") VND</td>
                         <td>@toy.ToyRemainingQuantity</td>
                         <td>@toy.ToyQuantitySold</td>
-                       <td> 
+                        <td>
                             <div class="d-flex flex-wrap gap-2 mb-3">
                                 <!-- View Modal Button -->
                                 <a href="#" class="btn btn-warning btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modal_@toy.Id">
@@ -58,10 +58,10 @@
                                 </a>
 
                                 <!-- Delete Button -->
-                                <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="#confirmDeleteModal_@toy.Id">
+                                <a href="/Admin/ToyManage/Delete/@toy.Id" class="btn btn-danger btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal_@toy.Id">
                                     <i class="fas fa-trash me-1"></i> Delete
                                 </a>
-
+                            </div>
                         </td>
                     </tr>
 
@@ -80,11 +80,11 @@
                                     </div>
                                     <div class="form-group row bdb1 pt_10 mb_0">
                                         <div class="col-md-4"><label class="form-label">Sale Price</label></div>
-                                        <div class="col-md-8">@toy.ToyPriceSale.ToString("N0") VND</div> <!-- Sale Price in Modal -->
+                                        <div class="col-md-8">@toy.ToyPriceSale.ToString("N0") VND</div>
                                     </div>
                                     <div class="form-group row bdb1 pt_10 mb_0">
                                         <div class="col-md-4"><label class="form-label">Rent Price</label></div>
-                                        <div class="col-md-8">@toy.ToyPriceRent.ToString("N0") VND</div> <!-- Rent Price in Modal -->
+                                        <div class="col-md-8">@toy.ToyPriceRent.ToString("N0") VND</div>
                                     </div>
                                     <div class="form-group row bdb1 pt_10 mb_0">
                                         <div class="col-md-4"><label class="form-label">Description</label></div>
@@ -128,7 +128,7 @@
             else
             {
                 <tr>
-                    <td colspan="7" style="text-align: center;">No toys found</td> <!-- Updated colspan -->
+                    <td colspan="7" style="text-align: center;">No toys found</td>
                 </tr>
             }
         </tbody>
@@ -140,12 +140,31 @@
                 @if (Model.PageNumber > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.PageNumber - 1)"><i class="fas fa-chevron-left"></i></a>
+                        <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.PageNumber - 1)" aria-label="Previous">
+                            <i class="fas fa-chevron-left"></i>
+                            <span class="d-none d-md-inline"> Previous</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true"><i class="fas fa-chevron-left"></i><span class="d-none d-md-inline"> Previous</span></span>
                     </li>
                 }
 
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
+                    // Display ellipsis for large page ranges
+                    if (i > 3 && i < Model.TotalPages - 2 && Math.Abs(Model.PageNumber - i) > 1)
+                    {
+                        if (i == 4 || i == Model.TotalPages - 3)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                        continue;
+                    }
+
                     <li class="page-item @(Model.PageNumber == i ? "active" : "")">
                         <a class="page-link" asp-page="./Index" asp-route-pageNumber="@i">@i</a>
                     </li>
@@ -154,7 +173,16 @@
                 @if (Model.PageNumber < Model.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.PageNumber + 1)"><i class="fas fa-chevron-right"></i></a>
+                        <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.PageNumber + 1)" aria-label="Next">
+                            <span class="d-none d-md-inline">Next </span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true"><span class="d-none d-md-inline">Next </span><i class="fas fa-chevron-right"></i></span>
                     </li>
                 }
             </ul>
