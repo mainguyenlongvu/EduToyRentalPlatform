@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Repositories.Base;
+using ToyShop.ModelViews.ToyModelViews;
+
 
 namespace EduToyRentalPlatform.Pages.Admin.ToyManage
 {
