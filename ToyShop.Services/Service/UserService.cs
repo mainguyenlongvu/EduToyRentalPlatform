@@ -45,7 +45,7 @@ namespace ToyShop.Services.Service
 
             // Tìm người dùng trong cơ sở dữ liệu
             var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
-                .FirstOrDefaultAsync(u => u.Email == model.Email && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
+                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
 
 
             // Xác thực mật khẩu
@@ -85,11 +85,18 @@ namespace ToyShop.Services.Service
 
         public async Task<bool> RegisterAsync(RegisterModel model)
         {
-
             // Kiểm tra xem người dùng đã tồn tại chưa
-            var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(u => (u.Email.ToLower() == model.Email.ToLower() || u.UserName.ToLower() == model.UserName) && !u.DeletedTime.HasValue) ?? throw new InvalidOperationException("User already exists!");
-            //Tìm Role
-            var role = await _unitOfWork.GetRepository<ApplicationRole>().Entities.FirstOrDefaultAsync(x=>x.Name == model.RoleName);
+            var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.UserName) && !u.DeletedTime.HasValue);
+
+            if (existingUser != null)
+            {
+                throw new InvalidOperationException("User already exists!");
+            }
+
+            // Tìm Role
+            var role = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+                .FirstOrDefaultAsync(x => x.Name == model.RoleName);
 
             // Mã hóa mật khẩu
             string hashedPassword = CoreHelper.HashPassword(model.Password);
@@ -99,22 +106,28 @@ namespace ToyShop.Services.Service
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Password = hashedPassword,
+                PasswordHash = hashedPassword, // Gán mật khẩu đã mã hóa
                 Phone = model.Phone,
                 CreatedTime = DateTime.UtcNow,
-            };
-            ApplicationUserRoles newApplicationUserRole = new ApplicationUserRoles
-            {
-                UserId = newUser.Id,
-                RoleId = role.Id,
-                CreatedTime = CoreHelper.SystemTimeNow
             };
 
             try
             {
                 // Thêm người dùng mới vào cơ sở dữ liệu
                 await _unitOfWork.GetRepository<ApplicationUser>().InsertAsync(newUser);
-                await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync(); // Lưu thay đổi trước để gán ID
+
+                // Tạo vai trò cho người dùng mới
+                ApplicationUserRoles newApplicationUserRole = new ApplicationUserRoles
+                {
+                    UserId = newUser.Id, // Gán UserId sau khi người dùng được lưu
+                    RoleId = role.Id,
+                    CreatedTime = CoreHelper.SystemTimeNow
+                };
+
+                // Thêm vai trò vào cơ sở dữ liệu
+                await _unitOfWork.GetRepository<ApplicationUserRoles>().InsertAsync(newApplicationUserRole);
+                await _unitOfWork.SaveAsync(); // Lưu thay đổi
             }
             catch (DbUpdateException ex)
             {
@@ -123,6 +136,7 @@ namespace ToyShop.Services.Service
 
             return true;
         }
+
 
     }
 

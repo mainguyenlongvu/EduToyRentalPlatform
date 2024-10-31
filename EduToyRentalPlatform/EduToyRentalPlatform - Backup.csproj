@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\Admin\FeedBack\**" />
+    <Compile Remove="Pages\Admin\Order\**" />
+    <Content Remove="Pages\Admin\FeedBack\**" />
+    <Content Remove="Pages\Admin\Order\**" />
+    <EmbeddedResource Remove="Pages\Admin\FeedBack\**" />
+    <EmbeddedResource Remove="Pages\Admin\Order\**" />
+    <None Remove="Pages\Admin\FeedBack\**" />
+    <None Remove="Pages\Admin\Order\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ShopDetail.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="ShopDetail.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\.DS_Store" />
+    <None Include="wwwroot\tinymce\.DS_Store" />
+    <None Include="wwwroot\tinymce\plugins\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\content\.DS_Store" />
+    <None Include="wwwroot\tinymce\skins\ui\.DS_Store" />
+    <None Include="wwwroot\tinymce\themes\.DS_Store" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SignalRSwaggerGen" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToyShop.Contract.Services\ToyShop.Contract.Services.csproj" />
+    <ProjectReference Include="..\ToyShop.Services\ToyShop.Services.csproj" />
+  </ItemGroup>
+
+</Project>
