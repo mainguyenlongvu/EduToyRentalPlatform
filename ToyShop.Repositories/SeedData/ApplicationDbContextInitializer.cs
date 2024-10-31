@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Core.Utils;
 using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 
@@ -85,16 +86,14 @@ public class ApplicationDbContextInitializer
     private void SeedUsers()
     {
         if (_context.ApplicationUsers.Any()) return;
-
-        var passwordHasher = new PasswordHasher<ApplicationUser>();
         var users = new ApplicationUser[]
         {
-        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
-        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
-        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
-        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
-        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" },
-        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = passwordHasher.HashPassword(null, "customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678"},
+        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "admin@gmail.com", Password = "admin123@" },
+        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "manager@gmail.com", Password = "manager123@" },
+        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email="customer1@gmail.com" , Password = "customer123@"},
+        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "customer2@gmail.com", Password = "customer123@" },
+        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" ,Email = "customer2@gmail.com", Password = "customer123@" },
+        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678",Email = "customer2@gmail.com", Password = "customer123@" },
         };
 
         _context.ApplicationUsers.AddRange(users);

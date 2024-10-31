@@ -5,51 +5,55 @@
 }
 
 <div class="register-container">
-    <h2 class="text-center">@ViewData["Title"]</h2>
+    <h2>@ViewData["Title"]</h2>
 
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div id="error-message" class="alert alert-danger text-center" style="color:red; margin-bottom: 15px;">
+            @Model.ErrorMessage
+        </div>
+    }
     <form method="post" asp-page-handler="OnPostAsync">
+        @Html.AntiForgeryToken()
         <div class="form-group">
-            <label asp-for="UserName" class="control-label">Tài khoản</label>
-            <input asp-for="UserName" class="form-control" placeholder="Nhập tài khoản của bạn" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
+            <label for="UserName" class="control-label">Tài khoản</label>
+            <input type="text" name="UserName" class="form-control" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("UserName", "", new { @class = "text-danger" })</span>
         </div>
 
         <div class="form-group">
-            <label asp-for="Email" class="control-label">Email</label>
-            <input asp-for="Email" class="form-control" placeholder="Nhập email của bạn" />
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label for="Email" class="control-label">Email</label>
+            <input type="email" name="Email" class="form-control" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("Email", "", new { @class = "text-danger" })</span>
         </div>
 
         <div class="form-group">
-            <label asp-for="Password" class="control-label">Mật khẩu</label>
-            <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu của bạn" />
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label for="Password" class="control-label">Mật khẩu</label>
+            <input type="password" name="Password" class="form-control" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("Password", "", new { @class = "text-danger" })</span>
         </div>
 
         <div class="form-group">
-            <label asp-for="Phone" class="control-label">Số điện thoại</label>
-            <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại của bạn" />
-            <span asp-validation-for="Phone" class="text-danger"></span>
+            <label for="ConfirmPassword" class="control-label">Xác nhận mật khẩu</label>
+            <input type="password" name="ConfirmPassword" class="form-control" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })</span>
         </div>
-        <div class="form-group role-select">
-            <label for="RoleId">Vai trò</label>
-            <select id="RoleId" name="RoleId" class="form-control">
-                <option value="">Chọn vai trò</option>
-                @foreach (var item in Model.Quyen)
-                {
-                    <option value="@item.Value">@item.Text</option>
-                }
-            </select>
-            <span style="float: right; margin-top: -15px">@Html.ValidationMessage("RoleId", "", new { @class = "text-danger" })</span>
+
+        <div class="form-group">
+            <label for="Phone" class="control-label">Số điện thoại</label>
+            <input type="text" name="Phone" class="form-control" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("Phone", "", new { @class = "text-danger" })</span>
         </div>
 
         <button type="submit" class="btn btn-primary">Đăng Ký</button>
+
+
     </form>
 
-    <div class="form-group mt-3">
+    <div class="form-group">
         <p class="text-center">
-            <span class="font-bold">Đã có tài khoản?</span>
-            <a href="/Account/LoginPage" class="btn btn-link no-underline">Đăng Nhập tại đây</a>
+            Đã có tài khoản? <a href="/Account/LoginPage" class="btn btn-link">Đăng Nhập tại đây</a>
         </p>
     </div>
 </div>

@@ -16,12 +16,10 @@ namespace ToyShop.Pages.Account
 {
     public class RegisterPageModel : PageModel
     {
-        private readonly ToyShopDBContext _context;
         private readonly IUserService _userService;
 
-        public RegisterPageModel(ToyShopDBContext context, IUserService userService)
+        public RegisterPageModel(IUserService userService)
         {
-            _context = context;
             _userService = userService;
         }
 
@@ -50,51 +48,45 @@ namespace ToyShop.Pages.Account
         [BindProperty]
         public List<SelectListItem> Quyen { get; set; }
 
+        public string ErrorMessage { get; set; }
+
         public void OnGet()
         {
-            Quyen = _context.ApplicationRoles.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = r.Name
-            }).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            var registerModel = new RegisterModel
             {
-                var registerModel = new RegisterModel
-                {
-                    UserName = UserName,
-                    Email = Email,
-                    Password = Password,
-                    Phone = Phone,
-                    RoleId = RoleId
-                };
+                UserName = UserName,
+                Email = Email,
+                Password = Password,
+                Phone = Phone,
+                RoleName = "Customer" // Lấy RoleId của quyền "user"
+            };
 
-                try
-                {
-                    // Gọi hàm RegisterAsync
-                    bool result = await _userService.RegisterAsync(registerModel);
+            try
+            {
+                // Gọi hàm RegisterAsync
+                bool result = await _userService.RegisterAsync(registerModel);
 
-                    if (result)
-                    {
-                        TempData["SuccessMessage"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-                        return RedirectToPage("/Account/LoginPage");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Đăng ký không thành công. Vui lòng thử lại.");
-                    }
+                if (result)
+                {
+                    ErrorMessage = "Đăng ký thành công! Vui lòng đăng nhập.";
+                    return RedirectToPage("/Account/LoginPage");
                 }
-                catch (Exception ex)
+                else
                 {
-                    // Ghi log hoặc xử lý lỗi ở đây
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    ErrorMessage = "Đăng ký không thành công! Vui lòng thử lại.";
+
                 }
             }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
 
-            // Nếu có lỗi trong ModelState hoặc đăng ký không thành công, trả về trang hiện tại
+
             return Page();
         }
 
