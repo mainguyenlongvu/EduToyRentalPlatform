@@ -78,7 +78,7 @@ namespace ToyShop.Services.Service
             return role switch
             {
                 "Admin" => "/Admin/Index",
-                _ => "/Home/Index"
+                _ => "/Shop"
             };
         }
 
