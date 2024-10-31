@@ -1,6 +1,7 @@
 ﻿@page
-@model ToyShop.Pages.Account.AccountDetailModel
+@model ToyShop.Pages.Account.ProfileDetailModel
 <h1 class="title">Thông tin tài khoản</h1>
+
 @if (Model.User != null)
 {
     <div class="profile-card">
@@ -18,36 +19,45 @@
                 </span>
             </p>
         </div>
-        @* Uncomment if edit functionality is available *@
-        @* <a href="./Edit?id=@Model.User.Id" class="btn btn-primary">Chỉnh sửa</a> *@
     </div>
 }
 else
 {
     <p class="error-message">Không tìm thấy thông tin người dùng.</p>
 }
+
 <div class="back-button-container">
-    <a href="/Profile/ProfileDetail" class="btn btn-secondary">Quay lại</a>
+    <a href="/Pages/Shop" class="btn btn-secondary">Quay lại</a>
 </div>
-<!-- Add your CSS for styling the page -->
+
 <style>
-    .title {
-        text-align: center;
-        font-size: 2em;
-        margin-bottom: 20px;
+    /* General styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e8f5e9; /* Light green background */
         color: #333;
     }
 
+    /* Title styling */
+    .title {
+        text-align: center;
+        font-size: 2.5em;
+        margin: 20px 0;
+        color: #388e3c; /* Dark green color */
+    }
+
+    /* Card container styling */
     .profile-card {
-        max-width: 500px;
-        margin: 0 auto;
-        background: #f8f9fa;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
         text-align: center;
     }
 
+    /* Header styling */
     .profile-header {
         display: flex;
         flex-direction: column;
@@ -55,63 +65,80 @@ else
         margin-bottom: 20px;
     }
 
+    /* Profile image styling */
     .profile-image {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
-        margin-bottom: 10px;
+        border: 3px solid #a5d6a7; /* Light green border */
+        margin-bottom: 15px;
     }
 
+    /* Username styling */
     .username {
-        font-size: 1.5em;
+        font-size: 1.8em;
         margin: 0;
-        color: #555;
+        color: #388e3c;
     }
 
+    /* Profile info section styling */
     .profile-info p {
         font-size: 1.1em;
         color: #666;
         margin: 10px 0;
     }
 
+    /* Status badge styling */
     .status {
         font-weight: bold;
     }
 
         .status.active {
-            color: green;
+            color: #43a047; /* Active status green */
         }
 
         .status.inactive {
-            color: red;
+            color: #e57373; /* Inactive status red */
         }
 
+    /* Error message styling */
     .error-message {
-        color: red;
+        color: #d32f2f;
         text-align: center;
         font-size: 1.2em;
     }
 
+    /* Back button container styling */
     .back-button-container {
         text-align: center;
         margin-top: 20px;
     }
 
+    /* Button styling */
     .btn {
         padding: 10px 20px;
-        border-radius: 5px;
+        border-radius: 8px;
         text-decoration: none;
         font-weight: bold;
+        transition: background-color 0.3s ease;
     }
 
     .btn-primary {
-        background-color: #007bff;
+        background-color: #66bb6a; /* Primary green */
         color: #fff;
     }
 
+        .btn-primary:hover {
+            background-color: #388e3c; /* Darker green on hover */
+        }
+
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #a5d6a7; /* Light green */
         color: #fff;
     }
+
+        .btn-secondary:hover {
+            background-color: #66bb6a; /* Darker green on hover */
+        }
 </style>

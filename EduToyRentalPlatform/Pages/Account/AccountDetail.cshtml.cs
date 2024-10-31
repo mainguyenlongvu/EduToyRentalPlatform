@@ -1,50 +1,80 @@
-﻿using ToyShop.Contract.Repositories.Entity;
-using ToyShop.Contract.Services.Interface;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using ToyShop.ModelViews.UserModelViews; // Namespace of ApplicationDbContext
 using System.Threading.Tasks;
-using ToyShop.Contract.Services.Interface;
+using Microsoft.EntityFrameworkCore;
+using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
+using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Services.Interface;
 
 namespace ToyShop.Pages.Account
 {
     public class AccountDetailModel : PageModel
     {
-        private readonly IUserService _userService;
+        private readonly ToyShopDBContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountDetailModel(IUserService userService)
+        public string UserName { get; private set; }
+        public string Email { get; private set; }
+        public string Phone { get; private set; }
+
+        public AccountDetailModel(ToyShopDBContext context, UserManager<ApplicationUser> userManager)
         {
-            _userService = userService;
+            _context = context;
+            _userManager = userManager;
         }
 
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
-        public string ErrorMessage { get; set; }
-
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-
-            UserId = Request.Query["id"].ToString();
-
-            if (!string.IsNullOrEmpty(UserId))
+            var userName = HttpContext.Request.Cookies["UserName"];
+            if (userName == null)
             {
-                // Thiết lập cookie cho UserId
-                Response.Cookies.Append("UserId", UserId, new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true
-                });
+                return RedirectToPage("/Account/Login");
+            }
 
-                // Gọi phương thức để lấy thông tin người dùng từ cơ sở dữ liệu
-                User = await _userService.GetUserByIdAsync(UserId);
-                if (User == null)
-                {
-                    ErrorMessage = "Không tìm thấy người dùng.";
-                }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+            if (user != null)
+            {
+                UserName = user.UserName;
+                Email = user.Email;
+                Phone = user.Phone;
             }
             else
             {
-                ErrorMessage = "ID người dùng không hợp lệ.";
+                UserName = "Guest";
+                Email = "Not Available";
+                Phone = "Not Available";
+            }
+
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostBackAsync()
+        {
+            var userName = HttpContext.Request.Cookies["UserName"];
+            if (userName == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            // Check if the user is in the "Admin" role
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            if (isAdmin)
+            {
+                return RedirectToPage("/Admin/Index");
+            }
+            else
+            {
+                return RedirectToPage("/Shop");
             }
         }
     }
