@@ -24,10 +24,10 @@
             <tr>
                 <th>Name</th>
                 <th>Image</th>
-                <th>Price</th> <!-- New Column -->
+                <th>Sale Price</th> <!-- Sale Price Column -->
+                <th>Rent Price</th> <!-- Rent Price Column -->
                 <th>Remaining</th>
                 <th>Sold</th>
-         
                 <th>Actions</th>
             </tr>
         </thead>
@@ -41,20 +41,27 @@
                         <td>
                             <img src="@Url.Content("~/img/" + toy.ToyImg)" alt="Toy Image" style="width:50px;height:50px;" />
                         </td>
-                        <td>@toy.ToyPriceSale.ToString("N0") VND</td> <!-- Display Price -->
+                        <td>@toy.ToyPriceSale.ToString("N0") VND</td> <!-- Display Sale Price -->
+                        <td>@toy.ToyPriceRent.ToString("N0") VND</td> <!-- Display Rent Price -->
                         <td>@toy.ToyRemainingQuantity</td>
                         <td>@toy.ToyQuantitySold</td>
-                        <td>
-                            <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_@toy.Id">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="/Admin/ToyManage/Edit/@toy.Id" class="btn btn-primary">
-                                <i class="fas fa-edit"></i>
-                            </a>
+                       <td> 
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <!-- View Modal Button -->
+                                <a href="#" class="btn btn-warning btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modal_@toy.Id">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
 
-                            <a asp-page="./Delete" asp-route-id="@toy.Id" class="btn btn-danger" onClick="return confirm('Are you sure?');">
-                                <i class="fas fa-trash"></i>
-                            </a>
+                                <!-- Edit Button -->
+                                <a href="/Admin/ToyManage/Edit/@toy.Id" class="btn btn-success btn-sm d-flex align-items-center">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+
+                                <!-- Delete Button -->
+                                <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="#confirmDeleteModal_@toy.Id">
+                                    <i class="fas fa-trash me-1"></i> Delete
+                                </a>
+
                         </td>
                     </tr>
 
@@ -72,14 +79,17 @@
                                         <div class="col-md-8">@toy.ToyName</div>
                                     </div>
                                     <div class="form-group row bdb1 pt_10 mb_0">
-                                        <div class="col-md-4"><label class="form-label">Price</label></div>
-                                        <div class="col-md-8">@toy.ToyPriceSale.ToString("N0") VND</div> <!-- Price in Modal -->
+                                        <div class="col-md-4"><label class="form-label">Sale Price</label></div>
+                                        <div class="col-md-8">@toy.ToyPriceSale.ToString("N0") VND</div> <!-- Sale Price in Modal -->
+                                    </div>
+                                    <div class="form-group row bdb1 pt_10 mb_0">
+                                        <div class="col-md-4"><label class="form-label">Rent Price</label></div>
+                                        <div class="col-md-8">@toy.ToyPriceRent.ToString("N0") VND</div> <!-- Rent Price in Modal -->
                                     </div>
                                     <div class="form-group row bdb1 pt_10 mb_0">
                                         <div class="col-md-4"><label class="form-label">Description</label></div>
                                         <div class="col-md-8">@toy.ToyDescription</div>
                                     </div>
-                       
                                     <div class="form-group row bdb1 pt_10 mb_0">
                                         <div class="col-md-4"><label class="form-label">Deleted</label></div>
                                         <div class="col-md-8">@(toy.IsDeleted ? "Yes" : "No")</div>
@@ -88,8 +98,27 @@
                                         <div class="col-md-4"><label class="form-label">Last Updated Time</label></div>
                                         <div class="col-md-8">@toy.LastUpdatedTime.ToString("dd-MM-yyyy")</div>
                                     </div>
-                              
-                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Delete Modal -->
+                    <div class="modal fade" id="confirmDeleteModal_@toy.Id" tabindex="-1" aria-labelledby="confirmDeleteLabel_@toy.Id" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteLabel_@toy.Id">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this toy?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form asp-page="./Delete" asp-route-id="@toy.Id" method="post">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +128,7 @@
             else
             {
                 <tr>
-                    <td colspan="8" style="text-align: center;">No toys found</td> <!-- Updated colspan -->
+                    <td colspan="7" style="text-align: center;">No toys found</td> <!-- Updated colspan -->
                 </tr>
             }
         </tbody>

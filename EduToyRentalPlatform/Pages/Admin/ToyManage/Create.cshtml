@@ -5,10 +5,12 @@
     Layout = "~/Pages/Admin/Shared/_Layout.cshtml";
 }
 
+
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <form method="post" enctype="multipart/form-data" class="p-4 shadow rounded bg-light">
+            <form method="post" enctype="multipart/form-data" class="p-4 shadow rounded bg-light" id="createToyForm">
                 <!-- Toy Name -->
                 <div class="mb-3 row">
                     <label for="ToyName" class="col-sm-3 col-form-label text-start">Name</label>
@@ -27,12 +29,21 @@
                     </div>
                 </div>
 
-                <!-- Toy Price -->
+                <!-- Toy Price Rent -->
                 <div class="mb-3 row">
-                    <label for="ToyPrice" class="col-sm-3 col-form-label text-start">Price</label>
+                    <label for="ToyPriceRent" class="col-sm-3 col-form-label text-start">Price (Rent)</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyPrice" name="Toy.ToyPrice" placeholder="Enter toy price" min="0" step="0.01" required />
-                        <span asp-validation-for="Toy.ToyPrice" class="text-danger"></span>
+                        <input type="number" class="form-control" id="ToyPriceRent" name="Toy.ToyPriceRent" placeholder="Enter toy rent price" min="0" step="0.01" required />
+                        <span asp-validation-for="Toy.ToyPriceRent" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Toy Price Sale -->
+                <div class="mb-3 row">
+                    <label for="ToyPriceSale" class="col-sm-3 col-form-label text-start">Price (Sale)</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" id="ToyPriceSale" name="Toy.ToyPriceSale" placeholder="Enter toy sale price" min="0" step="0.01" required />
+                        <span asp-validation-for="Toy.ToyPriceSale" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -58,8 +69,8 @@
                 <div class="mb-3 row">
                     <label for="ToyOption" class="col-sm-3 col-form-label text-start">Option</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="ToyOption" name="Toy.option" placeholder="Enter option" />
-                        <span asp-validation-for="Toy.option" class="text-danger"></span>
+                        <input type="text" class="form-control" id="ToyOption" name="Toy.Option" placeholder="Enter option" />
+                        <span asp-validation-for="Toy.Option" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -81,3 +92,11 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+ 
+}

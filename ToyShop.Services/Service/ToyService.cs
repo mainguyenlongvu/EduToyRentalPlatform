@@ -138,7 +138,7 @@ namespace ToyShop.Services.Service
             toy.ToyRemainingQuantity = model.ToyRemainingQuantity;
             toy.ToyImg = model.ToyImg == null?toy.ToyImg:model.ToyImg;
             toy.ToyQuantitySold = model.ToyQuantitySold;
-            toy.Option = model.option;
+            toy.Option = model.Option;
             toy.LastUpdatedTime = CoreHelper.SystemTimeNows;
             //Cập nhật bởi, bạn làm phần login chưa xong
             //toy.LastUpdatedBy = UserId;

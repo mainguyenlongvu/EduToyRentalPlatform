@@ -46,19 +46,59 @@
                         <td>@item.CreatedBy</td>
                         <td>@item.CreatedTime.ToString("HH:mm:ss")</td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
-                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">Contract Details</button>
-                                <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="collapse" data-bs-target="#transaction-details-@item.Id" aria-expanded="false" aria-controls="transaction-details-@item.Id">Transaction</button>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <!-- View Modal Button -->
+                                <a href="#" class="btn btn-warning btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modal_@item.Id">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
 
-                                @* Show Restore button only if any ContractDetail has ContractType = False *@
+                                <!-- Edit Button -->
+                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-success btn-sm d-flex align-items-center">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+
+                                <!-- Delete Button -->
+                                <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="confirmDelete('@item.Id')">
+                                    <i class="fas fa-trash me-1"></i> Delete
+                                </a>
+
+                                <!-- Contract Details Button with Custom Color -->
+                                <button type="button" class="btn btn-info btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">
+                                    <i class="fas fa-file-contract me-1"></i> Contract Details
+                                </button>
+
+
+                                <!-- Transaction Button -->
+                                <button type="button" class="btn btn-dark btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#transaction-details-@item.Id" aria-expanded="false" aria-controls="transaction-details-@item.Id">
+                                    <i class="fas fa-exchange-alt me-1"></i> Transaction
+                                </button>
+
+                                <!-- Conditional Restore Button -->
                                 @if (item.ContractDetails != null && item.ContractDetails.Any(cd => cd.ContractType == true))
                                 {
-                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">Restore</button>
+                                    <button type="button" class="btn btn-success btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">
+                                        <i class="fas fa-redo me-1"></i> Restore
+                                    </button>
                                 }
                             </div>
+
+                            <!-- Collapsible Sections with Margin Top -->
+                            <div class="collapse mt-2" id="contract-details-@item.Id">
+                                <!-- Contract Details Content Here -->
+                            </div>
+
+                            <div class="collapse mt-2" id="transaction-details-@item.Id">
+                                <!-- Transaction Content Here -->
+                            </div>
+
+                            <script>
+                                function confirmDelete(id) {
+                                    const confirmation = confirm("Are you sure you want to delete this item?");
+                                    if (confirmation) {
+                                        window.location.href = '/YourController/Delete/' + id; // Update this path as needed
+                                    }
+                                }
+                            </script>
                         </td>
                     </tr>
 

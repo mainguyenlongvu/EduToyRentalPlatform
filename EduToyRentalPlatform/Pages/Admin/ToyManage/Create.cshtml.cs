@@ -18,7 +18,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         }
 
         [BindProperty]
-        public CreateToyModel Toy { get; set; }
+        public CreateToyModel Toy { get; set; } = new CreateToyModel(); // Initialize to avoid null reference
 
         public void OnGet()
         {
@@ -48,7 +48,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
             catch (Exception ex)
             {
                 // Log the error (consider using a logging framework)
-                ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the toy: " + ex.Message);
                 return Page();
             }
         }

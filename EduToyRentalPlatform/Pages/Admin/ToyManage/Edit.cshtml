@@ -17,8 +17,8 @@
                     <label for="ToyName" class="col-sm-3 col-form-label text-start">Name</label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="ToyName" name="Toy.ToyName" value="@Model.Toy.ToyName" placeholder="Enter toy name" />
+                        <span asp-validation-for="Toy.ToyName" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ToyName" class="text-danger"></span>
                 </div>
 
                 <!-- Toy Description -->
@@ -26,17 +26,26 @@
                     <label for="ToyDescription" class="col-sm-3 col-form-label text-start">Description</label>
                     <div class="col-sm-9">
                         <textarea class="form-control" id="ToyDescription" name="Toy.ToyDescription" rows="4" placeholder="Enter toy description" style="height: 250px;">@Model.Toy.ToyDescription</textarea>
+                        <span asp-validation-for="Toy.ToyDescription" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ToyDescription" class="text-danger"></span>
                 </div>
 
-                <!-- Toy Price -->
+                <!-- Rent Price -->
                 <div class="mb-3 row">
-                    <label for="ToyPrice" class="col-sm-3 col-form-label text-start">Price</label>
+                    <label for="ToyPriceRent" class="col-sm-3 col-form-label text-start">Rent Price</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" id="ToyPrice" name="Toy.ToyPrice" value="@Model.Toy.ToyPriceSale" placeholder="Enter toy price" />
+                        <input type="number" class="form-control" id="ToyPriceRent" name="Toy.ToyPriceRent" value="@Model.Toy.ToyPriceRent" placeholder="Enter toy rent price" />
+                        <span asp-validation-for="Toy.ToyPriceRent" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ToyPriceSale" class="text-danger"></span>
+                </div>
+
+                <!-- Sale Price -->
+                <div class="mb-3 row">
+                    <label for="ToySalePrice" class="col-sm-3 col-form-label text-start">Sale Price</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" id="ToySalePrice" name="Toy.ToyPriceSale" value="@Model.Toy.ToyPriceSale" placeholder="Enter toy sale price" />
+                        <span asp-validation-for="Toy.ToyPriceSale" class="text-danger"></span>
+                    </div>
                 </div>
 
                 <!-- Remaining Quantity -->
@@ -44,8 +53,8 @@
                     <label for="ToyRemainingQuantity" class="col-sm-3 col-form-label text-start">Remaining Quantity</label>
                     <div class="col-sm-9">
                         <input type="number" class="form-control" id="ToyRemainingQuantity" name="Toy.ToyRemainingQuantity" value="@Model.Toy.ToyRemainingQuantity" placeholder="Enter remaining quantity" min="0" />
+                        <span asp-validation-for="Toy.ToyRemainingQuantity" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ToyRemainingQuantity" class="text-danger"></span>
                 </div>
 
                 <!-- Quantity Sold -->
@@ -53,28 +62,29 @@
                     <label for="ToyQuantitySold" class="col-sm-3 col-form-label text-start">Quantity Sold</label>
                     <div class="col-sm-9">
                         <input type="number" class="form-control" id="ToyQuantitySold" name="Toy.ToyQuantitySold" value="@Model.Toy.ToyQuantitySold" placeholder="Enter quantity sold" min="0" />
+                        <span asp-validation-for="Toy.ToyQuantitySold" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ToyQuantitySold" class="text-danger"></span>
                 </div>
+
                 <!-- Toy Option -->
                 <div class="mb-3 row">
                     <label for="ToyOption" class="col-sm-3 col-form-label text-start">Option</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="ToyOption" name="Toy.option" value="@Model.Toy.option" placeholder="Enter toy option" />
+                        <input type="text" class="form-control" id="ToyOption" name="Toy.Option" value="@Model.Toy.Option" placeholder="Enter toy option" />
+                        <span asp-validation-for="Toy.Option" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.option" class="text-danger"></span>
                 </div>
+
                 <!-- Toy Image -->
                 <div class="mb-3 row">
                     <label for="ToyImg" class="col-sm-3 col-form-label text-start">Image</label>
                     <div class="col-sm-9">
                         <input type="file" class="form-control" id="ToyImg" name="Toy.ImageFile" />
-                       <div class="mt-3 d-flex justify-content-center">
-                         <img src="@Url.Content("~/img/" + Model.Toy.ToyImg)" alt="Toy Image" class="rounded" style="width: 100px; height: 100px;" />
-                       </div>
-
+                        <div class="mt-3 d-flex justify-content-center">
+                            <img src="@Url.Content("~/img/" + Model.Toy.ToyImg)" alt="Toy Image" class="rounded" style="width: 100px; height: 100px;" />
+                        </div>
+                        <span asp-validation-for="Toy.ImageFile" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Toy.ImageFile" class="text-danger"></span>
                 </div>
 
                 <!-- Buttons -->
@@ -86,4 +96,9 @@
         </div>
     </div>
 </div>
- 
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
