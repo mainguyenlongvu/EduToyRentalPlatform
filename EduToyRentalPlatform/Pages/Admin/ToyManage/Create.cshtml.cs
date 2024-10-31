@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,69 +19,122 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         }
 
         [BindProperty]
-        public CreateToyModel Toy { get; set; } = new CreateToyModel(); // Initialize to avoid null reference
+        public CreateToyModel Toy { get; set; } = new CreateToyModel(); // Initialize to prevent null reference
 
         public void OnGet()
         {
+            // Any initial logic for GET request can be added here.
         }
 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync()
         {
-            // Validate the form inputs
             if (!ModelState.IsValid)
             {
+                LogModelErrors(); // Log errors for debugging
+                return Page();
+            }
+
+            // Check for zero price
+            if (Toy.ToyPriceSale <= 0)
+            {
+                ModelState.AddModelError("Toy.ToyPriceSale", "Sale price must be greater than 0.");
                 return Page();
             }
 
             // Handle the image file upload
-            try
+            if (Toy.ImageFile != null)
             {
-                // Handle the image upload
-                await HandleImageUploadAsync();
+                var validationResult = ValidateImageFile(Toy.ImageFile);
+                if (validationResult != null)
+                {
+                    ModelState.AddModelError("Toy.ImageFile", validationResult);
+                    return Page();
+                }
 
-                // Call the service to create a new toy
-                await _toyService.CreateToyAsync(Toy);
+                // Define the path where the image will be saved
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/");
+                EnsureDirectoryExists(uploadsFolder);
 
-                // Redirect to the ToyManagement page after a successful creation
-                return RedirectToPage("/Admin/ToyManage/Index");
+                // Generate a unique file name and save the image
+                Toy.ToyImg = await SaveImageFileAsync(Toy.ImageFile, uploadsFolder);
+                if (Toy.ToyImg == null)
+                {
+                    ModelState.AddModelError("Toy.ImageFile", "Error uploading image.");
+                    return Page();
+                }
             }
-            catch (Exception ex)
+
+            // Map the form data to a CreateToyModel for service call
+            var toyCreateModel = new CreateToyModel
             {
-                // Log the error (consider using a logging framework)
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the toy: " + ex.Message);
-                return Page();
+                ToyName = Toy.ToyName,
+                ToyDescription = Toy.ToyDescription,
+                ToyImg = Toy.ToyImg,
+                ToyPriceRent = Toy.ToyPriceRent,
+                ToyPriceSale = Toy.ToyPriceSale,
+                Option = Toy.Option,
+                ToyRemainingQuantity = Toy.ToyRemainingQuantity,
+                ToyQuantitySold = Toy.ToyQuantitySold
+            };
+
+            // Call the service to create a new toy
+            await _toyService.CreateToyAsync(toyCreateModel);
+
+            // Redirect to the ToyManagement page after a successful creation
+            return RedirectToPage("/Admin/ToyManage/Index");
+        }
+
+        private void LogModelErrors()
+        {
+            // Log model state errors for debugging
+            foreach (var entry in ModelState)
+            {
+                if (entry.Value.Errors.Count > 0)
+                {
+                    Console.WriteLine($"Error for {entry.Key}: {string.Join(", ", entry.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
             }
         }
 
-        private async Task HandleImageUploadAsync()
+        private string? ValidateImageFile(IFormFile imageFile)
         {
-            // Check if an image file is uploaded
-            if (Toy.ImageFile != null)
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var fileExtension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(fileExtension))
             {
-                // Define the path where the image will be saved
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/");
+                return "Invalid image type. Only JPG, PNG, and GIF files are allowed.";
+            }
+            return null; // No validation error
+        }
 
-                // Ensure the directory exists
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+        private void EnsureDirectoryExists(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
 
-                // Generate a unique file name using GUID
-                var uniqueFileName = Guid.NewGuid() + Path.GetExtension(Toy.ImageFile.FileName);
+        private async Task<string?> SaveImageFileAsync(IFormFile imageFile, string uploadsFolder)
+        {
+            var uniqueFileName = $"{Guid.NewGuid()}_{imageFile.FileName}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Full path to save the image
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // Save the file
+            try
+            {
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await Toy.ImageFile.CopyToAsync(fileStream);
+                    await imageFile.CopyToAsync(fileStream);
                 }
-
-                // Save the relative path to the ToyImg property
-                Toy.ToyImg = uniqueFileName;
+                return uniqueFileName; // Return the unique file name for storage
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (you could log it)
+                Console.WriteLine($"Error saving file: {ex.Message}");
+                return null; // Indicate failure
             }
         }
     }

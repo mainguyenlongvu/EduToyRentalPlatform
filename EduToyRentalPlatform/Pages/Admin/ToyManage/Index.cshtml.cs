@@ -26,7 +26,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         public int TotalPages { get; set; }
         [BindProperty(SupportsGet = true)]
         public string SearchName { get; set; }
-        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 4)
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 10)
         {
             var toys = await _toyService.GetToysAsync(pageNumber, pageSize, null);
 
