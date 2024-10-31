@@ -12,7 +12,7 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    [Migration("20241031062255_init")]
+    [Migration("20241031113250_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -616,16 +616,21 @@ namespace ToyShop.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Option")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ToyDescription")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ToyImg")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToyName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("ToyPriceRent")
                         .HasColumnType("int");
@@ -642,56 +647,6 @@ namespace ToyShop.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Toy");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "deab05383c0b4eb68a12e8cb08e2c761",
-                            CreatedBy = "Admin",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            LastUpdatedBy = "Admin",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Option = "Stackable Rings",
-                            ToyDescription = "Classic colorful stacking rings toy for toddlers.",
-                            ToyImg = "stacking_rings.webp",
-                            ToyName = "Stacking Rings",
-                            ToyPriceRent = 1500,
-                            ToyPriceSale = 150000000,
-                            ToyQuantitySold = 5,
-                            ToyRemainingQuantity = 20
-                        },
-                        new
-                        {
-                            Id = "91976b65f8b840eeb0bb2f442d8e77df",
-                            CreatedBy = "Admin",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            LastUpdatedBy = "Admin",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Option = "Puzzle",
-                            ToyDescription = "A wooden puzzle with animal shapes and numbers.",
-                            ToyImg = "wooden_puzzle.webp",
-                            ToyName = "Wooden Puzzle",
-                            ToyPriceRent = 100,
-                            ToyPriceSale = 120000,
-                            ToyQuantitySold = 6,
-                            ToyRemainingQuantity = 15
-                        },
-                        new
-                        {
-                            Id = "a94f4719549a4ac9b970f77e51fd3e30",
-                            CreatedBy = "Admin",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            LastUpdatedBy = "Admin",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Option = "Interactive Learning",
-                            ToyDescription = "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.",
-                            ToyImg = "1.webp",
-                            ToyName = "Educational Toy Set",
-                            ToyPriceRent = 1000,
-                            ToyPriceSale = 200000000,
-                            ToyQuantitySold = 8,
-                            ToyRemainingQuantity = 12
-                        });
                 });
 
             modelBuilder.Entity("ToyShop.Contract.Repositories.Entity.Transaction", b =>

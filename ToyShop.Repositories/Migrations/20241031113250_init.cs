@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace ToyShop.Repositories.Migrations
 {
     /// <inheritdoc />
@@ -36,14 +34,14 @@ namespace ToyShop.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ToyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ToyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ToyImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ToyDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ToyDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ToyPriceRent = table.Column<int>(type: "int", nullable: false),
                     ToyPriceSale = table.Column<int>(type: "int", nullable: false),
                     ToyRemainingQuantity = table.Column<int>(type: "int", nullable: false),
                     ToyQuantitySold = table.Column<int>(type: "int", nullable: false),
-                    Option = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Option = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -477,16 +475,6 @@ namespace ToyShop.Repositories.Migrations
                         principalTable: "RestoreToys",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Toy",
-                columns: new[] { "Id", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "Option", "ToyDescription", "ToyImg", "ToyName", "ToyPriceRent", "ToyPriceSale", "ToyQuantitySold", "ToyRemainingQuantity" },
-                values: new object[,]
-                {
-                    { "91976b65f8b840eeb0bb2f442d8e77df", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Puzzle", "A wooden puzzle with animal shapes and numbers.", "wooden_puzzle.webp", "Wooden Puzzle", 100, 120000, 6, 15 },
-                    { "a94f4719549a4ac9b970f77e51fd3e30", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Interactive Learning", "A vibrant interactive toy set designed for toddlers to learn shapes, numbers, and colors.", "1.webp", "Educational Toy Set", 1000, 200000000, 8, 12 },
-                    { "deab05383c0b4eb68a12e8cb08e2c761", "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), null, null, "Admin", new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "Stackable Rings", "Classic colorful stacking rings toy for toddlers.", "stacking_rings.webp", "Stacking Rings", 1500, 150000000, 5, 20 }
                 });
 
             migrationBuilder.CreateIndex(

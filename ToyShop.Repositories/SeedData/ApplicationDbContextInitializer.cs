@@ -59,13 +59,13 @@ public class ApplicationDbContextInitializer
         SeedUserRoles();
         SeedToys();
         SeedContracts();
-		SeedContractDetails();
         SeedRestoreToys();
-		SeedRestoreToyDetails();
         SeedChats();
         SeedFeedBacks();
         SeedTransactions();
-        _context.SaveChanges();
+		SeedContractDetails();
+		SeedRestoreToyDetails();
+		_context.SaveChanges();
     }
 
     private void SeedRoles()
@@ -236,6 +236,7 @@ public class ApplicationDbContextInitializer
 
         var users = _context.ApplicationUsers.ToList();
         var toys = _context.Toys.ToList();
+		var contractDetails = _context.ContractDetails.ToList();
 
         if (users.Count == 0 || toys.Count == 0) return;
 
@@ -333,6 +334,8 @@ public class ApplicationDbContextInitializer
 		var contracts = _context.ContractEntitys.ToList();
 		var toys = _context.Toys.ToList();
 
+		if (contracts.Count == 0 || toys.Count == 0) return;
+
 		var contractDetailsArray = new ContractDetail[]
 		{
 			new ContractDetail()
@@ -408,6 +411,9 @@ public class ApplicationDbContextInitializer
 			},
 		};
 
+		_context.ContractDetails.AddRange(contractDetailsArray.ToList());
+		_context.SaveChanges();
+
 	}
 
     private void SeedRestoreToys()
@@ -415,6 +421,8 @@ public class ApplicationDbContextInitializer
         if (_context.RestoreToys.Any()) return;
 
         var contracts = _context.ContractEntitys.ToList(); // Lấy tất cả các ContractEntity
+
+		if(contracts.Count == 0) return;
 
         var restoreToys = new RestoreToy[]
         {
@@ -458,9 +466,11 @@ public class ApplicationDbContextInitializer
 	{
 		if (_context.RestoreToyDetails.Any()) return;
 
-		var contracts = _context.RestoreToyDetails.ToList();
+		var contracts = _context.ContractEntitys.ToList();
 		var restoreToys = _context.RestoreToys.ToList();
 		var toys = _context.Toys.ToList();
+
+		if (contracts.Count == 0 || restoreToys.Count == 0 || toys.Count == 0) return;
 
 		var restoreToyDetails = new RestoreToyDetail[]
 		{
@@ -506,6 +516,9 @@ public class ApplicationDbContextInitializer
 				Compensation = 80,
 			},
 		};
+
+		_context.RestoreToyDetails.AddRange(restoreToyDetails.ToList());
+		_context.SaveChanges();
 	}
 
 
