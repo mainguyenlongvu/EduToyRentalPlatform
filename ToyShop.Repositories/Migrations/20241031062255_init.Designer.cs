@@ -12,15 +12,15 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    [Migration("20241029144941_initial")]
-    partial class initial
+    [Migration("20241031062255_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -646,7 +646,7 @@ namespace ToyShop.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dd00f7bf0df948dc8a3291f25fef3a73",
+                            Id = "deab05383c0b4eb68a12e8cb08e2c761",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -662,7 +662,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "3fac416ad0e541179fa983fe64685ad0",
+                            Id = "91976b65f8b840eeb0bb2f442d8e77df",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
@@ -678,7 +678,7 @@ namespace ToyShop.Repositories.Migrations
                         },
                         new
                         {
-                            Id = "7276aac814b84d6bb06af8bf5b21ba7b",
+                            Id = "a94f4719549a4ac9b970f77e51fd3e30",
                             CreatedBy = "Admin",
                             CreatedTime = new DateTimeOffset(new DateTime(2024, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             LastUpdatedBy = "Admin",
