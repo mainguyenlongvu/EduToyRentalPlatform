@@ -26,10 +26,11 @@ namespace EduToyRentalPlatform.Pages.Admin.FeedbackManage
         public int PageSize { get; set; }
         [BindProperty(SupportsGet = true)]
         public string SearchName { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
 
         public async Task OnGetAsync(int pageNumber = 1, int pageSize = 8)
         {
-            var feedbackList = await _feedBackService.GetFeedBacks_AdminAsync(pageNumber, pageSize, null);
+            var feedbackList = await _feedBackService.GetFeedBacks_AdminAsync(pageNumber, pageSize, true);
 
             if (!string.IsNullOrEmpty(SearchName))
             {
