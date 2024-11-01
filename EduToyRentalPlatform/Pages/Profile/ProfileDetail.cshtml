@@ -8,16 +8,19 @@
 <!-- CSS nội tuyến -->
 <style>
     body {
-        background-color: #f0f8f5; /* Màu nền xanh lá nhạt */
+        background-color: #f0f8f5; /* Light green background */
         font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
     }
-    /* Profile Header */
-    h2 {
-        color: #388e3c;
-        text-align: center;
-        font-weight: bold;
-        font-size: 2.5em;
-        margin-top: 20px;
+
+    /* Main Container */
+    .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
     }
 
     /* Card Style */
@@ -25,59 +28,169 @@
         background-color: #ffffff;
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
-        width: 900px;
-        margin-top: 20px;
-        padding: 30px;
-        text-align: center;
+        width: 950px;
+        padding: 40px;
+        margin: 20px;
     }
 
-    .profile-pic {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #c8e6c9; /* Soft green background */
-        display: inline-block;
+    /* Header */
+    h2 {
+        color: #388e3c;
+        text-align: center;
+        font-weight: bold;
+        font-size: 2.5em;
         margin-bottom: 20px;
     }
 
-    /* User Info */
-    .card-title {
-        color: #388e3c;
-        font-size: 1.8em;
+    /* Profile Picture and Info */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #c8e6c9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    .profile-info {
+        flex-grow: 1;
+    }
+
+    .profile-name {
+        font-size: 2em;
         font-weight: bold;
-        margin: 0 0 15px;
-    }
-
-    .card ul {
-        list-style-type: none;
-        padding: 0;
+        color: #388e3c;
         margin: 0;
-        text-align: left;
     }
 
-        .card ul li {
+    .profile-welcome {
+        color: #555;
+        margin: 10px 0 0;
+    }
+
+    /* Account Details */
+    .account-section {
+        margin-top: 20px;
+    }
+
+    .account-details, .account-settings {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+        .account-details h3, .account-settings h3 {
             color: #4caf50;
-            font-size: 1.1em;
-            margin: 10px 0;
-            font-weight: 500;
+            font-size: 1.6em;
+            font-weight: bold;
+            border-bottom: 2px solid #c8e6c9;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
+
+        .account-details ul, .account-settings ul {
+            list-style: none;
+            padding: 0;
+        }
+
+            .account-details ul li, .account-settings ul li {
+                color: #4caf50;
+                font-size: 1.1em;
+                margin: 10px 0;
+                font-weight: 500;
+            }
+
+    /* Button Container */
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
 
     .btn-primary {
         background-color: #68d391;
         border: none;
         color: white;
-        padding: 10px 20px;
-        text-align: center;
-        font-size: 1em;
+        padding: 12px 30px;
+        font-size: 1.2em;
         border-radius: 4px;
+        text-decoration: none;
         transition: background-color 0.3s;
-        with: 200px
     }
 
         .btn-primary:hover {
             background-color: #48bb78;
         }
+
+    /* Footer Section */
+    .card-footer {
+        text-align: center;
+        color: #777;
+        font-size: 0.9em;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
 </style>
+
+<!-- Profile Content -->
+<div class="main-container">
+    <div class="card">
+        <h2>Your Profile</h2>
+
+        <!-- Profile Header with Picture and Info -->
+        <div class="profile-header">
+            <div class="profile-pic">
+                <img src="~/images/avatar-placeholder.png" alt="User Avatar" width="100" height="100">
+            </div>
+            <div class="profile-info">
+                <p class="profile-name">@Model.UserName</p>
+                <p class="profile-welcome">Welcome to your profile page! Here are your details:</p>
+            </div>
+        </div>
+
+        <!-- Account Information Section -->
+        <div class="account-section">
+            <div class="account-details">
+                <h3>Account Information</h3>
+                <ul>
+                    <li><strong>Email:</strong> @Model.Email</li>
+                    <li><strong>Phone:</strong> @Model.Phone</li>
+                </ul>
+            </div>
+
+            <!-- Account Settings Section -->
+            <div class="account-settings">
+                <h3>Account Settings</h3>
+                <ul>
+                    <li><strong>Change Password</strong></li>
+                    <li><strong>Manage Subscriptions</strong></li>
+                    <li><strong>Privacy Settings</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Button Container -->
+        <div class="btn-container">
+            <a href="/Shop" class="btn-primary">Back</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+            © 2024 EduToyRentalPlatform. All rights reserved.
+        </div>
+    </div>
+</div>
 
 <h2>Your Profile</h2>
 
