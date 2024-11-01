@@ -19,11 +19,11 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         }
 
         [BindProperty]
-        public CreateToyModel Toy { get; set; } = new CreateToyModel(); // Initialize to prevent null reference
+        public CreateToyModel Toy { get; set; } = new CreateToyModel(); 
 
         public void OnGet()
         {
-            // Any initial logic for GET request can be added here.
+            
         }
 
         [ValidateAntiForgeryToken]
@@ -31,11 +31,10 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         {
             if (!ModelState.IsValid)
             {
-                LogModelErrors(); // Log errors for debugging
+                LogModelErrors(); 
                 return Page();
             }
 
-            // Check for zero price
             if (Toy.ToyPriceSale <= 0)
             {
                 ModelState.AddModelError("Toy.ToyPriceSale", "Sale price must be greater than 0.");
