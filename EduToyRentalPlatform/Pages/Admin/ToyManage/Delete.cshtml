@@ -2,4 +2,62 @@
 @model EduToyRentalPlatform.Pages.Admin.ToyManage.DeleteModel
 
 @{
+    ViewData["Title"] = "Delete Toy";
 }
+
+<h1>Delete Toy</h1>
+
+<h3>Are you sure you want to delete this toy?</h3>
+<div>
+    <h4>Toy Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyName)
+        </dd>
+        
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyDescription)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyDescription)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyPriceRent)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyPriceRent)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyPriceSale)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyPriceSale)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyRemainingQuantity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyRemainingQuantity)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Toy.ToyQuantitySold)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Toy.ToyQuantitySold)
+        </dd>
+    </dl>
+
+    <form method="post">
+        <input type="hidden" asp-for="Toy.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>
