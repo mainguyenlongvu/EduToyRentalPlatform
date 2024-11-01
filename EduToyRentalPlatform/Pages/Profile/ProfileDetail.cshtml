@@ -1,144 +1,96 @@
 ﻿@page
 @model ToyShop.Pages.Account.ProfileDetailModel
-<h1 class="title">Thông tin tài khoản</h1>
-
-@if (Model.User != null)
-{
-    <div class="profile-card">
-        <div class="profile-header">
-            <img src="/images/profile-placeholder.png" alt="Profile Picture" class="profile-image" />
-            <h2 class="username">@Model.User.UserName</h2>
-        </div>
-        <div class="profile-info">
-            <p><strong>Email:</strong> @Model.User.Email</p>
-            <p><strong>Số điện thoại:</strong> @Model.User.Phone</p>
-            <p>
-                <strong>Trạng thái:</strong>
-                <span class="status @(Model.User.DeletedTime.HasValue ? "inactive" : "active")">
-                    @(Model.User.DeletedTime.HasValue ? "Đã xóa" : "Hoạt động")
-                </span>
-            </p>
-        </div>
-    </div>
-}
-else
-{
-    <p class="error-message">Không tìm thấy thông tin người dùng.</p>
+@{
+    ViewData["Title"] = "Your Profile";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<div class="back-button-container">
-    <a href="/Pages/Shop" class="btn btn-secondary">Quay lại</a>
-</div>
-
+<!-- CSS nội tuyến -->
 <style>
-    /* General styling */
     body {
+        background-color: #f0f8f5; /* Màu nền xanh lá nhạt */
         font-family: Arial, sans-serif;
-        background-color: #e8f5e9; /* Light green background */
-        color: #333;
     }
-
-    /* Title styling */
-    .title {
+    /* Profile Header */
+    h2 {
+        color: #388e3c;
         text-align: center;
+        font-weight: bold;
         font-size: 2.5em;
-        margin: 20px 0;
-        color: #388e3c; /* Dark green color */
+        margin-top: 20px;
     }
 
-    /* Card container styling */
-    .profile-card {
-        max-width: 600px;
-        margin: 20px auto;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Card Style */
+    .card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
+        width: 900px;
+        margin-top: 20px;
         padding: 30px;
         text-align: center;
     }
 
-    /* Header styling */
-    .profile-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #c8e6c9; /* Soft green background */
+        display: inline-block;
         margin-bottom: 20px;
     }
 
-    /* Profile image styling */
-    .profile-image {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #a5d6a7; /* Light green border */
-        margin-bottom: 15px;
-    }
-
-    /* Username styling */
-    .username {
-        font-size: 1.8em;
-        margin: 0;
+    /* User Info */
+    .card-title {
         color: #388e3c;
-    }
-
-    /* Profile info section styling */
-    .profile-info p {
-        font-size: 1.1em;
-        color: #666;
-        margin: 10px 0;
-    }
-
-    /* Status badge styling */
-    .status {
+        font-size: 1.8em;
         font-weight: bold;
+        margin: 0 0 15px;
     }
 
-        .status.active {
-            color: #43a047; /* Active status green */
+    .card ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        text-align: left;
+    }
+
+        .card ul li {
+            color: #4caf50;
+            font-size: 1.1em;
+            margin: 10px 0;
+            font-weight: 500;
         }
-
-        .status.inactive {
-            color: #e57373; /* Inactive status red */
-        }
-
-    /* Error message styling */
-    .error-message {
-        color: #d32f2f;
-        text-align: center;
-        font-size: 1.2em;
-    }
-
-    /* Back button container styling */
-    .back-button-container {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    /* Button styling */
-    .btn {
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-    }
 
     .btn-primary {
-        background-color: #66bb6a; /* Primary green */
-        color: #fff;
+        background-color: #68d391;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 1em;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        with: 200px
     }
 
         .btn-primary:hover {
-            background-color: #388e3c; /* Darker green on hover */
-        }
-
-    .btn-secondary {
-        background-color: #a5d6a7; /* Light green */
-        color: #fff;
-    }
-
-        .btn-secondary:hover {
-            background-color: #66bb6a; /* Darker green on hover */
+            background-color: #48bb78;
         }
 </style>
+
+<h2>Your Profile</h2>
+
+<div class="card">
+    <div class="profile-pic">
+        <!-- Placeholder for profile picture -->
+        <img src="~/images/avatar-placeholder.png" alt="User Avatar" width="80" height="80" style="border-radius: 50%;">
+    </div>
+    <div class="card-title">Your profile in details:</div>
+    <ul>
+        <li><strong>Username:</strong> @Model.UserName</li>
+        <li><strong>Email:</strong> @Model.Email</li>
+        <li><strong>Phone:</strong> @Model.Phone</li>
+    </ul>
+    <a href="/Shop" class="btn-primary">Back</a>
+</div>
