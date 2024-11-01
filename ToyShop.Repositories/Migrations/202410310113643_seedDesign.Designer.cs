@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToyShop.Repositories.Base;
 
@@ -11,9 +12,11 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    partial class ToyShopDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241031233941_202410310113643_seedDesign")]
+    partial class _202410310113643_seedDesign
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
