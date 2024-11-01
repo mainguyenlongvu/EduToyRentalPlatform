@@ -44,17 +44,30 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<BasePaginatedList<ContractEntity>> GetContractsAsync(int pageNumber, int pageSize)
+        public async Task<BasePaginatedList<ContractEntity>> GetContractsAsync(int pageNumber, int pageSize, string searchTerm = null)
         {
             // Validate page number and page size
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
-            pageSize = pageSize < 1 ? 5 : pageSize;
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = Math.Max(pageSize, 5);
 
-            // Query for non-deleted contracts
+            // Start building the query for non-deleted contracts
             IQueryable<ContractEntity> contractsQuery = _unitOfWork.GetRepository<ContractEntity>().Entities
-                .Where(p => !p.DeletedTime.HasValue)
-                .OrderByDescending(p => p.CreatedTime);
+                .Where(p => !p.DeletedTime.HasValue) // Filter out deleted contracts
+                .Include(p => p.ApplicationUser); // Include ApplicationUser navigation property
 
+            // If a search term is provided, filter the results
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                contractsQuery = contractsQuery.Where(p =>
+                    p.Status.Contains(searchTerm) || // Filter by status
+                    p.ApplicationUser.FullName.Contains(searchTerm) // Filter based on User's Full Name
+                );
+            }
+
+            // Order by CreatedTime
+            contractsQuery = contractsQuery.OrderByDescending(p => p.DateCreated); // Assuming DateCreated is the field to order by
+
+            // Get total count for pagination
             int totalCount = await contractsQuery.CountAsync();
 
             // Apply pagination
@@ -63,8 +76,13 @@ namespace ToyShop.Contract.Services.Interface
                 .Take(pageSize)
                 .ToListAsync();
 
+            // Return the paginated list
             return new BasePaginatedList<ContractEntity>(paginatedContracts, totalCount, pageNumber, pageSize);
         }
+
+
+
+
 
         public async Task<ResponseContractModel> GetContractAsync(string id)
         {

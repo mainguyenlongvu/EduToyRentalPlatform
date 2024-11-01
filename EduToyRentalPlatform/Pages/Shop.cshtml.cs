@@ -21,7 +21,7 @@ namespace ToyShop.Pages
         public string SearchName { get; set; }
         public async Task OnGetAsync(int pageNumber = 1, int pageSize = 4)
         {
-            var toys = await _toyService.GetToysAsync(pageNumber, pageSize, null);
+            var toys = await _toyService.GetToysAsync(pageNumber, pageSize, true, SearchName);
 
             if (!string.IsNullOrEmpty(SearchName))
             {

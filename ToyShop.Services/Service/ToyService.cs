@@ -76,37 +76,51 @@ namespace ToyShop.Services.Service
         }
 
 
-        public async Task<BasePaginatedList<ResponeToyModel>> GetToysAsync(int pageNumber, int pageSize, bool? sortByName)
+        public async Task<BasePaginatedList<ResponeToyModel>> GetToysAsync(int pageNumber, int pageSize, bool? sortByName, string searchTerm)
         {
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
-            pageSize = pageSize < 1 ? 10 : pageSize;
+            // Ensure page number and page size are valid
+            pageNumber = Math.Max(1, pageNumber); // Use Math.Max for cleaner code
+            pageSize = Math.Max(10, pageSize);
 
+            // Build the base query
             IQueryable<Toy> toysQuery = _unitOfWork.GetRepository<Toy>().Entities
-                .Where(p => !p.DeletedTime.HasValue) // Những đồ chơi chưa có thời gian xoá trong DB (tức chưa được xoá) thì xuất hiện ngược lại thì không
-                .OrderByDescending(p => p.CreatedTime);
+                .Where(p => !p.DeletedTime.HasValue); // Exclude soft-deleted toys
 
-            // Sort by name if specified
+            // Apply search filter if a search term is provided
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                toysQuery = toysQuery.Where(p => p.ToyName.Contains(searchTerm)); // Filter by ToyName
+            }
+
+            // Apply sorting if specified
             if (sortByName.HasValue)
             {
                 toysQuery = sortByName.Value
-                    ? toysQuery.OrderBy(p => p.ToyName)
-                    : toysQuery.OrderByDescending(p => p.ToyName);
+                    ? toysQuery.OrderBy(p => p.ToyName) // Sort ascending
+                    : toysQuery.OrderByDescending(p => p.ToyName); // Sort descending
+            }
+            else
+            {
+                // If no sorting option is provided, keep the default sort
+                toysQuery = toysQuery.OrderByDescending(p => p.CreatedTime);
             }
 
-            // Total count of items
+            // Get total count of items after filtering
             int totalCount = await toysQuery.CountAsync();
 
             // Apply pagination
-            List<Toy> paginatedProducts = await toysQuery
+            List<Toy> paginatedToys = await toysQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
             // Map to response models
-            IReadOnlyCollection<ResponeToyModel> responseItems = _mapper.Map<IReadOnlyCollection<ResponeToyModel>>(paginatedProducts);
+            IReadOnlyCollection<ResponeToyModel> responseItems = _mapper.Map<IReadOnlyCollection<ResponeToyModel>>(paginatedToys);
 
+            // Create and return paginated response
             return new BasePaginatedList<ResponeToyModel>(responseItems, totalCount, pageNumber, pageSize);
         }
+
 
         public async Task<ResponeToyModel> GetToyAsync(string id)
         {
