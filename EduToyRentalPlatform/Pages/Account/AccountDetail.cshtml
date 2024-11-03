@@ -1,22 +1,96 @@
 ﻿@page
 @model ToyShop.Pages.Account.AccountDetailModel
+@{
+    ViewData["Title"] = "Your Profile";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
 
-<h1>Chi tiết tài khoản</h1>
+<!-- CSS nội tuyến -->
+<style>
+    body {
+        background-color: #f0f8f5; /* Màu nền xanh lá nhạt */
+        font-family: Arial, sans-serif;
+    }
+    /* Profile Header */
+    h2 {
+        color: #388e3c;
+        text-align: center;
+        font-weight: bold;
+        font-size: 2.5em;
+        margin-top: 20px;
+    }
 
-@if (Model.User != null)
-{
-    <div class="user-details">
-        <h3>@Model.User.UserName</h3>
-        <p><strong>Email:</strong> @Model.User.Email</p>
-        <p><strong>Số điện thoại:</strong> @Model.User.Phone</p>
-        <p><strong>Trạng thái:</strong> @(Model.User.DeletedTime.HasValue ? "Đã xóa" : "Hoạt động")</p>
+    /* Card Style */
+    .card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
+        width: 900px;
+        margin-top: 20px;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #c8e6c9; /* Soft green background */
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    /* User Info */
+    .card-title {
+        color: #388e3c;
+        font-size: 1.8em;
+        font-weight: bold;
+        margin: 0 0 15px;
+    }
+
+    .card ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        text-align: left;
+    }
+
+        .card ul li {
+            color: #4caf50;
+            font-size: 1.1em;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+    .btn-primary {
+        background-color: #68d391;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 1em;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        with:200px
+    }
+
+        .btn-primary:hover {
+            background-color: #48bb78;
+        }
+</style>
+
+<h2>Your Profile</h2>
+
+<div class="card">
+    <div class="profile-pic">
+        <!-- Placeholder for profile picture -->
+        <img src="~/images/avatar-placeholder.png" alt="User Avatar" width="80" height="80" style="border-radius: 50%;">
     </div>
-
-    @*  <a href="./Edit?id=@Model.User.Id" class="btn btn-primary">Chỉnh sửa</a> *@
-}
-else
-{
-    <p>Không tìm thấy thông tin người dùng.</p>
-}
-
-<a href="/Admin/Index" class="btn btn-secondary">Quay lại</a>
+    <div class="card-title">Your profile in details:</div>
+    <ul>
+        <li><strong>Username:</strong> @Model.UserName</li>
+        <li><strong>Email:</strong> @Model.Email</li>
+        <li><strong>Phone:</strong> @Model.Phone</li>
+    </ul>
+    <a href="/Shop" class="btn-primary">Back</a>
+</div>
