@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics.Contracts;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Repositories.Entity;
@@ -107,13 +108,32 @@ namespace ToyShop.Repositories.Base
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);  // Restrict deletion of user if they have chats
 
+            //Seed data of Toy
+
+            
         }
+
+
+		private static string GetConnectionString()
+		{
+			var path = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+			var config = new ConfigurationBuilder()
+				.SetBasePath(path + "\\EduToyRentalPlatform")
+				.AddJsonFile("appsettings.json")
+				.Build();
+
+			var optionsBuilder = new DbContextOptionsBuilder<ToyShopDBContext>();
+			var connectionString = config.GetConnectionString("ConnectionStrings:DBConnection");
+			return connectionString;
+		}
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Configure Lazy Loading Proxies here
             optionsBuilder.UseLazyLoadingProxies(); // or optionsBuilder.UseChangeTrackingProxies();
 
-            optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=ToyShop;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("ToyShop.Repositories"));
+            optionsBuilder.UseSqlServer("Data Source=CommunistPC\\COMMUNISM;Initial Catalog=ToyShop;Uid=sa;Pwd=123456;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("ToyShop.Repositories"));
         }
     }
 }
