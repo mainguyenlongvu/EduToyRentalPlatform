@@ -132,8 +132,15 @@ namespace ToyShop.Repositories.Base
         {
             // Configure Lazy Loading Proxies here
             optionsBuilder.UseLazyLoadingProxies(); // or optionsBuilder.UseChangeTrackingProxies();
+                                                    // Sử dụng ConfigurationBuilder để tải cấu hình từ appsettings.json
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-            optionsBuilder.UseSqlServer("Data Source=CommunistPC\\COMMUNISM;Initial Catalog=ToyShop;Uid=sa;Pwd=123456;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("ToyShop.Repositories"));
+            var connectionString = configuration.GetConnectionString("DBConnection");
+            optionsBuilder.UseSqlServer(connectionString);
+            //optionsBuilder.UseSqlServer("Data Source=CommunistPC\\COMMUNISM;Initial Catalog=ToyShop;Uid=sa;Pwd=12345;Integrated Security=True;Trust Server Certificate=True", b => b.MigrationsAssembly("ToyShop.Repositories"));
         }
     }
 }
