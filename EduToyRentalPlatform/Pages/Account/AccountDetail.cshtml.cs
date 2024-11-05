@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
-using ToyShop.ModelViews.UserModelViews; // Namespace of ApplicationDbContext
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ToyShop.ModelViews.UserModelViews; // Namespace of ApplicationDbContext
 using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 using ToyShop.Contract.Repositories.Entity;
@@ -28,13 +28,21 @@ namespace ToyShop.Pages.Account
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userName = HttpContext.Request.Cookies["UserName"];
-            if (userName == null)
+            // Get the UserId from cookies
+            var userIdString = HttpContext.Request.Cookies["UserId"];
+            if (userIdString == null)
             {
                 return RedirectToPage("/Account/Login");
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+            // Parse the UserId to Guid
+            if (!Guid.TryParse(userIdString, out Guid userId))
+            {
+                return RedirectToPage("/Account/Login"); // Redirect if parsing fails
+            }
+
+            // Find the user by UserId
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user != null)
             {
                 UserName = user.UserName;
@@ -53,13 +61,14 @@ namespace ToyShop.Pages.Account
 
         public async Task<IActionResult> OnPostBackAsync()
         {
-            var userName = HttpContext.Request.Cookies["UserName"];
-            if (userName == null)
+            // Get the UserId from cookies
+            var userId = HttpContext.Request.Cookies["UserId"];
+            if (userId == null)
             {
                 return RedirectToPage("/Account/Login");
             }
 
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return RedirectToPage("/Account/Login");
