@@ -114,18 +114,7 @@ namespace ToyShop.Repositories.Base
         }
 
 
-		private static string GetConnectionString()
-		{
-			var path = Directory.GetParent(Directory.GetCurrentDirectory()z).FullName;
-			var config = new ConfigurationBuilder()
-				.SetBasePath(path + "\\EduToyRentalPlatform")
-				.AddJsonFile("appsettings.json")
-				.Build();
 
-			var optionsBuilder = new DbContextOptionsBuilder<ToyShopDBContext>();
-			var connectionString = config.GetConnectionString("ConnectionStrings:DBConnection");
-			return connectionString;
-		}
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
