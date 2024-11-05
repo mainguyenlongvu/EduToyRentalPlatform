@@ -12,15 +12,15 @@ using ToyShop.Repositories.Base;
 namespace ToyShop.Repositories.Migrations
 {
     [DbContext(typeof(ToyShopDBContext))]
-    [Migration("20241031113643_initial")]
-    partial class initial
+    [Migration("20241031115709_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)

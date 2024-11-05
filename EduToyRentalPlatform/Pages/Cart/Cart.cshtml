@@ -4,115 +4,36 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<section class="h-100">
-    <div class="container h-100 py-5">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-10">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-normal mb-0">Shopping Cart</h3>
-                </div>
+<h2>Your Cart</h2>
 
-                @* Repeat this block for each product in the cart *@
-                <div class="card rounded-3 mb-4">
-                    <div class="card-body p-4">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTl7_5kHtFLHA2t5Zwb6QRpeiX8URyAfDJmyA&s"
-                                     class="img-fluid rounded-3" alt="Toy Image">
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-3">
-                                <p class="lead fw-normal mb-2">Toy 1</p>
-                                <p><span class="text-muted">Amazing toy for kid to study English</span></p>
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input min="0" name="quantity" value="2" type="number" class="form-control form-control-sm" />
-                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <div>
-                                    <input type="radio" id="rent1" name="purchaseOption1" checked onclick="updatePrice('price1', '150.000', '200000')" />
-                                    <label for="rent1">Rent</label>
-                                    <input type="radio" id="buy1" name="purchaseOption1" onclick="updatePrice('price1', '150.000', '200.000')" />
-                                    <label for="buy1">Buy</label>
-                                </div>
-                                <h5 class="mb-0" id="price1">150.000/h</h5>
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                            </div>
-                        </div>
+@if (Model.MyCart.Any())
+{
+    foreach (var item in Model.MyCart)
+    {
+        <div class="card rounded-3 mb-4">
+            <div class="card-body p-4">
+                <div class="row d-flex justify-content-between align-items-center">
+                    <div class="col-md-2 col-lg-2 col-xl-2">
+                        <img src="@item.Toy.Id" class="img-fluid rounded-3" alt="Toy Image">
                     </div>
-                </div>
-
-                <div class="card rounded-3 mb-4">
-                    <div class="card-body p-4">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img src="https://down-vn.img.susercontent.com/file/8b80b4774839c0850ba376bc4c8c144c"
-                                     class="img-fluid rounded-3" alt="Toy Image">
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-3">
-                                <p class="lead fw-normal mb-2">Toy 2</p>
-                                <p><span class="text-muted">Amazing toy for kid to learn alphabet</span></p>
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input min="0" name="quantity" value="1" type="number" class="form-control form-control-sm" />
-                                <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <div>
-                                    <input type="radio" id="rent2" name="purchaseOption2" checked onclick="updatePrice('price2', '120.000', '180000')" />
-                                    <label for="rent2">Rent</label>
-                                    <input type="radio" id="buy2" name="purchaseOption2" onclick="updatePrice('price2', '120.000', '180.000')" />
-                                    <label for="buy2">Buy</label>
-                                </div>
-                                <h5 class="mb-0" id="price2">120.000/h</h5>
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                            </div>
-                        </div>
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                        <p class="lead fw-normal mb-2">@item.Toy.ToyName</p>
+                        @*<p><span class="text-muted">Option: @item.Option</span></p>*@
                     </div>
-                </div>
-                @* Add similar blocks for other products *@
-
-                <div class="card mb-4">
-                    <div class="card-body p-4 d-flex flex-row align-items-center">
-                        <div class="form-outline flex-fill">
-                            <input type="text" id="form1" class="form-control form-control-lg" placeholder="Enter Discount Code" />
-                        </div>
-                        <button type="button" class="btn btn-outline-warning btn-lg ms-3">Apply</button>
+                    <div class="col-md-3 col-lg-3 col-xl-2">
+                        <p>Quantity: @item.Quantity</p>
                     </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <button type="button"
-                                class="btn btn-warning btn-block btn-lg"
-                                style="width: 100%;"
-                                onclick="window.location.href = '@Url.Page("/Cart/Checkout")';">
-                            Checkout
-                        </button>
+                    <div class="col-md-3 col-lg-2 col-xl-2">
+                        <h5 class="mb-0">@item.Toy.ToyPriceSale.ToString("C")</h5>
+                    </div><div class="col-md-3 col-lg-2 col-xl-2">
+                        <h5 class="mb-0">@item.Toy.ToyPriceRent.ToString("C")</h5>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<script>
-    function updatePrice(priceId, rentPrice, buyPrice) {
-        const priceElement = document.getElementById(priceId);
-        priceElement.innerText = document.getElementById(priceId.replace('price', 'rent')).checked ? `${rentPrice}/h` : `${buyPrice}/h`;
     }
-</script>
+}
+else
+{
+    <p>Your cart is empty.</p>
+}
