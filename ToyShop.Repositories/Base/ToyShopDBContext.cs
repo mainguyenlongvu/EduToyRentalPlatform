@@ -116,7 +116,7 @@ namespace ToyShop.Repositories.Base
 
 		private static string GetConnectionString()
 		{
-			var path = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+			var path = Directory.GetParent(Directory.GetCurrentDirectory()z).FullName;
 			var config = new ConfigurationBuilder()
 				.SetBasePath(path + "\\EduToyRentalPlatform")
 				.AddJsonFile("appsettings.json")
