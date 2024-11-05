@@ -6,7 +6,7 @@
 
 <h2>Your Cart</h2>
 
-@if (Model.MyCart.Any())
+@if (Model.MyCart != null)
 {
     foreach (var item in Model.MyCart)
     {
