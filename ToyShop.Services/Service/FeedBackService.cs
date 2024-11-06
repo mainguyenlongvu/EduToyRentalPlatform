@@ -25,7 +25,7 @@ namespace ToyShop.Services.Service
             var feedback = await _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue);
 
             // Check if feedback is null
             if (feedback == null)
@@ -100,6 +100,7 @@ namespace ToyShop.Services.Service
             IQueryable<FeedBack> feedbacksQuery = _unitOfWork.GetRepository<FeedBack>().Entities
                 .Include(f => f.User) // Include User details
                 .Include(f => f.Toy)  // Include Toy details
+                .Where(x=>!x.DeletedTime.HasValue)
                 .OrderByDescending(p => p.CreatedTime);
 
             // Sort by CreatedTime if specified
@@ -192,7 +193,7 @@ namespace ToyShop.Services.Service
         public async Task<bool> UpdateFeedBackAsync(string id, ResponeFeedBackModel model)
         {
             // Lấy phản hồi - kiểm tra sự tồn tại
-            FeedBack feedback = await _unitOfWork.GetRepository<FeedBack>().Entities.FirstOrDefaultAsync(p => p.Id == id)
+            FeedBack feedback = await _unitOfWork.GetRepository<FeedBack>().Entities.FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new Exception("The feedback cannot be found!");
 
             // Kiểm tra nội dung không được để trống

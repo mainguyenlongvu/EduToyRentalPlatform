@@ -9,6 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using ToyShop.Core.Constants;
+using Castle.Core.Resource;
+using ToyShop.Contract.Repositories.PaggingItems;
+using Azure.Core;
+using ToyShop.Core.Base;
+using System.Text.RegularExpressions;
+
 
 namespace ToyShop.Services.Service
 {
@@ -20,6 +28,7 @@ namespace ToyShop.Services.Service
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IConfiguration _configuration;
+        private const string customer = "Customer";
 
         public UserService(IHttpContextAccessor _httpContextAccessor1, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IPasswordHasher<ApplicationUser> passwordHasher)
         {
@@ -28,6 +37,35 @@ namespace ToyShop.Services.Service
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _configuration = configuration;
+        }
+        public async Task ChangPasswordAsync(ChangPasswordModel model)
+        {
+            // Mã hóa mật khẩu
+            string hashedPassword = CoreHelper.HashPassword(model.Password);
+            //kiểm tra user có tồn tại
+            ApplicationUser? user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && (x.Email == model.UserName || x.UserName == model.UserName) && x.Password == model.Password).FirstOrDefaultAsync() ??
+                throw new Exception("Vui lòng điền tên đăng nhập và mật khẩu");
+            //Điều kiện
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                throw new Exception("Vui lòng điền mật khẩu và xác nhận mật khẩu giống nhau");
+            }
+            if (model.NewPassword.Length < 6)
+            {
+                throw new Exception("Vui lòng điền mật khẩu dài hơn 6 kí tự");
+            }
+            //Gán vào user
+            user.Password = model.NewPassword;
+            user.PasswordHash = hashedPassword;
+
+            List<string> selectedEmail = new List<string> { user.Email!.ToLower() };
+            string body = $"<p>Mật khẩu của bạn đổi thàng công vào lúc: <strong>{CoreHelper.SystemTimeNow}</strong></p>";
+            //gửi email xác thực tài khoản
+            //await _emailService.SendEmailAsync(selectedEmail, "Đổi mật khẩu tài khoản", body);
+            //Cập nhật vào Db
+            await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+
         }
         public async Task<ApplicationUser> GetUserByIdAsync(string userId)
         {
@@ -39,7 +77,66 @@ namespace ToyShop.Services.Service
 
             return await userRepository.Entities.FirstOrDefaultAsync(u => u.Id.ToString() == userId && !u.DeletedTime.HasValue);
         }
+        public async Task<ApplicationUser> GetUserAsync(LoginModel model)
+        {
+            var userRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            if (userRepository == null)
+            {
+                throw new Exception("User repository is null.");
+            }
 
+            return await userRepository.Entities.FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
+        }
+        public async Task<BasePaginatedList<ApplicationUser>> GetPageAsync(int index, int pageSize, string nameSearch)
+        {
+            //điều kiện index
+            if (index <= 0)
+            {
+                throw new Exception("Vui lòng nhập index lớn hơn 0");
+            }
+            //điều kiện index
+            if (pageSize <= 0)
+            {
+                throw new Exception("Vui lòng nhập pageSize lớn hơn 0");
+            }
+            //Lấy UserId
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"]!;
+            // chuyển về form in hoa
+            string idUser = userId.ToUpper();
+            //chuyển về kiểu Guid
+            Guid.TryParse(idUser, out Guid guid);
+            // Giả sử trả về IQueryable<ApplicationUser>
+            IQueryable<ApplicationUser> query = _unitOfWork.GetRepository<ApplicationUser>().Entities;
+
+            // Lấy vai trò "Customer"
+            ApplicationRole? customerRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+                                             .Where(r => r.Name == customer && r.DeletedTime == null)
+                                             .FirstOrDefaultAsync();
+            // Lọc các tài khoản vai trò là "Customer" 
+            if (customerRole != null)
+            {
+                List<Guid> userRoles = await _unitOfWork.GetRepository<ApplicationUserRoles>().Entities
+                                            .Where(ur => ur.RoleId == customerRole.Id && ur.DeletedTime == null)
+                                            .Select(ur => ur.UserId)
+                                            .ToListAsync();
+
+                query = query.Where(lp => userRoles.Contains(lp.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(nameSearch))
+            {
+                query = query.Where(lp => lp.FullName.Contains(nameSearch));
+            }
+
+            //Lọc tài khoản chưa xóa, đã được kích hoạt và khác tài khoản mình
+            //query = query.Where(x => !x.DeletedTime.HasValue && x.EmailConfirmed == true && x.Id != guid);
+            query = query.OrderBy(e => e.FullName);
+
+            BasePaginatedList<ApplicationUser> resultQuery = await _unitOfWork.GetRepository<ApplicationUser>().GetPagging(query, index, pageSize);
+
+
+            return resultQuery;
+        }
         public async Task<string> LoginAsync(LoginModel model)
         {
 
@@ -81,8 +178,6 @@ namespace ToyShop.Services.Service
                 _ => "/Shop"
             };
         }
-
-
         public async Task<bool> RegisterAsync(RegisterModel model)
         {
             // Kiểm tra xem người dùng đã tồn tại chưa
@@ -136,8 +231,189 @@ namespace ToyShop.Services.Service
 
             return true;
         }
+        public async Task ChangPasswordAdminAsync(ChangPasswordAdminModel model)
+        {
+            //
+            string passwordValid = CoreHelper.HashPassword(model.NewPassword);
+
+            //kiểm tra user có tồn tại
+            ApplicationUser? user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && x.Id == model.Id).FirstOrDefaultAsync() ??
+                throw new Exception("Không tìm thấy tài khoản");
+            //Gán vào user
+            user.Password = model.NewPassword;
+            user.PasswordHash = passwordValid;
+            //Cập nhật vào Db
+            await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+
+        }
+        //public async Task CreateCustomer(CreateCustomerModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
+        //    {
+        //        throw new ErrorException(StatusCodes.Status406NotAcceptable, ResponseCodeConstants.INVALID_INPUT, "Vui lòng điền tên đăng nhập và mật khẩu");
+        //    }
+        //    ApplicationUser? existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.UserName == model.Username && x.DeletedTime == null).FirstOrDefaultAsync();
+
+        //    // kiểm tra nếu người dùng tồn tại và không bị xóa mềm
+        //    if (existingUser != null)
+        //    {
+        //        throw new Exception("Tên đăng nhập đã tồn tại");
+        //    }
+        //    //Kiểm tra role
+        //    ApplicationRole existedRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities.Where(x => x.Name == "Customer").FirstOrDefaultAsync() ??
+        //        throw new Exception("Vai trò không tồn tại");
+        //    //kiểm tra email
+        //    ApplicationUser? existingEmail = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.Email == model.Email!.ToLower() && x.DeletedTime == null).FirstOrDefaultAsync();
+
+        //    // kiểm tra nếu email tồn tại và không bị xóa mềm
+        //    if (existingEmail != null)
+        //    {
+        //        throw new Exception("Email đã tồn tại");
+        //    }
+        //    //kiểm tra sđt
+        //    ApplicationUser? existingPhone = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.PhoneNumber == model.PhoneNumber && x.DeletedTime == null).FirstOrDefaultAsync();
+        //    // kiểm tra nếu email tồn tại và không bị xóa mềm
+        //    if (existingPhone != null)
+        //    {
+        //        throw new Exception("Số điện thoại đã tồn tại");
+        //    }
+        //    //kiểm tra số đt
+        //    if (!IsValidPhoneNumber(model.PhoneNumber!))
+        //    {
+        //        throw new ErrorException(StatusCodes.Status406NotAcceptable, ResponseCodeConstants.INVALID_INPUT, "Số điện thoại không hợp lệ.");
+
+        //    }
+        //    // Kiểm tra mật khẩu không chứa khoảng trắng và ký tự có dấu
+        //    if (string.IsNullOrWhiteSpace(model.Password)
+        //        || model.Password.Any(char.IsWhiteSpace)
+        //        || model.Password.Any(c => char.IsLetter(c) && c > 127))
+        //    {
+        //        throw new ErrorException(StatusCodes.Status406NotAcceptable, ResponseCodeConstants.INVALID_INPUT, "Mật khẩu không hợp lệ");
+        //    }
+
+        //    ApplicationUser user = new ApplicationUser
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        UserName = model.Username,
+        //        Email = model.Email!.ToLower(),
+        //        FullName = model.FullName!,
+        //        Password = model.Password,
+        //        PhoneNumber = model.PhoneNumber,
+        //        SecurityStamp = Guid.NewGuid().ToString(),
+        //    };
+        //    // Tạo mã code ngẫu nhiên và hash nó
+        //    string code = new Random().Next(1000, 9999).ToString();
+
+        //    //gán vào user
+        //    //user.EmailCode = code;
+        //    List<string> selectedEmail = new List<string> { model.Email.ToLower() };
+        //    string body = $"<p>Code kích hoạt tài khoản của bạn là: <strong>{code}</strong></p>";
+        //    //gửi email xác thực tài khoản
+        //    await _emailService.SendEmailAsync(selectedEmail, "Code kích hoạt tài khoản", body);
 
 
+        //    FixedSaltPasswordHasher<ApplicationUser> passwordHasher = new FixedSaltPasswordHasher<ApplicationUser>(Options.Create(new PasswordHasherOptions()));
+
+        //    //var hashedInputPassword = HashPasswordService.HashPasswordTwice(request.Password);
+        //    user.PasswordHash = passwordHasher.HashPassword(user, model.Password);
+
+        //    //var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
+        //    ApplicationUserRoles userRole = new ApplicationUserRoles()
+        //    {
+        //        UserId = user.Id,
+        //        RoleId = existedRole.Id,
+        //    };
+        //    await _unitOfWork.GetRepository<ApplicationUserRoles>().InsertAsync(userRole);
+        //    await _unitOfWork.GetRepository<ApplicationUser>().InsertAsync(user);
+        //    await _unitOfWork.SaveAsync();
+        //}
+        static bool IsValidPhoneNumber(string phoneNumber)
+        {
+            // Mẫu regex để kiểm tra số điện thoại, bạn có thể tùy chỉnh theo yêu cầu cụ thể
+            string pattern = @"^(\+84|0)([3|5|7|8|9])+([0-9]{8})$";
+
+            // Sử dụng Regex để kiểm tra
+            Regex regex = new Regex(pattern);
+            return regex.IsMatch(phoneNumber);
+        }
+        public async Task UpdateCustomerAsync(Guid id, UpdateCustomerModel model)
+        {
+            //Tìm người dùng
+            ApplicationUser? existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.Id == id && x.DeletedTime == null).FirstOrDefaultAsync() ??
+                throw new Exception("Người dùng không tồn tại");
+            if (existingUser.Email != model.Email)
+            {
+                //kiểm tra email
+                ApplicationUser? existingEmail = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.Email == model.Email.ToLower() && x.DeletedTime == null).FirstOrDefaultAsync();
+                // kiểm tra nếu email tồn tại và không bị xóa mềm
+                if (existingEmail != null)
+                {
+                    throw new Exception("Email đã tồn tại");
+                }
+            }
+            //khi thay đổi mới đk
+            if (existingUser.PhoneNumber != model.Phone)
+            {
+                //kiểm tra sđt
+                ApplicationUser? existingPhone = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.PhoneNumber == model.Phone && x.DeletedTime == null).FirstOrDefaultAsync();
+                // kiểm tra nếu email tồn tại và không bị xóa mềm
+                if (existingPhone != null)
+                {
+                    throw new Exception("Số điện thoại đã tồn tại");
+                }
+            }
+
+            //kiểm tra số đt
+            if (!IsValidPhoneNumber(model.Phone))
+            {
+                throw new Exception("Số điện thoại không hợp lệ.");
+
+            }
+            // Tạo mã code ngẫu nhiên và hash nó
+            string code = new Random().Next(1000, 9999).ToString();
+            List<string> selectedEmail = new List<string> { model.Email.ToLower() };
+            string body = $"<p>Code kích hoạt tài khoản của bạn là:: <strong>{code}</strong></p>";
+            //gửi email xác thực tài khoản
+            //await _emailService.SendEmailAsync(selectedEmail, "Code kích hoạt tài khoản", body);
+            //kiểm tra xem phone có trống không
+            if (string.IsNullOrWhiteSpace(model.Phone))
+            {
+                throw new Exception("Không để số điện thoại trống");
+            }
+            //kiểm tra xem name có trống không
+            if (string.IsNullOrWhiteSpace(model.FullName))
+            {
+                throw new Exception("Không để số tên trống");
+            }
+            //Gán vào user
+            existingUser.FullName = model.FullName;
+            existingUser.Email = model.Email;
+            existingUser.EmailConfirmed = false;
+            existingUser.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            existingUser.NormalizedEmail = model.Email.ToUpper();
+            //existingUser.EmailCode = code.ToString();
+            existingUser.Phone = model.Phone;
+            existingUser.FullName = model.FullName;
+
+            //Lưu thay đổi
+            await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
+            await _unitOfWork.SaveAsync();
+        }
+        public async Task DeleteUserAsync(string id)
+        {
+            //Đổi qua guid
+            Guid.TryParse(id, out Guid guid);
+
+            //Check xem có id của voucher không
+            ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && x.Id == guid).FirstOrDefaultAsync() ??
+                throw new Exception("Không tìm thấy tài khoản");
+
+            //Cập nhật
+            user.DeletedTime = CoreHelper.SystemTimeNow;
+            await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+        }
     }
 
 
