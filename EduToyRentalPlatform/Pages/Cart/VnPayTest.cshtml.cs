@@ -1,38 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
 using ToyShop.Contract.Services.Interface;
-using ToyShop.ModelViews.ContractDetailModelView;
-using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.PaymentModelView;
-using ToyShop.ModelViews.TransactionModelView;
+using ToyShop.Services.Service;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
-    public class CheckoutModel : PageModel
+    public class VnPayTestModel : PageModel
     {
+
         private IVnPayService _vnPayService;
 
-
-
-        public CheckoutModel(IVnPayService vnPayService)
+        public VnPayTestModel(IVnPayService vnpay)
         {
-            _vnPayService = vnPayService;
+            _vnPayService = vnpay;
         }
-
-
-        [BindProperty]
-        public bool isTopUp { get; set; }
-
-
-        [BindProperty]
-        public CreateContractModel CreateContractModel { get; set; }
-
-        [BindProperty]
-        public CreateContractDetailModel CreateContractDetailModel { get; set; }
-
-        [BindProperty]
-        public CreateTransactionModel CreateTransactionModel { get; set; }
-
 
         public void OnGet()
         {
@@ -47,39 +30,40 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
 
         [ValidateAntiForgeryToken]
-        public void OnPost() 
+        public IActionResult OnPost()
         {
-            Console.WriteLine("VnPay OnPost Called");
+            Console.WriteLine("OnPost Called");
             var model = new VnPayRequestModel()
             {
-                OrderType = isTopUp ? "260000" : "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
-                Amount = Double.Parse(CreateContractModel.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan don hang {CreateTransactionModel.TranCode}",
-                Name = "EduToyRent thanh toan",
+                OrderType = "110000",
+                Amount = 1000,
+                OrderDescription = "Test thanh toan vnpay",
+                Name = "Do Choi",
                 IpAddress = "127.0.0.1"
             };
             string url = CreatePaymentUrl(model, HttpContext);
-            
-            Response.Redirect(url);         
+            return Redirect(url);
         }
-
-        
 
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
             return url;
         }
+
+        
+        
         public void PaymentCallBack()
         {
             Console.WriteLine("VnPay Callback called");
             var response = _vnPayService.PaymentExecute(Request.Query);
-
+            
             if (response == null || !response.VnPayResponseCode.Equals("00"))
             {
                 Response.Redirect("TestFailed");
                 return;
             }
+            Console.WriteLine(response.ToString);
             Response.Redirect("TestSuccess");
         }
     }

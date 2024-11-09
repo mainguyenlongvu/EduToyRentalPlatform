@@ -43,6 +43,12 @@ namespace ToyShop.Services.Service
 			var paymentUrl =
 				pay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
 
+            Console.WriteLine("version: " + _configuration["Vnpay:Version"]);
+			Console.WriteLine("Command: " + _configuration["Vnpay:Command"]);
+            Console.WriteLine("TmnCode: "+ _configuration["Vnpay:TmnCode"]);
+
+
+
 			return paymentUrl;
 		}
 
@@ -50,38 +56,9 @@ namespace ToyShop.Services.Service
 		{
 			var pay = new VnPayLibrary();
 
-			foreach (var (key, value) in collections)
-			{
-				if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
-				{
-					pay.AddResponseData(key, value);
-				}
-			}
+			var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
-			var orderId = Convert.ToInt64(pay.GetResponseData("vnp_TxnRef"));
-			var vnPayTranId = Convert.ToInt64(pay.GetResponseData("vnp_TransactionNo"));
-			var vnpResponseCode = pay.GetResponseData("vnp_ResponseCode");
-			var vnpSecureHash = collections.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
-			var orderInfo = pay.GetResponseData("vnp_OrderInfo");
-			var checkSignature = pay.ValidateSignature(vnpSecureHash, _configuration["Vnpay:HashSecret"]); //check Signature
-
-			if (!checkSignature)
-				return new VnPayResponseModel()
-				{
-					Success = false
-				};
-
-			return new VnPayResponseModel()
-			{
-				Success = true,
-				PaymentMethod = "VnPay",
-				OrderDescription = orderInfo,
-				OrderId = orderId.ToString(),
-				PaymentId = vnPayTranId.ToString(),
-				TransactionId = vnPayTranId.ToString(),
-				Token = vnpSecureHash,
-				VnPayResponseCode = vnpResponseCode
-			};
+			return response;
 		}
 	}
 }
