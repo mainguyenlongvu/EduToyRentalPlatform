@@ -11,18 +11,28 @@ namespace EduToyRentalPlatform.Pages.Cart
     public class CheckoutModel : PageModel
     {
         private IVnPayService _vnPayService;
+        private IContractService _contractService;  
+        private IContractDetailService _contractDetailService;
+        private ITransactionService _transactionService;
 
 
-
+        #region constructors
         public CheckoutModel(IVnPayService vnPayService)
         {
             _vnPayService = vnPayService;
         }
 
+        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, IContractDetailService contractDetailService, ITransactionService transactionService) : this(vnPayService)
+        {
+            _contractService = contractService;
+            _contractDetailService = contractDetailService;
+            _transactionService = transactionService;
+        }
+
+        #endregion
 
         [BindProperty]
-        public bool isTopUp { get; set; }
-
+        public bool IsTopUp { get; set; }
 
         [BindProperty]
         public CreateContractModel CreateContractModel { get; set; }
@@ -49,10 +59,11 @@ namespace EduToyRentalPlatform.Pages.Cart
         [ValidateAntiForgeryToken]
         public void OnPost() 
         {
+            
             Console.WriteLine("VnPay OnPost Called");
             var model = new VnPayRequestModel()
             {
-                OrderType = isTopUp ? "260000" : "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
+                OrderType = IsTopUp ? "260000" : "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(CreateContractModel.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan don hang {CreateTransactionModel.TranCode}",
                 Name = "EduToyRent thanh toan",
@@ -80,7 +91,19 @@ namespace EduToyRentalPlatform.Pages.Cart
                 Response.Redirect("TestFailed");
                 return;
             }
+
             Response.Redirect("TestSuccess");
         }
+
+        public void OnTopUpSuccess()
+        {
+
+        }
+
+        public void OnPurchaseSuccess()
+        {
+
+        }
+
     }
 }
