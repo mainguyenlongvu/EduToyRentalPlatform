@@ -92,17 +92,25 @@ namespace EduToyRentalPlatform.Pages.Cart
                 return;
             }
 
+            if (IsTopUp)
+                OnTopUpSuccess();
+            else
+                OnPurchaseSuccess();
+
             Response.Redirect("TestSuccess");
         }
 
-        public void OnTopUpSuccess()
+        public async void OnTopUpSuccess()
         {
-
+            await _contractService.CreateContractAsync(CreateContractModel);
+            await _transactionService.Insert(CreateTransactionModel);
         }
 
-        public void OnPurchaseSuccess()
+        public async void OnPurchaseSuccess()
         {
-
+            await _contractService.CreateContractAsync(CreateContractModel);
+            await _contractDetailService.CreateContractDetailAsync(CreateContractDetailModel);
+            await _transactionService.Insert(CreateTransactionModel);
         }
 
     }
