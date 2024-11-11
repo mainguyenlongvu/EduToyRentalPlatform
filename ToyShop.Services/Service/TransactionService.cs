@@ -22,11 +22,9 @@ namespace ToyShop.Services.Service
 		{
 			try
 			{
-				if (_unitOfWork.GetRepository<Transaction>().GetById(id) is null)
-				{
-					throw new KeyNotFoundException($"Transaction with id {id} not found");
-				}
-                _unitOfWork.GetRepository<Transaction>().Delete(id);
+				var transaction = _unitOfWork.GetRepository<Transaction>().Entities.FirstOrDefault(x=>!x.DeletedTime.HasValue && x.Id == id) ?? throw new KeyNotFoundException($"Transaction with id {id} not found");
+				
+                _unitOfWork.GetRepository<Transaction>().Delete(transaction.Id);
 				await _unitOfWork.SaveAsync();
 				return false;
 			}
@@ -44,7 +42,7 @@ namespace ToyShop.Services.Service
 		{
 			try
 			{
-				var transactions = await _unitOfWork.GetRepository<Transaction>().GetAllAsync();
+				var transactions = await _unitOfWork.GetRepository<Transaction>().Entities.Where(x=>!x.DeletedTime.HasValue).ToListAsync();
 				return transactions.Select(d => _mapper.Map<ResponseTransactionModel>(d));
 			}
 			catch (Exception ex)
@@ -57,9 +55,8 @@ namespace ToyShop.Services.Service
 		{
 			try
 			{
-				var transaction = await _unitOfWork.GetRepository<Transaction>().GetByIdAsync(id);
-				return transaction == null ? throw new KeyNotFoundException($"Transaction with id {id} not found.")
-					: _mapper.Map<ResponseTransactionModel>(transaction);
+                var transaction = _unitOfWork.GetRepository<Transaction>().Entities.FirstOrDefault(x => !x.DeletedTime.HasValue && x.Id == id) ?? throw new KeyNotFoundException($"Transaction with id {id} not found");
+                return  _mapper.Map<ResponseTransactionModel>(transaction);
 			}
 			catch (Exception ex) when (ex is KeyNotFoundException)
 			{
@@ -82,7 +79,7 @@ namespace ToyShop.Services.Service
                 }
 
                 // Get the repository and prepare the query
-                var query = _unitOfWork.GetRepository<Transaction>().Entities;
+                var query = _unitOfWork.GetRepository<Transaction>().Entities.Where(x=>!x.DeletedTime.HasValue);
 
                 // Get total count asynchronously
                 var totalItems = await query.CountAsync();
@@ -120,8 +117,7 @@ namespace ToyShop.Services.Service
 			}
 			try
 			{
-				var contract = await _unitOfWork.GetRepository<ToyShop.Contract.Repositories.Entity.ContractEntity>()
-					.GetByIdAsync(transactionCreate.ContractId) ?? throw new KeyNotFoundException("Contract not found.");
+				var contract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x=>x.Id == transactionCreate.ContractId && !x.DeletedTime.HasValue) ?? throw new KeyNotFoundException("Contract not found.");
 				Transaction transaction = _mapper.Map<Transaction>(transactionCreate);
 
 				await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
@@ -148,11 +144,10 @@ namespace ToyShop.Services.Service
             }
             try
             {
-				Transaction existingTransaction = _unitOfWork.GetRepository<Transaction>().Entities.AsNoTracking().FirstOrDefault(d => d.TranCode == tranCode)
+				Transaction existingTransaction = _unitOfWork.GetRepository<Transaction>().Entities.AsNoTracking().FirstOrDefault(d => d.TranCode == tranCode && !d.DeletedTime.HasValue)
 					?? throw new KeyNotFoundException("Transaction not found.");
 
-				Contract.Repositories.Entity.ContractEntity contract = await _unitOfWork.GetRepository<Contract.Repositories.Entity.ContractEntity>()
-					.GetByIdAsync(transactionDTO.ContractId)
+				ContractEntity contract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x=>x.Id == transactionDTO.ContractId && !x.DeletedTime.HasValue)
 					?? throw new KeyNotFoundException($"Contract with id {transactionDTO.ContractId} not found.");
 
                 CreateTransactionModel createModel = _mapper.Map<CreateTransactionModel>(transactionDTO);
