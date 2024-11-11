@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToyShop.ModelViews.GmailModel
 {
-	public class EmailRequestDto
+	public class EmailRequestModel
 	{
 
 		public string ReceiverEmail { get; set; }

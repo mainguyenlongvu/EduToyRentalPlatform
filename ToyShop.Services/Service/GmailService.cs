@@ -28,7 +28,7 @@ namespace ToyShop.Services.Service
 				.Build();
 		}
 
-		public bool SendEmailSingle(EmailRequestDto request)
+		public bool SendEmailSingle(EmailRequestModel request)
 		{
 			try
 			{
