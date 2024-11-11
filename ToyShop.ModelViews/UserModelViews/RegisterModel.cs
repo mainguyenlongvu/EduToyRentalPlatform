@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace ToyShop.ModelViews.UserModelViews
 
         [Required(ErrorMessage = "Vai trò là bắt buộc.")]
         public string RoleName { get; set; }
+        [Required(ErrorMessage = "Ảnh đại diện là bắt buộc.")]
+        public required IFormFile Image { get; set; }
     }
 
 }

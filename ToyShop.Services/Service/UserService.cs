@@ -204,6 +204,7 @@ namespace ToyShop.Services.Service
                 PasswordHash = hashedPassword, // Gán mật khẩu đã mã hóa
                 Phone = model.Phone,
                 CreatedTime = DateTime.UtcNow,
+                ImageUrl = await FileUploadHelper.UploadFile(model.Image)
             };
 
             try
