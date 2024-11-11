@@ -13,7 +13,6 @@
     "https": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "Cart/VnPayTest",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
