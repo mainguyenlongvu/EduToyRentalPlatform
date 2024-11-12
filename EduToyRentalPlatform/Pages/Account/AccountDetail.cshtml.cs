@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ToyShop.ModelViews.UserModelViews; // Namespace of ApplicationDbContext
+using ToyShop.ModelViews.UserModelViews;
 using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 using ToyShop.Contract.Repositories.Entity;
@@ -16,9 +17,25 @@ namespace ToyShop.Pages.Account
         private readonly ToyShopDBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public string UserName { get; private set; }
-        public string Email { get; private set; }
-        public string Phone { get; private set; }
+        public string Email { get; private set; } // Email is non-editable
+
+        // Editable properties
+        [BindProperty]
+        [Required(ErrorMessage = "User name is required.")]
+        public string UserName { get; set; }
+
+        [BindProperty]
+        [Phone(ErrorMessage = "Invalid phone number format.")]
+        public string Phone { get; set; }
+
+        [BindProperty]
+        [DataType(DataType.Password)]
+        public string NewPassword { get; set; }
+
+        [BindProperty]
+        [DataType(DataType.Password)]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; }
 
         public AccountDetailModel(ToyShopDBContext context, UserManager<ApplicationUser> userManager)
         {
@@ -28,20 +45,19 @@ namespace ToyShop.Pages.Account
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Get the UserId from cookies
+            // Retrieve UserId from cookies
             var userIdString = HttpContext.Request.Cookies["UserId"];
             if (userIdString == null)
             {
                 return RedirectToPage("/Account/Login");
             }
 
-            // Parse the UserId to Guid
             if (!Guid.TryParse(userIdString, out Guid userId))
             {
-                return RedirectToPage("/Account/Login"); // Redirect if parsing fails
+                return RedirectToPage("/Account/Login");
             }
 
-            // Find the user by UserId
+            // Load the user by UserId
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user != null)
             {
@@ -59,9 +75,61 @@ namespace ToyShop.Pages.Account
             return Page();
         }
 
+        public async Task<IActionResult> OnPostUpdateAsync()
+        {
+            // Retrieve UserId from cookies
+            var userIdString = HttpContext.Request.Cookies["UserId"];
+            if (userIdString == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            if (!Guid.TryParse(userIdString, out Guid userId))
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return RedirectToPage("/Account/Login");
+            }
+
+            // Update user properties
+            user.UserName = UserName;
+            user.Phone = Phone;
+
+            // Update password if a new one is provided
+            if (!string.IsNullOrWhiteSpace(NewPassword))
+            {
+                var result = await _userManager.RemovePasswordAsync(user);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Failed to remove old password.");
+                    return Page();
+                }
+
+                result = await _userManager.AddPasswordAsync(user, NewPassword);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Failed to set new password.");
+                    return Page();
+                }
+            }
+
+            // Save changes to the database
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Failed to update user information.");
+                return Page();
+            }
+
+            return RedirectToPage("/Account/AccountDetail");
+        }
+
         public async Task<IActionResult> OnPostBackAsync()
         {
-            // Get the UserId from cookies
             var userId = HttpContext.Request.Cookies["UserId"];
             if (userId == null)
             {
@@ -74,17 +142,9 @@ namespace ToyShop.Pages.Account
                 return RedirectToPage("/Account/Login");
             }
 
-            // Check if the user is in the "Admin" role
             bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
 
-            if (isAdmin)
-            {
-                return RedirectToPage("/Admin/Index");
-            }
-            else
-            {
-                return RedirectToPage("/Shop");
-            }
+            return isAdmin ? RedirectToPage("/Admin/Index") : RedirectToPage("/Shop");
         }
     }
 }
