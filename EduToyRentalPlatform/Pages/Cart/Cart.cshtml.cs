@@ -5,12 +5,14 @@ using ToyShop.ModelViews.ToyModelViews;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Repositories.Interface;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
     public class CartModel : PageModel
     {
-        private readonly IToyService _toyService;
+            private readonly IUnitOfWork _unitOfWork;
+            private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CartModel(IToyService toyService)
         {
@@ -27,46 +29,38 @@ namespace EduToyRentalPlatform.Pages.Cart
             var cart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");
             if (cart == null)
             {
-                cart = new List<Item>();
-                cart.Add(new Item()
-                {
-                    Toy = item,
-                    Quantity = 1
-                });
-                SessionExtensions.SetObject(HttpContext.Session, "cart", cart);
-            }
-            else
-            {
-                var index = Exists(cart, id);
-                if (index == -1)
-                {
-                    cart.Add(new Item()
-                    {
-                        Toy = item,
-                        Quantity = 1
-                    });
-                }
-                else
-                {
-                    var newQuantity = cart[index].Quantity + 1;
-                    cart[index].Quantity = newQuantity;
-                    SessionExtensions.SetObject(HttpContext.Session, "cart", cart);
-                }
-                SessionExtensions.SetObject(HttpContext.Session, "cart", cart);
-            }
-                return RedirectToPage("Cart");
+                _unitOfWork = unitOfWork;
+                _httpContextAccessor = httpContextAccessor;
             }
 
-            private int Exists(List<Item> cart, string id)
+            public List<ContractDetail> MyCart { get; set; }
+
+            public async Task OnGetAsync()
             {
-                for (int i = 0; i < cart.Count; i++)
+                // Retrieve the current user ID from cookies
+                string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    if (cart[i].Toy.Id.Equals(id))
+                    // Find the contract with status "In Cart" for this user
+                    var contract = await _unitOfWork.GetRepository<ContractEntity>()
+                        .Entities
+                        .Include(c => c.ContractDetails)
+                            .ThenInclude(d => d.Toy)
+                        .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart");
+
+                    if (contract != null)
                     {
-                        return i;
+                        // Populate MyCart with contract details
+                        MyCart = contract.ContractDetails.ToList();
                     }
                 }
-                return -1;
             }
+
+        public IActionResult OnPostCheckout()
+        {
+            TempData["CartItems"] = MyCart;
+            return RedirectToPage("/Cart/Checkout");
         }
+    }
     }
