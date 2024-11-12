@@ -32,10 +32,8 @@ namespace EduToyRentalPlatform.Pages.Cart
             }
         }
 
-
         public async Task PaymentCallBack()
         {
-
             Console.WriteLine("VnPay Callback called");
             var vnPayRes = _vnPayService.PaymentExecute(Request.Query);
 

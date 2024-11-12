@@ -28,6 +28,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         #endregion
 
+        [BindProperty]
         public CreateTransactionModel CreateTransactionModel { get; set; }
 
 
@@ -65,8 +66,6 @@ namespace EduToyRentalPlatform.Pages.Cart
             }     
         }
 
-
-
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
@@ -75,8 +74,6 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(ResponseContractModel contract)
         {
-            
-
             var model = new VnPayRequestModel()
             {
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
@@ -91,7 +88,6 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest(ResponseContractModel contract)
         {
-
             var model = new VnPayRequestModel()
             {
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
