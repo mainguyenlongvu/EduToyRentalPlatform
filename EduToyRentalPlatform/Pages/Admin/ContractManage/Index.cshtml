@@ -75,7 +75,7 @@
                                 </button>
 
                                 <!-- Conditional Restore Button -->
-                                @if (item.ContractDetails != null && item.ContractDetails.Any(cd => cd.ContractType == true))
+                                @if (item.RestoreToy != null)
                                 {
                                     <button type="button" class="btn btn-success btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">
                                         <i class="fas fa-redo me-1"></i> Restore
@@ -91,16 +91,7 @@
                             <div class="collapse mt-2" id="transaction-details-@item.Id">
                                 <!-- Transaction Content Here -->
                             </div>
-
-                            <script>
-                                function confirmDelete(id) {
-                                    const confirmation = confirm("Are you sure you want to delete this item?");
-                                    if (confirmation) {
-                                        window.location.href = '/YourController/Delete/' + id; // Update this path as needed
-                                    }
-                                }
-                            </script>
-                        </td>
+                                                  </td>
                     </tr>
 
                     <!-- Contract Details Section -->
@@ -148,13 +139,14 @@
                     <tr class="collapse" id="transaction-details-@item.Id">
                         <td colspan="9">
                             <h5>Transaction Details</h5>
-                            <table class="table table-bordered mt-2 table-warning table-transaction">
+                            <table class="table table-bordered mt-2 table-warning table-transaction" style="width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th>Transaction Code</th>
-                                        <th>Date Created</th>
-                                        <th>Payment Method</th>
-                                        <th>Status</th>
+                                        <th style="width: 20%; text-align: center;">Transaction Code</th>
+                                        <th style="width: 20%; text-align: center;">Date Created</th>
+                                        <th style="width: 20%; text-align: center;">Payment Method</th>
+                                        <th style="width: 20%; text-align: center;">Status</th>
+                                        <th style="width: 20%; text-align: center;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -163,17 +155,42 @@
                                         foreach (var transaction in item.Transactions)
                                         {
                                             <tr>
-                                                <td>@transaction.TranCode</td>
-                                                <td>@transaction.DateCreated?.ToString("yyyy-MM-dd")</td>
-                                                <td>@(transaction.Method)</td>
-                                                <td>@transaction.Status</td>
+                                                <td style="text-align: center;">@transaction.TranCode</td>
+                                                <td style="text-align: center;">@transaction.DateCreated?.ToString("yyyy-MM-dd")</td>
+                                                <td style="text-align: center;">@transaction.Method</td>
+                                                <td style="text-align: center;">@transaction.Status</td>
+                                                <td style="text-align: center;">
+                                                    @if (transaction.Status == "Pending")
+                                                    {
+                                                        <!-- Form to update transaction status to Completed -->
+                                                        <!-- Form to update transaction status to Completed -->
+                                                        <form method="post" asp-page-handler="UpdateTransaction" style="display:inline;">
+                                                            <input type="hidden" name="tranCode" value="@transaction.TranCode" />
+                                                            <input type="hidden" name="status" value="Completed" />
+                                                            <input type="hidden" name="contractId" value="@item.Id" />
+                                                            <input type="hidden" name="Method" value="@transaction.Method" />
+
+                                                            <button type="submit" class="btn btn-success btn-sm">Completed</button>
+                                                        </form>
+
+                                                        <!-- Form to update transaction status to Failed -->
+                                                        <form method="post" asp-page-handler="UpdateTransaction" style="display:inline;">
+                                                            <input type="hidden" name="tranCode" value="@transaction.TranCode" />
+                                                            <input type="hidden" name="status" value="Failed" />
+                                                            <input type="hidden" name="contractId" value="@item.Id" />
+                                                            <input type="hidden" name="Method" value="@transaction.Method" />
+                                                            <button type="submit" class="btn btn-danger btn-sm">Failed</button>
+                                                        </form>
+
+                                                    }
+                                                </td>
                                             </tr>
                                         }
                                     }
                                     else
                                     {
                                         <tr>
-                                            <td colspan="4" class="text-center">No transactions available</td>
+                                            <td colspan="5" class="text-center">No transactions available</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -181,93 +198,69 @@
                         </td>
                     </tr>
 
-                    <!-- Restore Toy Details Section -->
+
+
                     <tr class="collapse" id="restore-details-@item.Id">
                         <td colspan="10">
                             <h5>Restore Toy Details</h5>
-                            <form method="post" asp-page-handler="CreateRestore" asp-route-id="@item.Id" enctype="application/x-www-form-urlencoded">
-                                <table class="table table-bordered mt-2 table-success table-restore-details">
+                            <form method="post" asp-page-handler="CreateReturn" asp-route-id="@item.Id" enctype="application/x-www-form-urlencoded">
+                                <table class="table table-bordered mt-2 table-success table-restore-details" style="width: 100%;">
                                     <thead>
                                         <tr>
-                                            <th>Toy ID</th>
-                                            <th>Toy Name</th>
-                                            <th>Quantity</th>
-                                            <th>Unit Price</th>
-                                            <th>Subtotal</th>
-                                            <th>Reward</th>
-                                            <th>Is Return</th>
-                                            <th>Overdue Time (days)</th>
-                                            <th>Total Money</th>
-                                            <th>Compensation</th>
+                                            <th style="width: 9%; text-align: center;">Toy ID</th>
+                                            <th style="width: 15%; text-align: center;">Toy Name</th>
+                                            <th style="width: 8%; text-align: center;">Quantity</th>
+                                            <th style="width: 10%; text-align: center;">Unit Price</th>
+                                            <th style="width: 10%; text-align: center;">Subtotal</th>
+                                            <th style="width: 10%; text-align: center;">Reward</th>
+                                            <th style="width: 8%; text-align: center;">Is Return</th>
+                                            <th style="width: 10%; text-align: center;">Overdue Time (days)</th>
+                                            <th style="width: 10%; text-align: center;">Total Money</th>
+                                            <th style="width: 10%; text-align: center;">Compensation</th>
+                                            <th style="width: 10%; text-align: center;">Amount Due</th>
+                                            <th style="width: 10%; text-align: center;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (item.ContractDetails != null && item.ContractDetails.Any())
+                                        @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
                                         {
-                                            double totalToyQuantity = 0; // Initialize total toy quantity
-                                            double totalReward = 0; // Initialize total reward
-                                            double totalMoney = 0; // Initialize total money
-
-                                            foreach (var contractDetail in item.ContractDetails)
+                                            foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
                                             {
-                                                // Calculate values
-                                                int quantity = contractDetail.Quantity;
-                                                double subtotal = quantity * contractDetail.Price;
+                                                int quantity = returnToyDetail.ToyQuality ?? 0;
+                                                double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
                                                 double reward = subtotal * 0.5;
-
-                                                // Calculate overdue time
-                                                double overdueTime = 0;
-                                                if (contractDetail.DateEnd.HasValue)
-                                                {
-                                                    DateTime currentDate = DateTime.Now;
-                                                    DateTime dateEndAsDateTime = contractDetail.DateEnd.Value.ToDateTime(TimeOnly.MinValue); // Use TimeOnly.MinValue for midnight
-                                                    overdueTime = (currentDate - dateEndAsDateTime).TotalDays;
-                                                    overdueTime = Math.Max(0, Math.Round(overdueTime)); // Round and ensure it's not negative
-                                                }
-
-                                                // Calculate total money
-                                                double currentCompensation = 0; // Initialize compensation for the current detail
-                                                double overdueFee = overdueTime * quantity * 50; // Calculate overdue money
-                                                double currentTotalMoney = currentCompensation + subtotal - reward + overdueFee;
-
-                                                // Accumulate totals
-                                                totalToyQuantity += quantity;
-                                                totalReward += reward;
-                                                totalMoney += currentTotalMoney;
+                                                double overdueTime = returnToyDetail.OverdueTime ?? 0;
+                                                double currentTotalMoney = subtotal - reward;
+                                                double compensation = overdueTime * 10000;
+                                                double amountDue = subtotal - reward + compensation;
 
                                                 <tr>
-                                                    <td>@contractDetail.ToyId</td>
-                                                    <td>"Name Toy"</td>
-                                                    <td>@contractDetail.Quantity</td>
-                                                    <td>@contractDetail.Price.ToString("C")</td>
-                                                    <td>@subtotal.ToString("C")</td>
-                                                    <td>@reward.ToString("C")</td>
-                                                    <td>
-                                                        <input type="checkbox" name="IsReturn" value="true" class="form-check-input" />
+                                                    <td style="text-align: center;">@returnToyDetail.ToyId</td>
+                                                    <td style="text-align: center;">@returnToyDetail.ToyName</td>
+                                                    <td style="text-align: center;">@quantity</td>
+                                                    <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
+                                                    <td style="text-align: center;">@subtotal.ToString("C")</td>
+                                                    <td style="text-align: center;">@reward.ToString("C")</td>
+                                                    <td style="text-align: center;">
+                                                        <input type="checkbox" name="RestoreToyDetails[@returnToyDetail.ToyId].IsReturn" value="true" class="form-check-input" />
                                                     </td>
-                                                    <td>@overdueTime</td>
-                                                    <td>@currentTotalMoney.ToString("C")</td>
-                                                    <td>
-                                                        <input type="number" name="Compensation" class="form-control form-control-sm" />
+                                                    <td style="text-align: center;">@overdueTime</td>
+                                                    <td style="text-align: center;">@currentTotalMoney.ToString("C")</td>
+                                                    <td style="text-align: center;">
+                                                        @compensation.ToString("C")
                                                     </td>
+                                                    <td style="text-align: center;">@amountDue.ToString("C")</td>
+                                                    <td style="text-align: center;">
+                                                        <button type="button" class="btn btn-primary btn-sm" onclick="OnPostUpdateRestoreToyDetail('@returnToyDetail.ToyId')">Update</button>
+                                                    </td>
+
                                                 </tr>
                                             }
-                                            <tr>
-                                                <td colspan="2" class="text-end"><strong>Total:</strong></td>
-                                                <td>@totalToyQuantity</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>@totalReward.ToString("C")</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>@totalMoney.ToString("C")</td>
-                                                <td></td>
-                                            </tr>
                                         }
                                         else
                                         {
                                             <tr>
-                                                <td colspan="10" class="text-center">No toys to restore</td>
+                                                <td colspan="12" class="text-center">No toys to restore</td>
                                             </tr>
                                         }
                                     </tbody>
@@ -277,6 +270,7 @@
                             </form>
                         </td>
                     </tr>
+
                 }
             }
             else

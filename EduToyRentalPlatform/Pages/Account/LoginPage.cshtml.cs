@@ -49,17 +49,7 @@ namespace ToyShop.Pages.Account
                 };
 
                 string redirectUrl = await _userService.LoginAsync(loginModel);
-                var user = await _userService.GetUserAsync(loginModel);
-                Response.Cookies.Append("UserName", Email, new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true
-                });
-                Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true
-                });
+
                 ErrorMessage = "Đăng nhập thành công!";
                 // Chuyển hướng đến đường dẫn nhận được
                 return Redirect(redirectUrl);

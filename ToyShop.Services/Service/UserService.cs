@@ -81,64 +81,63 @@ namespace ToyShop.Services.Service
 
             return await userRepository.Entities.FirstOrDefaultAsync(u => u.Id.ToString() == userId && !u.DeletedTime.HasValue);
         }
-        public async Task<ApplicationUser> GetUserAsync(LoginModel model)
-        {
-            var userRepository = _unitOfWork.GetRepository<ApplicationUser>();
-            if (userRepository == null)
-            {
-                throw new Exception("User repository is null.");
-            }
-
-            return await userRepository.Entities.FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
-        }
         public async Task<BasePaginatedList<ApplicationUser>> GetPageAsync(int index, int pageSize, string nameSearch)
         {
-            //điều kiện index
+            // Check if the index is valid
             if (index <= 0)
             {
                 throw new Exception("Vui lòng nhập index lớn hơn 0");
             }
-            //điều kiện index
+
+            // Check if the pageSize is valid
             if (pageSize <= 0)
             {
                 throw new Exception("Vui lòng nhập pageSize lớn hơn 0");
             }
-            //Lấy UserId
+
+            // Get UserId from cookies and convert to uppercase
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"]!;
-            // chuyển về form in hoa
             string idUser = userId.ToUpper();
-            //chuyển về kiểu Guid
+
+            // Convert to Guid
             Guid.TryParse(idUser, out Guid guid);
-            // Giả sử trả về IQueryable<ApplicationUser>
+
+            // Assume we are fetching an IQueryable of ApplicationUser
             IQueryable<ApplicationUser> query = _unitOfWork.GetRepository<ApplicationUser>().Entities;
 
-            // Lấy vai trò "Customer"
+            // Get the "Customer" role
             ApplicationRole? customerRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
-                                             .Where(r => r.Name == customer && r.DeletedTime == null)
-                                             .FirstOrDefaultAsync();
-            // Lọc các tài khoản vai trò là "Customer" 
+                                                         .Where(r => r.Name == "Customer" && !r.DeletedTime.HasValue)
+                                                         .FirstOrDefaultAsync();
+
+            // Filter by role "Customer"
             if (customerRole != null)
             {
                 List<Guid> userRoles = await _unitOfWork.GetRepository<ApplicationUserRoles>().Entities
-                                            .Where(ur => ur.RoleId == customerRole.Id && ur.DeletedTime == null)
-                                            .Select(ur => ur.UserId)
-                                            .ToListAsync();
+                                                        .Where(ur => ur.RoleId == customerRole.Id && !ur.DeletedTime.HasValue)
+                                                        .Select(ur => ur.UserId)
+                                                        .ToListAsync();
 
+                // Only include users with "Customer" role
                 query = query.Where(lp => userRoles.Contains(lp.Id));
             }
 
+            // Search by full name if the nameSearch is provided
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
                 query = query.Where(lp => lp.FullName.Contains(nameSearch));
             }
 
-            //Lọc tài khoản chưa xóa, đã được kích hoạt và khác tài khoản mình
-            //query = query.Where(x => !x.DeletedTime.HasValue && x.EmailConfirmed == true && x.Id != guid);
+            // Filter out users that are deleted and those whose email is not confirmed
+            query = query.Where(x => !x.DeletedTime.HasValue && x.EmailConfirmed == true && x.Id != guid);
+
+            // Order by full name
             query = query.OrderBy(e => e.FullName);
 
+            // Paginate the query results
             BasePaginatedList<ApplicationUser> resultQuery = await _unitOfWork.GetRepository<ApplicationUser>().GetPagging(query, index, pageSize);
 
-
+            // Return the paginated results
             return resultQuery;
         }
         public async Task<string> LoginAsync(LoginModel model)
@@ -328,7 +327,7 @@ namespace ToyShop.Services.Service
         //    {
         //        UserId = user.Id,
         //        RoleId = existedRole.Id,
-        //    };
+        //    }
         //    await _unitOfWork.GetRepository<ApplicationUserRoles>().InsertAsync(userRole);
         //    await _unitOfWork.GetRepository<ApplicationUser>().InsertAsync(user);
         //    await _unitOfWork.SaveAsync();
@@ -405,19 +404,33 @@ namespace ToyShop.Services.Service
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
             await _unitOfWork.SaveAsync();
         }
-        public async Task DeleteUserAsync(string id)
+        public async Task<bool> DeleteUserAsync(string id)
         {
-            //Đổi qua guid
-            Guid.TryParse(id, out Guid guid);
+          
+            ApplicationUser user = await GetUserByIdAsync(id);
 
-            //Check xem có id của voucher không
-            ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && x.Id == guid).FirstOrDefaultAsync() ??
-                throw new Exception("Không tìm thấy tài khoản");
+            // If the user is not found, throw an exception
+            if (user == null || user.DeletedTime != null)
+            {
+                throw new Exception("User not found or already deleted.");
+            }
 
-            //Cập nhật
+            // Set the DeletedTime to mark as deleted
             user.DeletedTime = CoreHelper.SystemTimeNow;
+
+            // Update the user in the database
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
+
+            // Save the changes
             await _unitOfWork.SaveAsync();
+
+            // Return true to indicate the deletion was successful
+            return true;
+        }
+
+        public Task<ApplicationUser> GetUserAsync(LoginModel model)
+        {
+            throw new NotImplementedException();
         }
         public async Task ForgotPassword(string email)
         {
