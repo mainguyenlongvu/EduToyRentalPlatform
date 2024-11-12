@@ -8,10 +8,11 @@ namespace ToyShop.Pages.Shared
     public class ToyListPartialModel : PageModel
     {
         private readonly IContractService _contractService;
-
-        public ToyListPartialModel(IContractService contractService)
+        private readonly IContractDetailService _contractDetailService;
+        public ToyListPartialModel(IContractService contractService, IContractDetailService contractDetailService)
         {
             _contractService = contractService;
+            _contractDetailService = contractDetailService;
         }
 
         public void OnGet()
@@ -28,11 +29,10 @@ namespace ToyShop.Pages.Shared
                 ContractType = true
             };
 
-            await _contractService.CreateContractDetailAsync(model);
+            await _contractDetailService.CreateContractDetailAsync(model);
 
             // Redirect to Cart page
             return RedirectToPage("/Cart");
         }
-
     }
 }

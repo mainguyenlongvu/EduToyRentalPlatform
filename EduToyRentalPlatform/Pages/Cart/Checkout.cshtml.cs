@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics.Contracts;
+using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ContractDetailModelView;
 using ToyShop.ModelViews.ContractModelView;
@@ -31,10 +32,15 @@ namespace EduToyRentalPlatform.Pages.Cart
         [BindProperty]
         public CreateTransactionModel CreateTransactionModel { get; set; }
 
+        public List<ContractDetail> CartItems { get; set; }
 
         public void OnGet()
         {
-        
+            // Retrieve the cart items from TempData
+            if (TempData["CartItems"] != null)
+            {
+                CartItems = TempData["CartItems"] as List<ContractDetail>;
+            }
         }
 
         [ValidateAntiForgeryToken]
