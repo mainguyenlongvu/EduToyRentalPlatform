@@ -6,61 +6,43 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
     public class CartModel : PageModel
     {
-            private readonly IUnitOfWork _unitOfWork;
-            private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CartModel(IToyService toyService)
+        public CartModel(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
-            _toyService = toyService;
+            _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public List<Item>? MyCart { get; set; } = new();
-        public void OnGet()
+
+        public List<ContractDetail> MyCart { get; set; }
+
+        public async Task OnGetAsync()
         {
-            MyCart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");
-        }
-        public async Task<IActionResult> OnGetBuy(string id)
-        {
-            var item = await _toyService.GetToyAsync(id);
-            var cart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");
-            if (cart == null)
+            // Retrieve the current user ID from cookies
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+            if (!string.IsNullOrEmpty(userId))
             {
-                _unitOfWork = unitOfWork;
-                _httpContextAccessor = httpContextAccessor;
-            }
+                // Find the contract with status "In Cart" for this user
+                var contract = await _unitOfWork.GetRepository<ContractEntity>()
+                    .Entities
+                    .Include(c => c.ContractDetails)
+                        .ThenInclude(d => d.Toy)
+                    .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart");
 
-            public List<ContractDetail> MyCart { get; set; }
-
-            public async Task OnGetAsync()
-            {
-                // Retrieve the current user ID from cookies
-                string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
-
-                if (!string.IsNullOrEmpty(userId))
+                if (contract != null)
                 {
-                    // Find the contract with status "In Cart" for this user
-                    var contract = await _unitOfWork.GetRepository<ContractEntity>()
-                        .Entities
-                        .Include(c => c.ContractDetails)
-                            .ThenInclude(d => d.Toy)
-                        .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart");
-
-                    if (contract != null)
-                    {
-                        // Populate MyCart with contract details
-                        MyCart = contract.ContractDetails.ToList();
-                    }
+                    // Populate MyCart with contract details
+                    MyCart = contract.ContractDetails.ToList();
                 }
             }
-
-        public IActionResult OnPostCheckout()
-        {
-            TempData["CartItems"] = MyCart;
-            return RedirectToPage("/Cart/Checkout");
         }
     }
-    }
+}

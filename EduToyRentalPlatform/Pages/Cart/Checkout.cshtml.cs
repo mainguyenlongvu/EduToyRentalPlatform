@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ContractDetailModelView;
 using ToyShop.ModelViews.ContractModelView;
@@ -12,11 +13,19 @@ namespace EduToyRentalPlatform.Pages.Cart
     public class CheckoutModel : PageModel
     {
         private IVnPayService _vnPayService;
-        private IContractService _contractService;  
+        private IContractService _contractService;
         private IContractDetailService _contractDetailService;
         private ITransactionService _transactionService;
+        public List<ContractDetail> CartItems { get; set; }
 
-
+        public void OnGet()
+        {
+            // Retrieve the cart items from TempData
+            if (TempData["CartItems"] != null)
+            {
+                CartItems = TempData["CartItems"] as List<ContractDetail>;
+            }
+        }
         #region constructors
         public CheckoutModel(IVnPayService vnPayService)
         {
@@ -47,24 +56,16 @@ namespace EduToyRentalPlatform.Pages.Cart
         [BindProperty]
         public CreateTransactionModel CreateTransactionModel { get; set; }
 
-
-        public void OnGet()
-        {
-        
-        }
-
         [ValidateAntiForgeryToken]
-        public async Task OnPost() 
+        public async Task OnPost()
         {
-            
+
             Console.WriteLine("Payment OnPost Called");
-            var model =  IsTopUp? await CreateVnPayTopUpRequest() : await CreateVnPayPurchaseRequest();
+            var model = IsTopUp ? await CreateVnPayTopUpRequest() : await CreateVnPayPurchaseRequest();
             string url = CreatePaymentUrl(model, HttpContext);
-            
-            Response.Redirect(url);         
+
+            Response.Redirect(url);
         }
-
-
 
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
@@ -94,7 +95,6 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             return model;
         }
-
         private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest()
         {
             await _contractService.CreateContractAsync(CreateContractModel);
