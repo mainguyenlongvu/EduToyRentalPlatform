@@ -2,6 +2,7 @@
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Core.Base;
 using ToyShop.ModelViews.ContractModelView;
+using ToyShop.ModelViews.TopUpModel;
 
 namespace ToyShop.Contract.Services.Interface
 {
@@ -13,6 +14,9 @@ namespace ToyShop.Contract.Services.Interface
         Task UpdateContractAsync(string id, UpdateContractModel model);
         Task DeleteContractAsync(string id);
         Task<List<ContractEntity>> GetAllContractsAsync(); // New method for fetching all contracts
+
+		Task<bool> CreateTopUpAsync(CreateTopUpModel model);
+
 
 
     }

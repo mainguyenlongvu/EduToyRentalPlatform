@@ -5,7 +5,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 {
     public class Item
     {
-        public ResponeToyModel Toy { get; set; }
-        public int Quantity { get; set; }
+        public ContractEntity Contract { get; set; }
+        public List<ContractDetail> Details { get; set; }
     }
 }

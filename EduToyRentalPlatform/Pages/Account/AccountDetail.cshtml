@@ -5,86 +5,11 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<!-- CSS nội tuyến -->
-<style>
-    body {
-        background-color: #f0f8f5; /* Màu nền xanh lá nhạt */
-        font-family: Arial, sans-serif;
-    }
-    /* Profile Header */
-    h2 {
-        color: #388e3c;
-        text-align: center;
-        font-weight: bold;
-        font-size: 2.5em;
-        margin-top: 20px;
-    }
-
-    /* Card Style */
-    .card {
-        background-color: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 8px 16px rgba(0, 128, 0, 0.2);
-        width: 900px;
-        margin-top: 20px;
-        padding: 30px;
-        text-align: center;
-    }
-
-    .profile-pic {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #c8e6c9; /* Soft green background */
-        display: inline-block;
-        margin-bottom: 20px;
-    }
-
-    /* User Info */
-    .card-title {
-        color: #388e3c;
-        font-size: 1.8em;
-        font-weight: bold;
-        margin: 0 0 15px;
-    }
-
-    .card ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        text-align: left;
-    }
-
-        .card ul li {
-            color: #4caf50;
-            font-size: 1.1em;
-            margin: 10px 0;
-            font-weight: 500;
-        }
-
-    .btn-primary {
-        background-color: #68d391;
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-        font-size: 1em;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-        with:200px
-    }
-
-        .btn-primary:hover {
-            background-color: #48bb78;
-        }
-</style>
-
 <h2>Your Profile</h2>
 
 <div class="card">
     <div class="profile-pic">
-        <!-- Placeholder for profile picture -->
-        <img src="~/images/avatar-placeholder.png" alt="User Avatar" width="80" height="80" style="border-radius: 50%;">
+        <img src="~/@Model.Img" alt="User Avatar" width="80" height="80" style="border-radius: 50%;">
     </div>
     <div class="card-title">Your profile in details:</div>
     <ul>
@@ -92,5 +17,135 @@
         <li><strong>Email:</strong> @Model.Email</li>
         <li><strong>Phone:</strong> @Model.Phone</li>
     </ul>
-    <a href="/Shop" class="btn-primary">Back</a>
+
+    <button class="btn-primary" onclick="showEditForm()">Edit Profile</button>
+    <button class="btn-primary" onclick="showChangePasswordForm()">Change Password</button>
+    <a href="/Shop" class="btn-secondary">Back</a>
 </div>
+
+<!-- Modal for Editing Profile Information -->
+<div id="editForm" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeForm('editForm')">&times;</span>
+        <h3>Edit Profile</h3>
+        <form method="post" asp-page-handler="Update">
+            <label>Username:</label>
+            <input type="text" asp-for="UserName" class="input-field" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+
+            <label>Phone:</label>
+            <input type="text" asp-for="Phone" class="input-field" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+
+            <button type="submit" class="btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Changing Password -->
+<div id="changePasswordForm" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeForm('changePasswordForm')">&times;</span>
+        <h3>Change Password</h3>
+        <form method="post" asp-page-handler="UpdatePassword">
+            <label>New Password:</label>
+            <input type="password" asp-for="NewPassword" class="input-field" />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+
+            <label>Confirm New Password:</label>
+            <input type="password" asp-for="ConfirmPassword" class="input-field" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+            <button type="submit" class="btn-primary">Change Password</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Card style */
+    .card {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .profile-pic {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background-color: #555;
+    }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            background-color: #45a049;
+        }
+
+    /* Modal Style */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .close {
+        float: right;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 8px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    .text-danger {
+        color: red;
+    }
+</style>
+
+<script>
+    function showEditForm() {
+        document.getElementById("editForm").style.display = "flex";
+    }
+
+    function showChangePasswordForm() {
+        document.getElementById("changePasswordForm").style.display = "flex";
+    }
+
+    function closeForm(formId) {
+        document.getElementById(formId).style.display = "none";
+    }
+</script>

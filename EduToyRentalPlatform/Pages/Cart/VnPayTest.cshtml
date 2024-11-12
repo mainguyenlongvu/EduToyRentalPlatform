@@ -1,0 +1,9 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Cart.VnPayTestModel
+@{
+}
+<form  method="post">
+	@Html.AntiForgeryToken()
+	<input name="txt" />
+	<button type="submit" name="btnSubmit" value="Test VnPay">VnPay</button>
+</form>

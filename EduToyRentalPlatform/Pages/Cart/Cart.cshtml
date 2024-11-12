@@ -6,19 +6,26 @@
 
 <h2>Your Cart</h2>
 
-@if (Model.MyCart.Any())
+@if (Model.MyCart == null)
+
+		{
+		<p>Your cart is empty.</p>
+		}
+else
 {
     foreach (var item in Model.MyCart)
     {
         <div class="card rounded-3 mb-4">
             <div class="card-body p-4">
                 <div class="row d-flex justify-content-between align-items-center">
+                    <div class="col-md-12 col-lg-12 col-xl-12 mt-2">
+                        <input type="hidden" name="ToyId" value="@item.Toy.Id" />
+                    </div>
                     <div class="col-md-2 col-lg-2 col-xl-2">
-                        <img src="@item.Toy.Id" class="img-fluid rounded-3" alt="Toy Image">
+                        <img src="@item.Toy.ToyImg" class="img-fluid rounded-3" alt="Toy Image">
                     </div>
                     <div class="col-md-3 col-lg-3 col-xl-3">
                         <p class="lead fw-normal mb-2">@item.Toy.ToyName</p>
-                        @*<p><span class="text-muted">Option: @item.Option</span></p>*@
                     </div>
                     <div class="col-md-3 col-lg-3 col-xl-2">
                         <p>Quantity: @item.Quantity</p>
@@ -33,7 +40,4 @@
         </div>
     }
 }
-else
-{
-    <p>Your cart is empty.</p>
-}
+

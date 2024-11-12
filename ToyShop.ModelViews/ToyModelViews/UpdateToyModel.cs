@@ -23,7 +23,7 @@ namespace ToyShop.ModelViews.ToyModelViews
         [Range(0, int.MaxValue, ErrorMessage = "The number sold must be greater than or equal to 0!")]
         public int ToyQuantitySold { get; set; }
         public string? Option { get; set; }
-        public required IFormFile Image { get; set; }
+        //public required IFormFile Image { get; set; }
 
     }
 }
