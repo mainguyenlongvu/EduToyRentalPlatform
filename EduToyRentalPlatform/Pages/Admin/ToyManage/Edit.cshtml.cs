@@ -62,7 +62,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
                 Option = Toy.Option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
                 ToyQuantitySold = Toy.ToyQuantitySold,
-                Image = Toy.ImageFile
+                //Image = Toy.ImageFile
             };
 
             await _toyService.UpdateToyAsync(Toy.Id, toyUpdateModel);

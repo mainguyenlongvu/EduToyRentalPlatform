@@ -75,7 +75,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
                 Option = Toy.Option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
                 ToyQuantitySold = Toy.ToyQuantitySold,
-                ImageFile = Toy.ImageFile,                
+                //ImageFile = Toy.ImageFile,                
             };
 
             // Call the service to create a new toy
