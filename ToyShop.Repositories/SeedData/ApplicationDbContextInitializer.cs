@@ -128,7 +128,6 @@ public class ApplicationDbContextInitializer
         _context.ApplicationUserRoles.AddRange(userRoles);
         _context.SaveChanges();
     }
-
     private void SeedToys()
     {
         if (_context.Toys.Any()) return;
@@ -282,7 +281,6 @@ public class ApplicationDbContextInitializer
         _context.Toys.AddRange(toys);
         _context.SaveChanges();
     }
-
     private void SeedContracts()
     {
         if (_context.ContractEntitys.Any()) return;
@@ -379,7 +377,6 @@ public class ApplicationDbContextInitializer
         _context.SaveChanges();
 
     }
-
     private void SeedContractDetails()
     {
         if (_context.ContractDetails.Any()) return;
@@ -467,7 +464,6 @@ public class ApplicationDbContextInitializer
         _context.ContractDetails.AddRange(contractDetailsArray);
         _context.SaveChanges();
     }
-
     private void SeedRestoreToys()
     {
         if (_context.RestoreToys.Any()) return;
@@ -514,7 +510,6 @@ public class ApplicationDbContextInitializer
         _context.RestoreToys.AddRange(restoreToys);
         _context.SaveChanges();
     }
-
     private void SeedRestoreToyDetails()
     {
         if (_context.RestoreToyDetails.Any()) return;
@@ -571,9 +566,6 @@ public class ApplicationDbContextInitializer
         _context.RestoreToyDetails.AddRange(restoreToyDetails);
         _context.SaveChanges();
     }
-
-
-
     private void SeedChats()
     {
         if (_context.Chats.Any()) return;

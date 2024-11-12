@@ -16,6 +16,7 @@ using ToyShop.Contract.Repositories.PaggingItems;
 using Azure.Core;
 using ToyShop.Core.Base;
 using System.Text.RegularExpressions;
+using Azure;
 
 
 namespace ToyShop.Services.Service
@@ -136,7 +137,6 @@ namespace ToyShop.Services.Service
             // Return the paginated results
             return resultQuery;
         }
-
         public async Task<string> LoginAsync(LoginModel model)
         {
 
