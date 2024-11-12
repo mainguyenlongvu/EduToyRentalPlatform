@@ -1,16 +1,10 @@
-﻿using ToyShop.Contract.Repositories.Entity;
-using ToyShop.Contract.Services.Interface;
-using ToyShop.ModelViews.UserModelViews;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
-using ToyShop.Repositories.Base;
-using System.Linq;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-
-
+using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.UserModelViews;
 
 namespace ToyShop.Pages.Account
 {
@@ -24,6 +18,10 @@ namespace ToyShop.Pages.Account
         }
 
         [BindProperty]
+        [Required(ErrorMessage = "Hãy nhập tên tài khoản.")]
+        public string UserName { get; set; }
+
+        [BindProperty]
         [EmailAddress]
         [Required(ErrorMessage = "Hãy nhập Email")]
         public string Email { get; set; }
@@ -32,10 +30,6 @@ namespace ToyShop.Pages.Account
         [Required(ErrorMessage = "Hãy nhập mật khẩu.")]
         [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
         public string Password { get; set; }
-
-        [BindProperty]
-        [Required(ErrorMessage = "Hãy nhập tên tài khoản.")]
-        public string UserName { get; set; }
 
         [BindProperty]
         [Required(ErrorMessage = "Hãy nhập số điện thoại.")]
@@ -48,26 +42,37 @@ namespace ToyShop.Pages.Account
         [BindProperty]
         public List<SelectListItem> Quyen { get; set; }
 
+        [BindProperty]
+        [Required(ErrorMessage = "Hãy chọn ảnh đại diện.")]
+        public IFormFile Image { get; set; } // Bind the image file
+
         public string ErrorMessage { get; set; }
 
         public void OnGet()
         {
+            // Load roles or other data for the page as necessary
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
             var registerModel = new RegisterModel
             {
                 UserName = UserName,
                 Email = Email,
                 Password = Password,
                 Phone = Phone,
-                RoleName = "Customer" // Lấy RoleId của quyền "user"
+                RoleName = "Customer", // Set the role name; adjust as needed
+                Image = Image // Assign the uploaded file to the model
             };
 
             try
             {
-                // Gọi hàm RegisterAsync
+                // Call RegisterAsync to save the registration data, including the image
                 bool result = await _userService.RegisterAsync(registerModel);
 
                 if (result)
@@ -78,7 +83,6 @@ namespace ToyShop.Pages.Account
                 else
                 {
                     ErrorMessage = "Đăng ký không thành công! Vui lòng thử lại.";
-
                 }
             }
             catch (Exception ex)
@@ -86,9 +90,7 @@ namespace ToyShop.Pages.Account
                 ErrorMessage = ex.Message;
             }
 
-
             return Page();
         }
-
     }
 }

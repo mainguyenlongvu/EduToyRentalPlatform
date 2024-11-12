@@ -35,6 +35,7 @@ app.UseSession();
 app.MapRazorPages();
 
 // Định nghĩa route cho trang chủ
+
 app.MapGet("/", async context =>
 {
     // Kiểm tra quyền người dùng

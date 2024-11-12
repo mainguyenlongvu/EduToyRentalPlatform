@@ -16,7 +16,7 @@ namespace EduToyRentalPlatform.Pages.Cart
         {
             _toyService = toyService;
         }
-        public List<Item> MyCart { get; set; } = new();
+        public List<Item>? MyCart { get; set; } = new();
         public void OnGet()
         {
             MyCart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");

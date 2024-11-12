@@ -114,6 +114,42 @@ namespace ToyShop.Services.Service
 
 		#endregion
 
+		public VnPayResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
+		{
+
+			foreach (var (key, value) in collection)
+			{
+				if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+				{
+					this.AddResponseData(key, value);
+					Console.WriteLine($"{key.ToString()}= {value.ToString()}");
+				}
+			}
+
+			var orderDesc = this.GetResponseData("vnp_OrderInfo");
+			var vnPayTranId = Convert.ToInt64(this.GetResponseData("vnp_TransactionNo"));
+			var vnpResponseCode = this.GetResponseData("vnp_ResponseCode");
+			var vnpSecureHash =
+				collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value;
+			var amount = Convert.ToDouble(this.GetResponseData("vnp_Amount"));
+			var checkSignature =
+				this.ValidateSignature(vnpSecureHash, hashSecret);
+
+			if (!checkSignature)
+				return new VnPayResponseModel()
+				{
+					Success = false
+				};
+
+			return new VnPayResponseModel()
+			{
+				Success = true,
+				OrderDescription = orderDesc,
+				PaymentId = vnPayTranId.ToString(),
+				Token = vnpSecureHash,
+				VnPayResponseCode = vnpResponseCode,
+			};
+		}
 
 
 	}

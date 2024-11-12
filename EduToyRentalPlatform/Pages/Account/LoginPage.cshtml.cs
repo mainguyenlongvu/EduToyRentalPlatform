@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.UserModelViews;
+using ToyShop.Contract.Repositories.Interface;
 
 
 namespace ToyShop.Pages.Account
@@ -11,10 +12,11 @@ namespace ToyShop.Pages.Account
     public class LoginPageModel : PageModel
     {
         private readonly IUserService _userService;
-
-        public LoginPageModel(IUserService userService)
+        private readonly IUnitOfWork _unitOfWork;
+        public LoginPageModel(IUserService userService, IUnitOfWork unitOfWork)
         {
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
 
         [BindProperty]
@@ -38,29 +40,34 @@ namespace ToyShop.Pages.Account
 
             //if (ModelState.IsValid)
             //{
-                try
+            try
+            {
+                var loginModel = new LoginModel
                 {
-                    var loginModel = new LoginModel
-                    {
-                        Email = Email,
-                        Password = Password
-                    };
+                    Email = Email,
+                    Password = Password
+                };
 
-                    string redirectUrl = await _userService.LoginAsync(loginModel);
-
-                    Response.Cookies.Append("UserName", Email, new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(7),
-                        HttpOnly = true
-                    });
-                    ErrorMessage = "Đăng nhập thành công!";
-                    // Chuyển hướng đến đường dẫn nhận được
-                    return Redirect(redirectUrl);
-                }
-                catch (Exception ex)
+                string redirectUrl = await _userService.LoginAsync(loginModel);
+                var user = await _userService.GetUserAsync(loginModel);
+                Response.Cookies.Append("UserName", Email, new CookieOptions
                 {
-                    ErrorMessage = ex.Message;
-                }
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    HttpOnly = true
+                });
+                Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    HttpOnly = true
+                });
+                ErrorMessage = "Đăng nhập thành công!";
+                // Chuyển hướng đến đường dẫn nhận được
+                return Redirect(redirectUrl);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
             //}
 
             return Page();
