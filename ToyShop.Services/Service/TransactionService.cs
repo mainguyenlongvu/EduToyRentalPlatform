@@ -135,38 +135,39 @@ namespace ToyShop.Services.Service
 			}
 		}
 
-		public async Task<CreateTransactionModel> Update(int tranCode, CreateTransactionModel transactionDTO)
-		{
-			ArgumentNullException.ThrowIfNull(transactionDTO);
-			if (transactionDTO.ContractId == null)
-			{
-				throw new ArgumentNullException(nameof(transactionDTO.ContractId), "ContractId is required.");
+        public async Task<UpdateTransactionModel> Update(int tranCode, CreateTransactionModel transactionDTO)
+        {
+            ArgumentNullException.ThrowIfNull(transactionDTO);
+
+            if (transactionDTO.ContractId == null)
+            {
+                throw new ArgumentNullException(nameof(transactionDTO.ContractId), "ContractId is required.");
             }
+
             try
             {
-				Transaction existingTransaction = _unitOfWork.GetRepository<Transaction>().Entities.AsNoTracking().FirstOrDefault(d => d.TranCode == tranCode && !d.DeletedTime.HasValue)
-					?? throw new KeyNotFoundException("Transaction not found.");
+                // Retrieve the existing transaction
+                var existingTransaction = await _unitOfWork.GetRepository<Transaction>()
+                    .Entities
+                    .FirstOrDefaultAsync(d => d.TranCode == tranCode && !d.DeletedTime.HasValue)
+                    ?? throw new KeyNotFoundException("Transaction not found.");
 
-				ContractEntity contract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x=>x.Id == transactionDTO.ContractId && !x.DeletedTime.HasValue)
-					?? throw new KeyNotFoundException($"Contract with id {transactionDTO.ContractId} not found.");
-
-                CreateTransactionModel createModel = _mapper.Map<CreateTransactionModel>(transactionDTO);
-                createModel.TranCode = tranCode;
+                _mapper.Map(transactionDTO, existingTransaction);
 
                 _unitOfWork.GetRepository<Transaction>().Update(existingTransaction);
+                await _unitOfWork.SaveAsync();
 
-				await _unitOfWork.SaveAsync();
+                return _mapper.Map<UpdateTransactionModel>(existingTransaction);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new KeyNotFoundException(ex.Message, ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while updating the transaction.", ex);
+            }
+        }
 
-				return _mapper.Map<CreateTransactionModel>(existingTransaction);
-			}
-			catch (KeyNotFoundException)
-			{
-				throw;
-			}
-			catch (Exception ex)
-			{
-				throw new InvalidOperationException(ex.Message, ex);
-			}
-		}
-	}
+    }
 }
