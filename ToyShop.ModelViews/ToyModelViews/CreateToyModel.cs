@@ -26,7 +26,6 @@ namespace ToyShop.ModelViews.ToyModelViews
 
         [Required(ErrorMessage = "You must specify an option!")]
         public string? Option { get; set; }
-
         public bool IsDeleted { get; set; }
 
         [Required(ErrorMessage = "You must upload an image file!")]
