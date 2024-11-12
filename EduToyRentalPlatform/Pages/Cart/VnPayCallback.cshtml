@@ -4,13 +4,13 @@
 }
 
 @{
-	if(Request.Query.Count == 0)
+	if(!Request.Query.ContainsKey("vnp_OrderInfo"))
 	{
-		<h1 class="col-1">Không tìm thấy callback query</h1>
+		<h1 class="col-1">Không tìm thấy thông tin thanh toán</h1>
 	}
 	else
 	{
-		<h1 class="col-1">Đang xử lý thông tin</h1>
+		<h1 class="col-1">Đang xử lý thông tin thanh toán</h1>
 	};
 }
 
