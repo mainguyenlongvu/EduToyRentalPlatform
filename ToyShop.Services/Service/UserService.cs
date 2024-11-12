@@ -39,6 +39,16 @@ namespace ToyShop.Services.Service
 
             return await userRepository.Entities.FirstOrDefaultAsync(u => u.Id.ToString() == userId && !u.DeletedTime.HasValue);
         }
+        public async Task<ApplicationUser> GetUserAsync(LoginModel model)
+        {
+            var userRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            if (userRepository == null)
+            {
+                throw new Exception("User repository is null.");
+            }
+
+            return await userRepository.Entities.FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
+        }
 
         public async Task<string> LoginAsync(LoginModel model)
         {

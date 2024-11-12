@@ -8,5 +8,6 @@ namespace ToyShop.Contract.Services.Interface
         Task<ApplicationUser> GetUserByIdAsync(string id);
         Task<string> LoginAsync(LoginModel model);
         Task<bool> RegisterAsync(RegisterModel model);
+        Task<ApplicationUser> GetUserAsync(LoginModel model);
     }
 }
