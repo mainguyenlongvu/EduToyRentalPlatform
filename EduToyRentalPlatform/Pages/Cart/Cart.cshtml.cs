@@ -43,5 +43,11 @@ namespace EduToyRentalPlatform.Pages.Cart
                     }
                 }
             }
+
+        public IActionResult OnPostCheckout()
+        {
+            TempData["CartItems"] = MyCart;
+            return RedirectToPage("/Cart/Checkout");
         }
+    }
     }
