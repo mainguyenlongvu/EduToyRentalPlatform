@@ -47,7 +47,7 @@ namespace ToyShop.Services.Service
             newToy.CreatedTime = CoreHelper.SystemTimeNows;
             newToy.DeletedTime = null;
             newToy.LastUpdatedBy = null;
-            newToy.ToyImg = await FileUploadHelper.UploadFile(model.ImageFile);
+            //newToy.ToyImg = await FileUploadHelper.UploadFile(model.ImageFile);
 
             await _unitOfWork.GetRepository<Toy>().InsertAsync(newToy);
             await _unitOfWork.SaveAsync();
@@ -155,7 +155,7 @@ namespace ToyShop.Services.Service
             toy.ToyQuantitySold = model.ToyQuantitySold;
             toy.Option = model.Option;
             toy.LastUpdatedTime = CoreHelper.SystemTimeNows;
-            toy.ToyImg = await FileUploadHelper.UploadFile(model.Image);
+            //toy.ToyImg = await FileUploadHelper.UploadFile(model.Image);
             //Cập nhật bởi, bạn làm phần login chưa xong
             //toy.LastUpdatedBy = UserId;
              _unitOfWork.GetRepository<Toy>().Update(toy);
