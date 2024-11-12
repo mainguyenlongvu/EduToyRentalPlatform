@@ -65,7 +65,9 @@ public class ApplicationDbContextInitializer
         SeedChats();
         SeedFeedBacks();
         SeedTransactions();
-        _context.SaveChanges();
+		SeedContractDetails();
+		SeedRestoreToyDetails();
+		_context.SaveChanges();
     }
 
     private void SeedRoles()
@@ -287,6 +289,7 @@ public class ApplicationDbContextInitializer
 
         var users = _context.ApplicationUsers.ToList();
         var toys = _context.Toys.ToList();
+		var contractDetails = _context.ContractDetails.ToList();
 
         if (users.Count == 0 || toys.Count == 0) return;
 
