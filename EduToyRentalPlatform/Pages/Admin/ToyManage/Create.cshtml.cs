@@ -19,7 +19,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
         }
 
         [BindProperty]
-        public CreateToyModel Toy { get; set; } = new CreateToyModel(); 
+        public CreateToyModel Toy { get; set; } = new CreateToyModel();
 
         public void OnGet()
         {
@@ -74,7 +74,8 @@ namespace EduToyRentalPlatform.Pages.Admin.ToyManage
                 ToyPriceSale = Toy.ToyPriceSale,
                 Option = Toy.Option,
                 ToyRemainingQuantity = Toy.ToyRemainingQuantity,
-                ToyQuantitySold = Toy.ToyQuantitySold
+                ToyQuantitySold = Toy.ToyQuantitySold,
+                //ImageFile = Toy.ImageFile,                
             };
 
             // Call the service to create a new toy

@@ -14,7 +14,20 @@ namespace EduToyRentalPlatform.Pages.Cart
             private readonly IUnitOfWork _unitOfWork;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public CartModel(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public CartModel(IToyService toyService)
+        {
+            _toyService = toyService;
+        }
+        public List<Item>? MyCart { get; set; } = new();
+        public void OnGet()
+        {
+            MyCart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");
+        }
+        public async Task<IActionResult> OnGetBuy(string id)
+        {
+            var item = await _toyService.GetToyAsync(id);
+            var cart = SessionExtensions.GetObject<List<Item>>(HttpContext.Session, "cart");
+            if (cart == null)
             {
                 _unitOfWork = unitOfWork;
                 _httpContextAccessor = httpContextAccessor;

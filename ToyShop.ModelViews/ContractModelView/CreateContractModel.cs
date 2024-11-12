@@ -15,6 +15,7 @@ namespace ToyShop.ModelViews.ContractModelView
         [DisplayName("Tên khách hàng")]
         [StringLength(50,MinimumLength = 10,ErrorMessage = "Chiều dài tối đa chỉ {2} - {1}")]
         public string?   CustomerName { get; set; }
+
         [Required(ErrorMessage = "Phải nhập chọn đồ chơi")]
         [DisplayName("Tên đồ chơi")]
         public string?   ToyName { get; set; }

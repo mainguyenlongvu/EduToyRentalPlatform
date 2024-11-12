@@ -1,0 +1,17 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Cart.PaymentCallbackModel
+@{
+}
+
+@{
+	if(!Request.Query.ContainsKey("vnp_OrderInfo"))
+	{
+		<h1 class="col-1">Không tìm thấy thông tin thanh toán</h1>
+	}
+	else
+	{
+		<h1 class="col-1">Đang xử lý thông tin thanh toán</h1>
+	};
+}
+
+

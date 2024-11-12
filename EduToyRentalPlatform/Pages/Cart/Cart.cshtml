@@ -6,7 +6,12 @@
 
 <h2>Your Cart</h2>
 
-@if (Model.MyCart.Any())
+@if (Model.MyCart == null)
+
+		{
+		<p>Your cart is empty.</p>
+		}
+else
 {
     foreach (var item in Model.MyCart)
     {
@@ -35,7 +40,4 @@
         </div>
     }
 }
-else
-{
-    <p>Your cart is empty.</p>
-}
+

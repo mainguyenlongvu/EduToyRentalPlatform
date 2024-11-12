@@ -4,9 +4,15 @@
     ViewData["Title"] = "Đăng Ký";
 }
 
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div id="error-message" class="alert alert-danger text-center" style="color:red; margin-bottom: 15px;">
+        @Model.ErrorMessage
+    </div>
+}
 <div class="register-container">
     <h2>@ViewData["Title"]</h2>
-
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
@@ -14,8 +20,10 @@
             @Model.ErrorMessage
         </div>
     }
-    <form method="post" asp-page-handler="OnPostAsync">
+    <form method="post" asp-page-handler="OnPostAsync" enctype="multipart/form-data">
+        <!-- Note: enctype added here -->
         @Html.AntiForgeryToken()
+
         <div class="form-group">
             <label for="UserName" class="control-label">Tài khoản</label>
             <input type="text" name="UserName" class="form-control" />
@@ -46,9 +54,14 @@
             <span style="float: right;margin-top: -15px">@Html.ValidationMessage("Phone", "", new { @class = "text-danger" })</span>
         </div>
 
+        <!-- New field for uploading user image -->
+        <div class="form-group">
+            <label for="UserImage" class="control-label">Ảnh đại diện</label>
+            <input type="file" name="UserImage" class="form-control" accept="image/*" />
+            <span style="float: right;margin-top: -15px">@Html.ValidationMessage("UserImage", "", new { @class = "text-danger" })</span>
+        </div>
+
         <button type="submit" class="btn btn-primary">Đăng Ký</button>
-
-
     </form>
 
     <div class="form-group">

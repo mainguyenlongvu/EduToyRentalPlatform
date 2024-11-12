@@ -8,6 +8,7 @@ using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Core.Constants;
 using static ToyShop.Core.Base.BaseException;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.ModelViews.TopUpModel;
 
 namespace ToyShop.Contract.Services.Interface
 {
@@ -114,5 +115,10 @@ namespace ToyShop.Contract.Services.Interface
         {
             return await _unitOfWork.GetRepository<ContractEntity>().Entities.ToListAsync(); 
         }
-    }
+
+		public Task<bool> CreateTopUpAsync(CreateTopUpModel model)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
