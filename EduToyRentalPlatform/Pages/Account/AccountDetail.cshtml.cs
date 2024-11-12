@@ -9,6 +9,7 @@ using ToyShop.Repositories.Base;
 using ToyShop.Repositories.Entity;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
+using System.Drawing;
 
 namespace ToyShop.Pages.Account
 {
@@ -27,7 +28,7 @@ namespace ToyShop.Pages.Account
         [BindProperty]
         [Phone(ErrorMessage = "Invalid phone number format.")]
         public string Phone { get; set; }
-
+        public string Img { get; set; }
         [BindProperty]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
@@ -64,6 +65,7 @@ namespace ToyShop.Pages.Account
                 UserName = user.UserName;
                 Email = user.Email;
                 Phone = user.Phone;
+                Img = user.ImageUrl;
             }
             else
             {
