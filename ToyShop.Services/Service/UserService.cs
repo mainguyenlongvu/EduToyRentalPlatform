@@ -16,6 +16,8 @@ using ToyShop.Contract.Repositories.PaggingItems;
 using Azure.Core;
 using ToyShop.Core.Base;
 using System.Text.RegularExpressions;
+using Microsoft.AspNet.Identity;
+using ToyShop.ModelViews.GmailModel;
 
 
 namespace ToyShop.Services.Service
@@ -26,17 +28,19 @@ namespace ToyShop.Services.Service
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly GmailService _gmailService;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IConfiguration _configuration;
         private const string customer = "Customer";
 
-        public UserService(IHttpContextAccessor _httpContextAccessor1, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IPasswordHasher<ApplicationUser> passwordHasher)
+        public UserService(IHttpContextAccessor _httpContextAccessor1, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IPasswordHasher<ApplicationUser> passwordHasher, GmailService gmailService)
         {
             _httpContextAccessor = _httpContextAccessor1;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _configuration = configuration;
+            _gmailService = gmailService;
         }
         public async Task ChangPasswordAsync(ChangPasswordModel model)
         {
@@ -414,6 +418,39 @@ namespace ToyShop.Services.Service
             user.DeletedTime = CoreHelper.SystemTimeNow;
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
             await _unitOfWork.SaveAsync();
+        }
+        public async Task ForgotPassword(string email)
+        {
+            // Tìm người dùng qua email
+            ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x=>x.Email == email )
+                ?? throw new Exception("Không tìm thấy tài khoản");
+
+            // Tạo mã code ngẫu nhiên và hash nó
+            string code = new Random().Next(100000, 999999).ToString();
+            //var codeHash = _userManager.PasswordHasher.HashPassword(user, code);
+
+            // Cập nhật mã code và thời gian tạo mã cho người dùng
+            user.Password = code;
+            user.PasswordHash = CoreHelper.HashPassword(code);
+            //user.CodeGeneratedTime = DateTime.UtcNow;
+            await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
+
+            // Gửi email chứa mã code tới người dùng
+            //List<string> selectedEmail = new List<string> { email };
+            string body = $"<div style=\"font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2\">\r\n  <div style=\"margin:50px auto;width:70%;padding:20px 0\">\r\n    <div style=\"border-bottom:1px solid #eee\">\r\n      <a href=\"\" style=\"font-size:1.4em;color: #ee0000;text-decoration:none;font-weight:600\">EduToyRent Platform</a>\r\n    </div>\r\n    <p style=\"font-size:1.1em\">Chào bạn,</p>\r\n    <p>Đây là mật khẩu mới của bạn. Vui lòng đổi sau khi đăng nhập.</p>\r\n    <h2 style=\"background: #aa0000;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;\">@{code}</h2>\r\n    <p style=\"font-size:0.9em;\">Thân,<br />EduToyRent Staff</p>\r\n    <hr style=\"border:none;border-top:1px solid #eee\" />\r\n    <div style=\"float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300\">\r\n      <p>EduToyRent Platform</p>\r\n      <p>Ho Chi Minh City</p>\r\n      <p>Vietnam</p>\r\n    </div>\r\n  </div>\r\n</div>";
+            EmailRequestModel emailRequestModel = new EmailRequestModel
+            {
+                EmailBody = body,
+                IsHtml = true,
+                EmailSubject = "Quên mật khẩu",
+                ReceiverEmail = email,
+            };
+            //Kiểm tra gửi email có thành công không
+            if (!_gmailService.SendEmailSingle(emailRequestModel))
+            {
+                throw new Exception("Gửi email thất bại");
+            }
+
         }
     }
 

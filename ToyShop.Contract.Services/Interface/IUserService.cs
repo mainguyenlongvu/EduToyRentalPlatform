@@ -15,5 +15,6 @@ namespace ToyShop.Contract.Services.Interface
         Task ChangPasswordAdminAsync(ChangPasswordAdminModel model);
         Task<BasePaginatedList<ApplicationUser>> GetPageAsync(int index, int pageSize, string nameSearch);
         Task ChangPasswordAsync(ChangPasswordModel model);
+        Task ForgotPassword(string email);
     }
 }
