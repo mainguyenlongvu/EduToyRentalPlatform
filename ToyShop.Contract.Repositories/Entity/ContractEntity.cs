@@ -17,7 +17,7 @@ namespace ToyShop.Contract.Repositories.Entity
         public int? NumberOfRentals { get; set; }
         public DateOnly? DateCreated { get; set; }
         public string? Status { get; set; }
-
+        public string? Note { get; set; }
         public virtual ICollection<Transaction>? Transactions { get; set; } = new List<Transaction>();
         public virtual ICollection<Delivery>? Deliveries { get; set; } = new List<Delivery>();
         public virtual ICollection<ContractDetail>? ContractDetails { get; set; } = new List<ContractDetail>();
