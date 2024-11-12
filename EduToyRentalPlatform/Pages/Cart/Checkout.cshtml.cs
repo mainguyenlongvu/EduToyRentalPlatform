@@ -4,6 +4,7 @@ using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ContractDetailModelView;
 using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.PaymentModelView;
+using ToyShop.ModelViews.TopUpModel;
 using ToyShop.ModelViews.TransactionModelView;
 
 namespace EduToyRentalPlatform.Pages.Cart
@@ -35,6 +36,9 @@ namespace EduToyRentalPlatform.Pages.Cart
         public bool IsTopUp { get; set; }
 
         [BindProperty]
+        public CreateTopUpModel CreateTopUpModel { get; set; }
+
+        [BindProperty]
         public CreateContractModel CreateContractModel { get; set; }
 
         [BindProperty]
@@ -46,92 +50,67 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         public void OnGet()
         {
-            foreach (var (key, value) in Request.Query)
-            {
-                if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
-                {
-                    PaymentCallBack();
-                    break;
-                }
-            }
+        
         }
 
         [ValidateAntiForgeryToken]
-        public void OnPost() 
+        public async Task OnPost() 
         {
             
             Console.WriteLine("Payment OnPost Called");
-            var model = IsTopUp? CreateVnPayTopUpRequest() : CreateVnPayPurchaseRequest();
+            var model =  IsTopUp? await CreateVnPayTopUpRequest() : await CreateVnPayPurchaseRequest();
             string url = CreatePaymentUrl(model, HttpContext);
             
             Response.Redirect(url);         
         }
 
-        
+
 
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
             return url;
         }
-        public void PaymentCallBack()
-        {
-            Console.WriteLine("VnPay Callback called");
-            var vnPayRes = _vnPayService.PaymentExecute(Request.Query);
 
-            if (vnPayRes == null || !vnPayRes.VnPayResponseCode.Equals("00"))
+        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest()
+        {
+            var contractModel = new CreateContractModel()
             {
-                Response.Redirect("TestFailed");
-                return;
-            }
+                CustomerName = CreateTopUpModel.CustomerName,
+                TotalValue = CreateTopUpModel.TotalValue,
+            };
 
-            if (IsTopUp)
-                OnTopUpSuccess(vnPayRes);
-            else
-                OnPurchaseSuccess(vnPayRes);
+            await _contractService.CreateContractAsync(CreateContractModel);
+            await _transactionService.Insert(CreateTransactionModel);
 
-            Response.Redirect("TestSuccess");
-        }
-
-        private VnPayRequestModel CreateVnPayTopUpRequest()
-        {
             var model = new VnPayRequestModel()
             {
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
-                Amount = Double.Parse(CreateContractModel.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan don hang {CreateTransactionModel.TranCode}",
-                Name = "EduToyRent thanh toan",
+                Amount = Double.Parse(CreateTopUpModel.TotalValue.ToString()),
+                OrderDescription = $"Thanh toan nap vi {CreateTransactionModel.TranCode}",
+                Name = CreateTopUpModel.CustomerName == null ? "EduToyRent" : CreateTopUpModel.CustomerName,
                 IpAddress = "127.0.0.1"
             };
 
             return model;
         }
 
-        private VnPayRequestModel CreateVnPayPurchaseRequest()
+        private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest()
         {
+            await _contractService.CreateContractAsync(CreateContractModel);
+            await _contractDetailService.CreateContractDetailAsync(CreateContractDetailModel);
+            await _transactionService.Insert(CreateTransactionModel);
+
             var model = new VnPayRequestModel()
             {
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(CreateContractModel.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan don hang {CreateTransactionModel.TranCode}",
-                Name = "EduToyRent thanh toan",
+                Name = CreateContractModel.CustomerName == null ? "EduToyRent" : CreateContractModel.CustomerName,
                 IpAddress = "127.0.0.1"
             };
 
             return model;
-        }
-
-        public async void OnTopUpSuccess(VnPayResponseModel vnPayRes)
-        {
-            await _contractService.CreateContractAsync(CreateContractModel);
-            await _transactionService.Insert(CreateTransactionModel);
-        }
-
-        public async void OnPurchaseSuccess(VnPayResponseModel vnPayRes)
-        {
-            await _contractService.CreateContractAsync(CreateContractModel);
-            await _contractDetailService.CreateContractDetailAsync(CreateContractDetailModel);
-            await _transactionService.Insert(CreateTransactionModel);
         }
 
     }

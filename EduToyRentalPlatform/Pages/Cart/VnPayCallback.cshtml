@@ -1,0 +1,17 @@
+﻿@page
+@model EduToyRentalPlatform.Pages.Cart.PaymentCallbackModel
+@{
+}
+
+@{
+	if(Request.Query.Count == 0)
+	{
+		<h1 class="col-1">Không tìm thấy callback query</h1>
+	}
+	else
+	{
+		<h1 class="col-1">Đang xử lý thông tin</h1>
+	};
+}
+
+
