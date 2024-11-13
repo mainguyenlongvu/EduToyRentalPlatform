@@ -4,6 +4,7 @@ using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ContractDetailModelView;
 using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.PaymentModelView;
+using ToyShop.ModelViews.TransactionModelView;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
@@ -53,24 +54,24 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         private async Task OnTopUpSuccess(VnPayResponseModel vnPayRes)
         {
-            var contractId = HttpContext.Session.GetString("ContractId");
+            var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
             var updateContract = new UpdateContractModel()
             {
-                Status = "Success"
+                Status = "Done"
             };
-
-            await _contractService.UpdateContractAsync(contractId, updateContract);
+            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+            await _transactionService.Insert(tranModel);
         }
 
         private async Task OnPurchaseSuccess(VnPayResponseModel vnPayRes)
         {
-            var contractId = HttpContext.Session.GetString("ContractId");
+            var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
             var updateContract = new UpdateContractModel()
             {
-                Status = "Success"
+                Status = "Done"
             };
-
-            await _contractService.UpdateContractAsync(contractId, updateContract);
+            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+            await _transactionService.Insert(tranModel);
         }
 
     }

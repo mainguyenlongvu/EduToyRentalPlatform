@@ -40,7 +40,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             if (TempData["CartItems"] != null)
             {
                 CartItems = TempData["CartItems"] as List<ContractDetail>;
-            }
+            } 
         }
 
         [ValidateAntiForgeryToken]
@@ -59,8 +59,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (CreateTransactionModel.Method) //vnpay
             {
-                HttpContext.Session.SetString("TranCode", CreateTransactionModel.TranCode.ToString());
-                HttpContext.Session.SetString("ContractId", CreateTransactionModel.ContractId.ToString());
+                HttpContext.Session.SetObject("CreateTransactionModel", CreateTransactionModel);
 
                 var model = contract.ToyName == null ?
                     await CreateVnPayTopUpRequest(contract) 
@@ -69,9 +68,10 @@ namespace EduToyRentalPlatform.Pages.Cart
 
                 string url = CreatePaymentUrl(model, HttpContext);
                 Response.Redirect(url);
-            }     
+            }
         }
 
+        #region vnpay
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
@@ -102,9 +102,18 @@ namespace EduToyRentalPlatform.Pages.Cart
                 Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
                 IpAddress = "127.0.0.1"
             };
-
             return model;
         }
+        #endregion
+
+        private CreateTransactionModel CreateOfflineTransaction()
+        {
+            return new CreateTransactionModel()
+            {
+                Status = "Processing"
+            };
+        }
+
 
     }
 }
