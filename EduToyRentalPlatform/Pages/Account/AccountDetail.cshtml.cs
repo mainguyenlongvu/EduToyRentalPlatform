@@ -14,137 +14,77 @@ namespace ToyShop.Pages.Account
 {
     public class AccountDetailModel : PageModel
     {
-        private readonly ToyShopDBContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
-        public string Email { get; private set; } // Email is non-editable
-
-        // Editable properties
+        public AccountDetailModel(IUserService userService)
+        {
+            _userService = userService;
+        }
         [BindProperty]
-        [Required(ErrorMessage = "User name is required.")]
         public string UserName { get; set; }
 
         [BindProperty]
-        [Phone(ErrorMessage = "Invalid phone number format.")]
+        public string Email { get; set; }
+
+        [BindProperty]
         public string Phone { get; set; }
 
         [BindProperty]
-        [DataType(DataType.Password)]
         public string NewPassword { get; set; }
 
         [BindProperty]
-        [DataType(DataType.Password)]
-        [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
 
-        public AccountDetailModel(ToyShopDBContext context, UserManager<ApplicationUser> userManager)
+
+        [BindProperty]
+        public UpdateCustomerModel UserDetails { get; set; } = new UpdateCustomerModel();
+
+        [BindProperty]
+        public ChangPasswordModel ChangePassword { get; set; } = new ChangPasswordModel();
+
+        public async Task<IActionResult> OnGetAsync(Guid userId)
         {
-            _context = context;
-            _userManager = userManager;
-        }
+            // Load the user details
+            var user = await _userService.GetUserByIdAsync(userId.ToString());
 
-        public async Task<IActionResult> OnGetAsync()
-        {
-            // Retrieve UserId from cookies
-            var userIdString = HttpContext.Request.Cookies["UserId"];
-            if (userIdString == null)
+            if (user == null)
             {
-                return RedirectToPage("/Account/Login");
+                return NotFound();
             }
 
-            if (!Guid.TryParse(userIdString, out Guid userId))
-            {
-                return RedirectToPage("/Account/Login");
-            }
-
-            // Load the user by UserId
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user != null)
-            {
-                UserName = user.UserName;
-                Email = user.Email;
-                Phone = user.Phone;
-            }
-            else
-            {
-                UserName = "Guest";
-                Email = "Not Available";
-                Phone = "Not Available";
-            }
+            // Populate UserDetails model with retrieved data, excluding email
+            UserDetails.FullName = user.FullName;
+            UserDetails.Phone = user.Phone;
+            UserDetails.Email = user.Email;
+            UserDetails.ImageUrl = user.ImageUrl;
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostUpdateAsync()
+        public async Task<IActionResult> OnPostUpdateDetailsAsync(Guid userId)
         {
-            // Retrieve UserId from cookies
-            var userIdString = HttpContext.Request.Cookies["UserId"];
-            if (userIdString == null)
+            if (!ModelState.IsValid)
             {
-                return RedirectToPage("/Account/Login");
-            }
-
-            if (!Guid.TryParse(userIdString, out Guid userId))
-            {
-                return RedirectToPage("/Account/Login");
-            }
-
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                return RedirectToPage("/Account/Login");
-            }
-
-            // Update user properties
-            user.UserName = UserName;
-            user.Phone = Phone;
-
-            // Update password if a new one is provided
-            if (!string.IsNullOrWhiteSpace(NewPassword))
-            {
-                var result = await _userManager.RemovePasswordAsync(user);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Failed to remove old password.");
-                    return Page();
-                }
-
-                result = await _userManager.AddPasswordAsync(user, NewPassword);
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError("", "Failed to set new password.");
-                    return Page();
-                }
-            }
-
-            // Save changes to the database
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                ModelState.AddModelError("", "Failed to update user information.");
                 return Page();
             }
 
-            return RedirectToPage("/Account/AccountDetail");
+            // Call UpdateCustomerAsync without changing email
+            await _userService.UpdateCustomerAsync(userId, UserDetails);
+
+            return RedirectToPage("AccountDetail", new { userId });
         }
 
-        public async Task<IActionResult> OnPostBackAsync()
+        public async Task<IActionResult> OnPostChangePasswordAsync(Guid userId)
         {
-            var userId = HttpContext.Request.Cookies["UserId"];
-            if (userId == null)
+            if (!ModelState.IsValid)
             {
-                return RedirectToPage("/Account/Login");
+                return Page();
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return RedirectToPage("/Account/Login");
-            }
+            // Call ChangePasswordAsync to change the password
+            await _userService.ChangPasswordAsync(ChangePassword);
 
-            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-
-            return isAdmin ? RedirectToPage("/Admin/Index") : RedirectToPage("/Shop");
+            return RedirectToPage("AccountDetail", new { userId });
         }
     }
 }
