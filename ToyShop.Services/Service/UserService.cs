@@ -427,7 +427,6 @@ namespace ToyShop.Services.Service
             // Return true to indicate the deletion was successful
             return true;
         }
-
         public Task<ApplicationUser> GetUserAsync(LoginModel model)
         {
             throw new NotImplementedException();
@@ -466,6 +465,4 @@ namespace ToyShop.Services.Service
 
         }
     }
-
-
 }

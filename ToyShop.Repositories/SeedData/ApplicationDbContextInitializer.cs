@@ -84,7 +84,6 @@ public class ApplicationDbContextInitializer
         _context.ApplicationRoles.AddRange(roles);
         _context.SaveChanges();
     }
-
     private void SeedUsers()
     {
         if (_context.ApplicationUsers.Any()) return;

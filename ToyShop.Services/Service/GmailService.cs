@@ -16,17 +16,17 @@ namespace ToyShop.Services.Service
 
 		public GmailService()
 		{
-			if (_configuration == null) InitializeConfiguration();
+			//if (_configuration == null) InitializeConfiguration();
 		}
 
-		private void InitializeConfiguration()
-		{
-			var path = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-			_configuration = new ConfigurationBuilder()
-				.SetBasePath(path + "\\EduToyRent.API")
-				.AddJsonFile("appsettings.json")
-				.Build();
-		}
+		//private void InitializeConfiguration()
+		//{
+		//	var path = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+		//	_configuration = new ConfigurationBuilder()
+		//		.SetBasePath(path + "\\EduToyRent.API")
+		//		.AddJsonFile("appsettings.json")
+		//		.Build();
+		//}
 
 		public  bool SendEmailSingle(EmailRequestModel request)
 		{
