@@ -25,7 +25,7 @@ namespace ToyShop.Services.Service
             // Kiểm tra tên không được để trống
             if (string.IsNullOrWhiteSpace(model.ToyName))
             {
-                throw new Exception("Please enter toy name!");
+                throw new Exception("Vui lòng nhập tên đồ chơi!");
             }
 
             // Kiểm tra sản phẩm đã tồn tại hay chưa
@@ -39,7 +39,7 @@ namespace ToyShop.Services.Service
 
             if (isExistProduct)
             {
-                throw new Exception("Entered name already exists!");
+                throw new Exception("Tên đã tồn tại!");
             }
 
             // Lưu toy vào DB
@@ -62,7 +62,7 @@ namespace ToyShop.Services.Service
             // Lấy sản phẩm - kiểm tra sự tồn tại
             Toy toy = await _unitOfWork.GetRepository<Toy>().Entities
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
-                ?? throw new Exception("The Toy cannot be found!");
+                ?? throw new Exception("Không tìm thấy đồ chơi!");
 
             // Xóa mềm
             toy.DeletedTime = CoreHelper.SystemTimeNow;
@@ -127,7 +127,7 @@ namespace ToyShop.Services.Service
         {
             Toy toy = await _unitOfWork.GetRepository<Toy>()
                 .Entities.FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
-                ?? throw new Exception("The Prodcut can not found!");
+                ?? throw new Exception("Không tìm thấy đồ chơi!");
             return _mapper.Map<ResponeToyModel>(toy);
 
         }
@@ -137,12 +137,12 @@ namespace ToyShop.Services.Service
             // Lấy sản phẩm - kiểm tra sự tồn tại
             Toy toy = await _unitOfWork.GetRepository<Toy>().Entities
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
-                ?? throw new Exception("The Toy cannot be found!");
+                ?? throw new Exception("Không tìm thấy đồ chơi!");
 
             // Kiểm tra tên không được để trống
             if (string.IsNullOrWhiteSpace(model.ToyName))
             {
-                throw new Exception("Please enter toy name!");
+                throw new Exception("Vui lòng nhập tên đồ chơi!");
             }
 
             // Cập nhật và lưu sản phẩm vào db

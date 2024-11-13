@@ -43,11 +43,17 @@ namespace ToyShop.Contract.Services.Interface
             //Nếu không tìm thấy thì tạo mới 
             if (contractEntity == null)
             {
-                //Tạo mới contract khi chưa có ở trạng thái In Cart
-                ContractEntity newContract = new ContractEntity();
-                newContract.Status = "In Cart";
-                newContract.CreatedBy = userId;
-                newContract.CreatedTime = CoreHelper.SystemTimeNows;
+                // Tạo mới contract khi chưa có ở trạng thái In Cart
+                ContractEntity newContract = new ContractEntity
+                {
+                    Status = "In Cart",
+                    CreatedBy = userId,
+                    CreatedTime = CoreHelper.SystemTimeNows,
+                    UserId = Guid.Parse(userId)
+                };
+                // Lưu newContract vào cơ sở dữ liệu trước
+                await _unitOfWork.GetRepository<ContractEntity>().InsertAsync(newContract);
+                await _unitOfWork.SaveAsync();  // Sau khi save, newContract.Id sẽ có giá trị hợp lệ
                 //Map qua 
                 ContractDetail contractDetail = _mapper.Map<ContractDetail>(model);
                 contractDetail.CreatedTime = CoreHelper.SystemTimeNows;

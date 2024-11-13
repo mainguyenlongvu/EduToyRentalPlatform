@@ -11,6 +11,8 @@ namespace ToyShop.Repositories.Mapper
         {
             CreateMap<Transaction, ResponseTransactionModel>().ReverseMap();
             CreateMap<CreateTransactionModel, Delivery>().ReverseMap();
+            CreateMap<CreateTransactionModel, Transaction>().ReverseMap();
+
         }
     }
 }

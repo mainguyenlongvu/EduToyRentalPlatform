@@ -84,6 +84,7 @@ namespace ToyShop
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<IContractDetailService, ContractDetailService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IDeliveryService, DeliveryService>();
             services.AddScoped<IRestoreToyService, RestoreToyService>();
