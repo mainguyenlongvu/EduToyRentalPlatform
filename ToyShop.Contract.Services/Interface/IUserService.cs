@@ -10,10 +10,11 @@ namespace ToyShop.Contract.Services.Interface
         Task<string> LoginAsync(LoginModel model);
         Task<bool> RegisterAsync(RegisterModel model);
         Task<ApplicationUser> GetUserAsync(LoginModel model);
-        Task DeleteUserAsync(string id);
+        Task<bool> DeleteUserAsync(string id);
         Task UpdateCustomerAsync(Guid id, UpdateCustomerModel model);
         Task ChangPasswordAdminAsync(ChangPasswordAdminModel model);
         Task<BasePaginatedList<ApplicationUser>> GetPageAsync(int index, int pageSize, string nameSearch);
         Task ChangPasswordAsync(ChangPasswordModel model);
+        Task ForgotPassword(string email);
     }
 }

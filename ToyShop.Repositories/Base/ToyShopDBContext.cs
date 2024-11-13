@@ -113,10 +113,6 @@ namespace ToyShop.Repositories.Base
             
         }
 
-
-
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Configure Lazy Loading Proxies here

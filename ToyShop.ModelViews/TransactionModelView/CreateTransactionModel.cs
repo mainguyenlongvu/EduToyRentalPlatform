@@ -13,5 +13,8 @@ namespace ToyShop.ModelViews.TransactionModelView
 		public string? Status { get; set; }
 		public string? ContractId { get; set; }
 
+
+
+
 	}
 }
