@@ -90,12 +90,12 @@ public class ApplicationDbContextInitializer
         if (_context.ApplicationUsers.Any()) return;
         var users = new ApplicationUser[]
         {
-        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "admin@gmail.com", Password = "admin123@" },
-        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "manager@gmail.com", Password = "manager123@" },
-        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email="customer1@gmail.com" , Password = "customer123@"},
-        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "customer2@gmail.com", Password = "customer123@" },
-        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" ,Email = "customer2@gmail.com", Password = "customer123@" },
-        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678",Email = "customer2@gmail.com", Password = "customer123@" },
+        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "admin@gmail.com", Password = "admin123@" , ImageUrl = "img/9.jpg"},
+        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "manager@gmail.com", Password = "manager123@", ImageUrl = "img/9.jpg" },
+        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email="customer1@gmail.com" , Password = "customer123@", ImageUrl = "img/9.jpg"},
+        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
+        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" ,Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
+        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678",Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
         };
 
         _context.ApplicationUsers.AddRange(users);
@@ -138,7 +138,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Superhero Action Figure",
-            ToyImg = "images/superhero_action_figure.png",
+            ToyImg = "img/superhero_action_figure.png",
             ToyDescription = "A detailed action figure of your favorite superhero.",
             ToyPriceSale = 29,
             ToyPriceRent = 4,
@@ -151,7 +151,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Classic Board Game",
-            ToyImg = "images/classic_board_game.png",
+            ToyImg = "img/classic_board_game.png",
             ToyDescription = "A classic board game for family fun.",
             ToyPriceSale = 19,
             ToyPriceRent = 4,
@@ -164,7 +164,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Wooden Dollhouse",
-            ToyImg = "images/wooden_dollhouse.png",
+            ToyImg = "img/wooden_dollhouse.png",
             ToyDescription = "A beautifully crafted wooden dollhouse.",
             ToyPriceSale = 49,
             ToyPriceRent = 4,
@@ -177,7 +177,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Soccer Ball",
-            ToyImg = "images/soccer_ball.png",
+            ToyImg = "img/soccer_ball.png",
             ToyDescription = "A standard size soccer ball for outdoor play.",
             ToyPriceSale = 15,
             ToyPriceRent = 4,
@@ -190,7 +190,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Building Blocks Set",
-            ToyImg = "images/building_blocks_set.png",
+            ToyImg = "img/building_blocks_set.png",
             ToyDescription = "A set of colorful building blocks for creative play.",
             ToyPriceSale = 25,
             ToyPriceRent = 4,
@@ -203,7 +203,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Remote Control Car",
-            ToyImg = "images/remote_control_car.png",
+            ToyImg = "img/remote_control_car.png",
             ToyDescription = "A fast remote control car for kids.",
             ToyPriceSale = 45,
             ToyPriceRent = 4,
@@ -216,7 +216,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Puzzle Game",
-            ToyImg = "images/puzzle_game.png",
+            ToyImg = "img/puzzle_game.png",
             ToyDescription = "A fun puzzle game for all ages.",
             ToyPriceSale = 20,
             ToyPriceRent = 4,
