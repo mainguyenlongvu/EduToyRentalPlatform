@@ -9,6 +9,14 @@ namespace ToyShop.Pages.Shared
     {
         private readonly IContractService _contractService;
         private readonly IContractDetailService _contractDetailService;
+
+        // Sử dụng [BindProperty] để nhận giá trị từ form
+        [BindProperty]
+        public string ToyId { get; set; }
+
+        [BindProperty]
+        public int Quantity { get; set; }
+
         public ToyListPartialModel(IContractService contractService, IContractDetailService contractDetailService)
         {
             _contractService = contractService;
@@ -19,21 +27,27 @@ namespace ToyShop.Pages.Shared
         {
         }
 
-        // Handler for adding item to cart
-        public async Task<IActionResult> OnPostAddToCartAsync(string toyId)
+        // Phương thức xử lý POST cho Add to Cart
+        public async Task<IActionResult> OnPostAsync()
         {
-            var model = new CreateContractDetailModel
+            // Kiểm tra nếu ToyId và Quantity có dữ liệu
+            if (!string.IsNullOrEmpty(ToyId) && Quantity > 0)
             {
-                ToyId = toyId,
-                Quantity = 1,
-                ContractType = true
-            };
+                var model = new CreateContractDetailModel
+                {
+                    ToyId = ToyId,
+                    Quantity = Quantity,
+                    ContractType = true
+                };
 
-            await _contractDetailService.CreateContractDetailAsync(model);
+                await _contractDetailService.CreateContractDetailAsync(model);
 
-            // Redirect to Cart page
-            return RedirectToPage("/Cart");
+                // Chuyển hướng đến trang Giỏ Hàng
+                return RedirectToPage("/Cart/Cart");
+            }
+
+            // Nếu dữ liệu không hợp lệ, trả về lại trang hiện tại
+            return Page();
         }
-
     }
 }
