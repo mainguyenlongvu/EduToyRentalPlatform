@@ -17,17 +17,18 @@
                     <p class="text-dark fs-5 fw-bold mb-0">@toy.ToyPriceSale.ToString("N0") VND</p>
                     <p class="text-dark fs-5 fw-bold mb-0">@toy.ToyPriceRent.ToString("N0") VND</p>
                     <div class="d-flex justify-content-start align-items-center">
-                        <!-- Add to Cart Form -->
-                        <form method="post" asp-page-handler="AddToCart">
+                        <!-- Form Add to Cart -->
+                        <form method="post" asp-page="/Shop" asp-page-handler="AddToCart">
                             <input type="hidden" name="ToyId" value="@toy.Id" />
                             <input type="hidden" name="Quantity" value="1" />
                             <button type="submit" class="btn btn-sm border border-secondary rounded-pill px-2 py-1 text-success me-2" style="font-size: 0.85rem;">
-                                <i class="fa fa-shopping-bag me-2 text-success"></i> Add to cart
+                                <i class="fa fa-shopping-bag me-2 text-success"></i> Thêm vào giỏ
                             </button>
                         </form>
+
                         <!-- View Details Button -->
                         <a href="@Url.Page("./ShopDetail", new { id = toy.Id })" class="btn btn-sm border border-secondary rounded-pill px-2 py-1 text-primary" style="font-size: 0.85rem;">
-                            <i class="fa fa-info-circle me-2 text-primary"></i> Details
+                            <i class="fa fa-info-circle me-2 text-primary"></i> Chi tiết
                         </a>
                     </div>
                 </div>

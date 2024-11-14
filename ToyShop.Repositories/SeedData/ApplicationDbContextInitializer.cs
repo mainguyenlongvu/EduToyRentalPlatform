@@ -84,18 +84,17 @@ public class ApplicationDbContextInitializer
         _context.ApplicationRoles.AddRange(roles);
         _context.SaveChanges();
     }
-
     private void SeedUsers()
     {
         if (_context.ApplicationUsers.Any()) return;
         var users = new ApplicationUser[]
         {
-        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "admin@gmail.com", Password = "admin123@" , ImageUrl = "img/9.jpg"},
-        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "manager@gmail.com", Password = "manager123@", ImageUrl = "img/9.jpg" },
-        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email="customer1@gmail.com" , Password = "customer123@", ImageUrl = "img/9.jpg"},
-        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
-        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" ,Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
-        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678",Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "img/9.jpg"},
+        new ApplicationUser { UserName = "admin", FullName = "Admin User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("admin123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "admin@gmail.com", Password = "admin123@" , ImageUrl = "9.jpg"},
+        new ApplicationUser { UserName = "manager", FullName = "Manager User", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("manager123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "manager@gmail.com", Password = "manager123@", ImageUrl = "9.jpg" },
+        new ApplicationUser { UserName = "customer1", FullName = "Customer One", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email="customer1@gmail.com" , Password = "customer123@", ImageUrl = "9.jpg"},
+        new ApplicationUser { UserName = "customer2", FullName = "Customer Two", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678", Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "9.jpg"},
+        new ApplicationUser { UserName = "customer3", FullName = "Customer Three", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow, Phone = "0912345678" ,Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "9.jpg"},
+        new ApplicationUser { UserName = "customer4", FullName = "Customer Four", EmailConfirmed = true, SecurityStamp = Guid.NewGuid().ToString(), PasswordHash = CoreHelper.HashPassword("customer123@"), CreatedTime = DateTimeOffset.UtcNow, LastUpdatedTime = DateTimeOffset.UtcNow , Phone = "0912345678",Email = "customer2@gmail.com", Password = "customer123@" , ImageUrl = "9.jpg"},
         };
 
         _context.ApplicationUsers.AddRange(users);
@@ -128,7 +127,6 @@ public class ApplicationDbContextInitializer
         _context.ApplicationUserRoles.AddRange(userRoles);
         _context.SaveChanges();
     }
-
     private void SeedToys()
     {
         if (_context.Toys.Any()) return;
@@ -138,7 +136,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Superhero Action Figure",
-            ToyImg = "img/superhero_action_figure.png",
+            ToyImg = "superhero_action_figure.png",
             ToyDescription = "A detailed action figure of your favorite superhero.",
             ToyPriceSale = 29,
             ToyPriceRent = 4,
@@ -151,7 +149,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Classic Board Game",
-            ToyImg = "img/classic_board_game.png",
+            ToyImg = "classic_board_game.png",
             ToyDescription = "A classic board game for family fun.",
             ToyPriceSale = 19,
             ToyPriceRent = 4,
@@ -164,7 +162,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Wooden Dollhouse",
-            ToyImg = "img/wooden_dollhouse.png",
+            ToyImg = "wooden_dollhouse.png",
             ToyDescription = "A beautifully crafted wooden dollhouse.",
             ToyPriceSale = 49,
             ToyPriceRent = 4,
@@ -177,7 +175,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Soccer Ball",
-            ToyImg = "img/soccer_ball.png",
+            ToyImg = "soccer_ball.png",
             ToyDescription = "A standard size soccer ball for outdoor play.",
             ToyPriceSale = 15,
             ToyPriceRent = 4,
@@ -190,7 +188,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Building Blocks Set",
-            ToyImg = "img/building_blocks_set.png",
+            ToyImg = "building_blocks_set.png",
             ToyDescription = "A set of colorful building blocks for creative play.",
             ToyPriceSale = 25,
             ToyPriceRent = 4,
@@ -203,7 +201,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Remote Control Car",
-            ToyImg = "img/remote_control_car.png",
+            ToyImg = "remote_control_car.png",
             ToyDescription = "A fast remote control car for kids.",
             ToyPriceSale = 45,
             ToyPriceRent = 4,
@@ -216,7 +214,7 @@ public class ApplicationDbContextInitializer
         new Toy
         {
             ToyName = "Puzzle Game",
-            ToyImg = "img/puzzle_game.png",
+            ToyImg = "puzzle_game.png",
             ToyDescription = "A fun puzzle game for all ages.",
             ToyPriceSale = 20,
             ToyPriceRent = 4,
@@ -282,7 +280,6 @@ public class ApplicationDbContextInitializer
         _context.Toys.AddRange(toys);
         _context.SaveChanges();
     }
-
     private void SeedContracts()
     {
         if (_context.ContractEntitys.Any()) return;
@@ -379,7 +376,6 @@ public class ApplicationDbContextInitializer
         _context.SaveChanges();
 
     }
-
     private void SeedContractDetails()
     {
         if (_context.ContractDetails.Any()) return;
@@ -467,7 +463,6 @@ public class ApplicationDbContextInitializer
         _context.ContractDetails.AddRange(contractDetailsArray);
         _context.SaveChanges();
     }
-
     private void SeedRestoreToys()
     {
         if (_context.RestoreToys.Any()) return;
@@ -514,7 +509,6 @@ public class ApplicationDbContextInitializer
         _context.RestoreToys.AddRange(restoreToys);
         _context.SaveChanges();
     }
-
     private void SeedRestoreToyDetails()
     {
         if (_context.RestoreToyDetails.Any()) return;
@@ -571,9 +565,6 @@ public class ApplicationDbContextInitializer
         _context.RestoreToyDetails.AddRange(restoreToyDetails);
         _context.SaveChanges();
     }
-
-
-
     private void SeedChats()
     {
         if (_context.Chats.Any()) return;
