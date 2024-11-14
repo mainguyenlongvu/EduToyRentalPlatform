@@ -1,17 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Contract.Services.Interface;
+using ToyShop.ModelViews.ContractDetailModelView;
+using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.PaymentModelView;
+using ToyShop.ModelViews.TransactionModelView;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
     public class PaymentCallbackModel : PageModel
     {
         private IVnPayService _vnPayService;
+        private ITransactionService _transactionService;
+        private IContractService _contractService;
 
-        public PaymentCallbackModel(IVnPayService vnPayService)
+        public PaymentCallbackModel(IVnPayService vnPayService, ITransactionService transactionService, IContractService contractService)
         {
             _vnPayService = vnPayService;
+            _transactionService = transactionService;
+            _contractService = contractService;
         }
 
         public void OnGet()
@@ -26,8 +33,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             }
         }
 
-
-        public void PaymentCallBack()
+        public async Task PaymentCallBack()
         {
             Console.WriteLine("VnPay Callback called");
             var vnPayRes = _vnPayService.PaymentExecute(Request.Query);
@@ -39,21 +45,33 @@ namespace EduToyRentalPlatform.Pages.Cart
             }
 
             if (Request.Query.FirstOrDefault(m => m.Key.Equals("vnp_OrderInfo")).Value.Contains("nap vi"))
-                OnTopUpSuccess(vnPayRes);
+                await OnTopUpSuccess(vnPayRes);
             else
-                OnPurchaseSuccess(vnPayRes);
+                await OnPurchaseSuccess(vnPayRes);
 
             Response.Redirect("TestSuccess");
         }
 
-        private void OnTopUpSuccess(VnPayResponseModel vnPayRes)
+        private async Task OnTopUpSuccess(VnPayResponseModel vnPayRes)
         {
-            string order = vnPayRes.OrderId;
+            var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
+            var updateContract = new UpdateContractModel()
+            {
+                Status = "Done"
+            };
+            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+            await _transactionService.Insert(tranModel);
         }
 
-        private void OnPurchaseSuccess(VnPayResponseModel vnPayRes)
+        private async Task OnPurchaseSuccess(VnPayResponseModel vnPayRes)
         {
-            string order = vnPayRes.OrderId;
+            var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
+            var updateContract = new UpdateContractModel()
+            {
+                Status = "Done"
+            };
+            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+            await _transactionService.Insert(tranModel);
         }
 
     }
