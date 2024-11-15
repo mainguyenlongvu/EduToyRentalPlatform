@@ -1,20 +1,14 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Core.Base;
 using ToyShop.Core.Utils;
 using ToyShop.ModelViews.RestoreToyDetailModelViews;
-using ToyShop.ModelViews.RestoreToyModelViews;
 
 namespace ToyShop.Services.Service
 {
-    public class RestoreToyDetailService : IRestoreToyDetailService
+	public class RestoreToyDetailService : IRestoreToyDetailService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -58,7 +52,7 @@ namespace ToyShop.Services.Service
             try
             {
                 RestoreToyDetail restoreToyDetail = _unitOfWork.GetRepository<RestoreToyDetail>().Entities.AsNoTracking().FirstOrDefault(d => d.Id == id && !d.DeletedTime.HasValue)
-                    ?? throw new KeyNotFoundException($"Delivery with id {id} not found.");
+                    ?? throw new KeyNotFoundException($"Delivery with restoreToyId {id} not found.");
 
                 restoreToyDetail.DeletedTime = CoreHelper.SystemTimeNow;
 
@@ -160,5 +154,24 @@ namespace ToyShop.Services.Service
             }
         }
 
-    }
+		public async Task<RestoreToyDetail> GetByRestoreToyId(string restoreToyId)
+		{
+			try
+			{
+				var restoreToyDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.Id == restoreToyId && !x.DeletedTime.HasValue) ?? throw new KeyNotFoundException("RestoreToy not found or has been deleted.");
+
+				return _mapper.Map<RestoreToyDetail>(restoreToyDetail);
+			}
+			catch (KeyNotFoundException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidOperationException("Failed to retrieve restoreToy detail. Please try again later.", ex);
+			}
+		}
+
+
+	}
 }

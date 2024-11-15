@@ -19,6 +19,7 @@ namespace ToyShop.Repositories.Mapper
             //.ForMember(d => d.DateStart, opt => opt.MapFrom(src => src.DateStart))
             //.ForMember(d => d.DateEnd, opt => opt.MapFrom(src => src.DateEnd));
             CreateMap<ResponseContractModel, CreateContractModel>().ReverseMap();
+            CreateMap<ContractEntity, CancelContractModel>().ReverseMap();
 
         }
     }

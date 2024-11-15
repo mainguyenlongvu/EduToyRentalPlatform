@@ -87,8 +87,21 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
                     Method = Method
 
                 };
-
                 var updatedTransaction = await _transactionService.Update(tranCode, transactionDTO);
+
+                var currentRestore = await _restoreToyService.GetByContractId(contractId);
+                var restoreToyDto = new UpdateRestoreModel() 
+                { 
+                    Status = status
+                };
+                await _restoreToyService.Update(currentRestore.Id, restoreToyDto);
+
+                var currentRestoreDetail = await _restoreToyDetailService.GetByRestoreToyId(currentRestore.Id);
+                var restoreToyDetailDto = new UpdateRestoreDetailModel()
+                {
+                    
+                };
+                await _restoreToyDetailService.Update(currentRestoreDetail.Id, restoreToyDetailDto);
 
                 return RedirectToPage();
             }
@@ -121,6 +134,8 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
 
             try
             {
+                
+
                 var restoreToyDetailDTO = new UpdateRestoreDetailModel
                 {
                     ToyQuality = toyQuality,

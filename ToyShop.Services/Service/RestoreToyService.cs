@@ -152,6 +152,27 @@ namespace ToyShop.Services.Service
             }
         }
 
+
+		public async Task<RestoreToy> GetByContractId(string contractId)
+		{
+			try
+			{
+				var existingRestoreToy = await _unitOfWork.GetRepository<RestoreToy>().Entities.AsNoTracking().FirstOrDefaultAsync(d => d.ContractId.Equals(contractId) && !d.DeletedTime.HasValue)
+					?? throw new KeyNotFoundException("RestoreToy not found.");
+
+				return existingRestoreToy;
+			}
+			catch (KeyNotFoundException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidOperationException(ex.Message, ex);
+			}
+
+		}
+
     }
 }
 
