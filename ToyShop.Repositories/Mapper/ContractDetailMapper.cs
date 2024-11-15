@@ -14,6 +14,7 @@ namespace ToyShop.Repositories.Mapper
                 .ForMember(d => d.ToyName, opt => opt.MapFrom(src => src.Toy.Id == src.ToyId ? src.Toy.ToyName : ""));
 
             CreateMap<ContractDetail, UpdateContractDetailModel>().ReverseMap();
+            CreateMap<ContractDetail, UpdateContractDetailRentModel>().ReverseMap();
             CreateMap<ContractDetail, CreateContractDetailModel>().ReverseMap();
             CreateMap<ResponseContractDetailModel, CreateContractDetailModel>().ReverseMap();
 

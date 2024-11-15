@@ -353,5 +353,70 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
         }
+
+        public async Task UpdateContractDetailRentAsync(string id, UpdateContractDetailRentModel model)
+        {
+            //Điều kiện
+            if (model.Quantity <= 0)
+            {
+                throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.INVALID_INPUT, "Số lượng phải lớn hơn 0");
+            }
+            if (model.DateStart <= model.DateEnd)
+            {
+                throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.INVALID_INPUT, "Ngày bắt đầu phải lớn hơn ngày kết thúc");
+            }
+            //Tìm hợp đồng
+            ContractDetail contractDetail = await _unitOfWork.GetRepository<ContractDetail>().Entities
+                .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
+                ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract detail not found!");
+            //Tìm đồ chơi
+            Toy toy = await _unitOfWork.GetRepository<Toy>().Entities
+                .FirstOrDefaultAsync(p => p.Id == contractDetail.ToyId && !p.DeletedTime.HasValue);
+            _mapper.Map(model, contractDetail);
+            contractDetail.LastUpdatedTime = CoreHelper.SystemTimeNows;
+            //Cập nhập lại giá
+            //Nêu true là bán lấy giá bán
+            if (contractDetail.ContractType == true)
+            {
+                contractDetail.Price = model.Quantity * toy.ToyPriceSale;
+            }
+            else//còn false là thuê lấy giá của thuê
+            {
+                //giá trị = số lượng của đồ chơi * (giá thuê + giá bán/2)* giá ngày thuê
+                contractDetail.Price = model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2) * (model.DateStart.Value.Day - model.DateEnd.Value.Day);
+                contractDetail.DateStart = model.DateStart.Value;
+                contractDetail.DateEnd = model.DateEnd.Value;
+                //Tìm xem có sẵn đơn trả chưa
+                RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractDetail.ContractId && !x.DeletedTime.HasValue);
+                //Nếu có restoreToy
+                if (restoreToy != null)
+                {
+                    //Tìm xem đơn trả đó có Đồ chơi này chưa
+                    RestoreToyDetail restoreDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.RestoreToyId == restoreToy.Id && x.ToyId == toy.Id);
+                    //Nếu có
+                    if (restoreDetail != null)
+                    {
+                        restoreDetail.ToyQuality = model.Quantity;
+                        restoreDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                        //Cập nhật lại
+                        await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreDetail);
+                    }
+                    //Nếu ko có
+                    else
+                    {
+                        RestoreToyDetail restoreToyDetail = new RestoreToyDetail();
+                        restoreToyDetail.RestoreToyId = restoreToy.Id;
+                        restoreToyDetail.ToyQuality = model.Quantity;
+                        restoreToyDetail.ToyName = toy.ToyName;
+                        restoreToyDetail.ToyId = toy.Id;
+                        restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                        //thêm vào Db
+                        await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
+                    }
+                }
+            }
+            await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
+            await _unitOfWork.SaveAsync();
+        }
     }
 }
