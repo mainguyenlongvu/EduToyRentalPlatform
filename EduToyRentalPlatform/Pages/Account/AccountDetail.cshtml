@@ -8,15 +8,18 @@
 <h2>Your Profile</h2>
 
 <div class="card">
+    <div class="profile-pic">
+        <img src="/img/@Model.Img" alt="User Avatar" width="80" height="80" style="border-radius: 50%;">
+    </div>
     <div class="card-title">Your profile in details:</div>
     <ul>
-        <li><strong>Username:</strong> @Model.UserName</li>
+        <li><strong>Họ tên:</strong> @Model.FullName</li>
         <li><strong>Email:</strong> @Model.Email</li>
-        <li><strong>Phone:</strong> @Model.Phone</li>
+        <li><strong>Số điện thoại:</strong> @Model.Phone</li>
     </ul>
 
-    <button class="btn-primary" onclick="showEditForm()">Edit Profile</button>
-    <button class="btn-primary" onclick="showChangePasswordForm()">Change Password</button>
+@*     <button class="btn-primary" onclick="showEditForm()">Edit Profile</button>
+    <button class="btn-primary" onclick="showChangePasswordForm()">Change Password</button> *@
     <a href="/Shop" class="btn-secondary">Back</a>
 </div>
 
@@ -25,17 +28,22 @@
     <div class="modal-content">
         <span class="close" onclick="closeForm('editForm')">&times;</span>
         <h3>Edit Profile</h3>
-        <form method="post" asp-page-handler="Update">
-            <label>Username:</label>
-            <input type="text" asp-for="UserName" class="input-field" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
+        <form method="post" asp-page-handler="UpdateDetail" enctype="multipart/form-data">
+            <label>Họ tên:</label>
+            <input type="text" asp-for="UserDetails.FullName" class="input-field" />
+            <span asp-validation-for="UserDetails.FullName" class="text-danger"></span>
 
-            <label>Phone:</label>
-            <input type="text" asp-for="Phone" class="input-field" />
-            <span asp-validation-for="Phone" class="text-danger"></span>
+            <label>Số điện thoại:</label>
+            <input type="text" asp-for="UserDetails.Phone" class="input-field" />
+            <span asp-validation-for="UserDetails.Phone" class="text-danger"></span>
 
-            <button type="submit" class="btn-primary">Save Changes</button>
+            <label>Ảnh đại diện:</label>
+            <input type="file" asp-for="ImageFile" class="input-field" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+
+            <button type="submit" class="btn-primary px-4">Save Changes</button>
         </form>
+
     </div>
 </div>
 
@@ -44,20 +52,33 @@
     <div class="modal-content">
         <span class="close" onclick="closeForm('changePasswordForm')">&times;</span>
         <h3>Change Password</h3>
-        <form method="post" asp-page-handler="UpdatePassword">
+        <form method="post" asp-page-handler="ChangePassword">
             <label>New Password:</label>
-            <input type="password" asp-for="NewPassword" class="input-field" />
-            <span asp-validation-for="NewPassword" class="text-danger"></span>
+            <input type="password" asp-for="ChangePassword.NewPassword" class="input-field" />
+            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
 
             <label>Confirm New Password:</label>
-            <input type="password" asp-for="ConfirmPassword" class="input-field" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            <input type="password" asp-for="ChangePassword.ConfirmPassword" class="input-field" />
+            <span asp-validation-for="ChangePassword.ConfirmPassword" class="text-danger"></span>
 
             <button type="submit" class="btn-primary">Change Password</button>
         </form>
+
     </div>
 </div>
+<script>
+    function showEditForm() {
+        document.getElementById("editForm").style.display = "block";
+    }
 
+    function showChangePasswordForm() {
+        document.getElementById("changePasswordForm").style.display = "block";
+    }
+
+    function closeForm(formId) {
+        document.getElementById(formId).style.display = "none";
+    }
+</script>
 <style>
     /* Card style */
     .card {
@@ -133,16 +154,5 @@
     }
 </style>
 
-<script>
-    function showEditForm() {
-        document.getElementById("editForm").style.display = "flex";
-    }
 
-    function showChangePasswordForm() {
-        document.getElementById("changePasswordForm").style.display = "flex";
-    }
 
-    function closeForm(formId) {
-        document.getElementById(formId).style.display = "none";
-    }
-</script>
