@@ -234,6 +234,11 @@ namespace ToyShop.Contract.Services.Interface
             return await _unitOfWork.GetRepository<ContractEntity>().Entities.Where(X => !X.DeletedTime.HasValue).ToListAsync();
         }
 
+        public async Task<List<ContractEntity>> GetAllContractsByUserIdAsync(string userId)
+        {
+            return await _unitOfWork.GetRepository<ContractEntity>().Entities.Include(x => x.Transactions).Where(X => X.UserId.ToString() == userId == !X.DeletedTime.HasValue).ToListAsync();
+        }
+
         public Task<bool> CreateTopUpAsync(CreateTopUpModel model)
         {
             throw new NotImplementedException();
