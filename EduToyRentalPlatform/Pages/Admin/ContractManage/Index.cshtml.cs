@@ -35,10 +35,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
 
         public int TotalItems { get; private set; }
         public int PageNumber { get; private set; }
-        public int PageSize { get; private set; } = 8; // Default page size
-
-        [BindProperty(SupportsGet = true)]
-        public string SearchName { get; set; }
+        public int PageSize { get; private set; } = 8;
 
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
         public IList<ContractEntity> ContractEntities { get; set; } = new List<ContractEntity>();
@@ -49,25 +46,12 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
             // Set PageNumber and ensure it is at least 1
             PageNumber = Math.Max(pageNumber, 1);
 
-            // Fetch contracts based on current PageNumber, PageSize, and SearchName
-            var contracts = await _contractService.GetContractsAsync(PageNumber, PageSize, SearchName);
+            var contracts = await _contractService.GetContractsAsync(PageNumber, PageSize,"");
 
             // Update TotalItems based on the fetched contracts
             TotalItems = contracts.TotalItems;
-
-            // If there is a search term, filter the items accordingly
-            if (!string.IsNullOrEmpty(SearchName))
-            {
-                ContractEntities = contracts.Items
-                    .Where(c => c.ApplicationUser.FullName.Contains(SearchName, StringComparison.OrdinalIgnoreCase) ||
-                                c.Status.Contains(SearchName, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-                TotalItems = ContractEntities.Count; // Update TotalItems based on filtered results
-            }
-            else
-            {
                 ContractEntities = contracts.Items.ToList(); // No filter applied
-            }
+            
         }
 
         // Method to update restore toy
@@ -132,28 +116,65 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
 
             return Page();
         }
-
-
-
-        // Method to update restore toy detail
-        public async Task<IActionResult> OnPostUpdateRestoreToyDetail(string restoreToyDetailId, UpdateRestoreDetailModel restoreToyDetailDTO)
+        public async Task<IActionResult> OnPostUpdateRestoreToyDetail(
+    string restoreToyDetailId,
+    string? toyId,
+    int? toyQuality,
+    int? reward,
+    string? toyName,
+    bool? isReturn,
+    double? overdueTime,
+    int? totalMoney,
+    int? compensation)
         {
+            if (!ModelState.IsValid)
+            {
+                return Page(); // Trả về trang với thông báo lỗi nếu dữ liệu không hợp lệ
+            }
+
             try
             {
-                await _restoreToyDetailService.Update(restoreToyDetailId, restoreToyDetailDTO);
+                var restoreToyDetailDTO = new UpdateRestoreDetailModel
+                {
+                    ToyQuality = toyQuality,
+                    Reward = reward,
+                    ToyId = toyId,
+                    ToyName = toyName,
+                    IsReturn = isReturn,
+                    OverdueTime = overdueTime,
+                    TotalMoney = totalMoney,
+                    Compensation = compensation
+                };
 
-                return RedirectToPage();
+                var isUpdated = await _restoreToyDetailService.Update(restoreToyDetailId, restoreToyDetailDTO);
+
+                if (isUpdated)
+                {
+                    TempData["SuccessMessage"] = "RestoreToyDetail updated successfully.";
+                    return RedirectToPage("/Admin/ContractManage/Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Update failed. RestoreToyDetail not found.");
+                    return Page(); // Trả về trang với thông báo lỗi
+                }
             }
             catch (KeyNotFoundException)
             {
-                ModelState.AddModelError(string.Empty, "RestoreToyDetail không tìm thấy.");
+                ModelState.AddModelError(string.Empty, "RestoreToyDetail not found.");
+                return RedirectToPage("/Admin/ContractManage/Index");
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.AddModelError(string.Empty, $"An error occurred while updating the restore toy detail: {ex.Message}");
+                return RedirectToPage("/Admin/ContractManage/Index");
             }
-
-            return Page();
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An unexpected error occurred: {ex.Message}");
+                return RedirectToPage("/Admin/ContractManage/Index");
+            }
         }
+
     }
 }
