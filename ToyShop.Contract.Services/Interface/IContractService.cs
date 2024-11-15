@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Repositories.PaggingItems;
 using ToyShop.Core.Base;
 using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.TopUpModel;
@@ -19,6 +20,6 @@ namespace ToyShop.Contract.Services.Interface
         Task<bool> CreateTopUpAsync(CreateTopUpModel model);
         Task CancelContractAsync(string id);
 
-        Task<List<ContractEntity>> GetAllContractsByUserIdAsync(string userId);
+        Task<PaginatedList<ContractEntity>> GetAllContractsByUserIdAsync(string userId, string searchTerm);
     }
 }
