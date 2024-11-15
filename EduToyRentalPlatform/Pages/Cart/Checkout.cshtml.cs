@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics.Contracts;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ContractDetailModelView;
@@ -13,9 +14,24 @@ namespace EduToyRentalPlatform.Pages.Cart
     public class CheckoutModel : PageModel
     {
         private IVnPayService _vnPayService;
-        private IContractService _contractService;
-        private IContractDetailService _contractDetailService;
+        private IContractService _contractService;  
         private ITransactionService _transactionService;
+
+
+        #region constructors
+
+        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, ITransactionService transactionService)
+        {
+            _vnPayService = vnPayService;
+            _contractService = contractService;
+            _transactionService = transactionService;
+        }
+
+        #endregion
+
+        [BindProperty]
+        public CreateTransactionModel CreateTransactionModel { get; set; }
+
         public List<ContractDetail> CartItems { get; set; }
 
         public void OnGet()
@@ -24,94 +40,80 @@ namespace EduToyRentalPlatform.Pages.Cart
             if (TempData["CartItems"] != null)
             {
                 CartItems = TempData["CartItems"] as List<ContractDetail>;
-            }
+            } 
         }
-        #region constructors
-        public CheckoutModel(IVnPayService vnPayService)
-        {
-            _vnPayService = vnPayService;
-        }
-
-        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, IContractDetailService contractDetailService, ITransactionService transactionService) : this(vnPayService)
-        {
-            _contractService = contractService;
-            _contractDetailService = contractDetailService;
-            _transactionService = transactionService;
-        }
-
-        #endregion
-
-        [BindProperty]
-        public bool IsTopUp { get; set; }
-
-        [BindProperty]
-        public CreateTopUpModel CreateTopUpModel { get; set; }
-
-        [BindProperty]
-        public CreateContractModel CreateContractModel { get; set; }
-
-        [BindProperty]
-        public CreateContractDetailModel CreateContractDetailModel { get; set; }
-
-        [BindProperty]
-        public CreateTransactionModel CreateTransactionModel { get; set; }
 
         [ValidateAntiForgeryToken]
-        public async Task OnPost()
+        public async Task OnPost() 
         {
-
             Console.WriteLine("Payment OnPost Called");
-            var model = IsTopUp ? await CreateVnPayTopUpRequest() : await CreateVnPayPurchaseRequest();
-            string url = CreatePaymentUrl(model, HttpContext);
 
-            Response.Redirect(url);
+            if (!ModelState.IsValid) 
+            { 
+                return;
+            }
+            this.CreateTransactionModel.TranCode = 
+                int.Parse(new Random().NextInt64(100000000, 999999999).ToString());
+
+            var contract = await _contractService.GetContractAsync(CreateTransactionModel.ContractId);
+
+            if (CreateTransactionModel.Method) //vnpay
+            {
+                HttpContext.Session.SetObject("CreateTransactionModel", CreateTransactionModel);
+
+                var model = contract.ToyName == null ?
+                    await CreateVnPayTopUpRequest(contract) 
+                    : 
+                    await CreateVnPayPurchaseRequest(contract);
+
+                string url = CreatePaymentUrl(model, HttpContext);
+                Response.Redirect(url);
+            }
         }
 
+        #region vnpay
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
             return url;
         }
 
-        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest()
+        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(ResponseContractModel contract)
         {
-            var contractModel = new CreateContractModel()
-            {
-                CustomerName = CreateTopUpModel.CustomerName,
-                TotalValue = CreateTopUpModel.TotalValue,
-            };
-
-            await _contractService.CreateContractAsync(CreateContractModel);
-            await _transactionService.Insert(CreateTransactionModel);
-
             var model = new VnPayRequestModel()
             {
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
-                Amount = Double.Parse(CreateTopUpModel.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan nap vi {CreateTransactionModel.TranCode}",
-                Name = CreateTopUpModel.CustomerName == null ? "EduToyRent" : CreateTopUpModel.CustomerName,
+                Amount = Double.Parse(contract.TotalValue.ToString()),
+                OrderDescription = $"Thanh toan nap vi {CreateTransactionModel.ContractId}",
+                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
                 IpAddress = "127.0.0.1"
             };
 
             return model;
         }
-        private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest()
-        {
-            await _contractService.CreateContractAsync(CreateContractModel);
-            await _contractDetailService.CreateContractDetailAsync(CreateContractDetailModel);
-            await _transactionService.Insert(CreateTransactionModel);
 
+        private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest(ResponseContractModel contract)
+        {
             var model = new VnPayRequestModel()
             {
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
-                Amount = Double.Parse(CreateContractModel.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan don hang {CreateTransactionModel.TranCode}",
-                Name = CreateContractModel.CustomerName == null ? "EduToyRent" : CreateContractModel.CustomerName,
+                Amount = Double.Parse(contract.TotalValue.ToString()),
+                OrderDescription = $"Thanh toan don hang {CreateTransactionModel.ContractId}",
+                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
                 IpAddress = "127.0.0.1"
             };
-
             return model;
         }
+        #endregion
+
+        private CreateTransactionModel CreateOfflineTransaction()
+        {
+            return new CreateTransactionModel()
+            {
+                Status = "Processing"
+            };
+        }
+
 
     }
 }

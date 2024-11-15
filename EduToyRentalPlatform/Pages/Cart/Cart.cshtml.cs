@@ -43,6 +43,12 @@ namespace EduToyRentalPlatform.Pages.Cart
                     MyCart = contract.ContractDetails.ToList();
                 }
             }
+            }
+
+        public IActionResult OnPostCheckout()
+        {
+            TempData["CartItems"] = MyCart;
+            return RedirectToPage("/Cart/Checkout");
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -78,4 +84,4 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
 
     }
-}
+    }

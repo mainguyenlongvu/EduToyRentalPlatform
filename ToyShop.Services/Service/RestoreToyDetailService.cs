@@ -128,29 +128,35 @@ namespace ToyShop.Services.Service
         }
 
 
-        public async Task Update(string id, UpdateRestoreDetailModel restoreToyDetail)
+        public async Task<bool> Update(string id, UpdateRestoreDetailModel restoreToyDetail)
         {
             try
             {
-                var existingRestoreToyDetail = _unitOfWork.GetRepository<RestoreToyDetail>().Entities.AsNoTracking().FirstOrDefault(d => d.Id == id)
+                var repository = _unitOfWork.GetRepository<RestoreToyDetail>();
+
+                var existingRestoreToyDetail = repository.Entities
+                    .AsNoTracking()
+                    .FirstOrDefault(d => d.Id == id)
                     ?? throw new KeyNotFoundException("RestoreToy detail not found.");
 
-                existingRestoreToyDetail = _mapper.Map<RestoreToyDetail>(restoreToyDetail);
-                existingRestoreToyDetail.Id = id;
+                // Map only properties that need updating
+                _mapper.Map(restoreToyDetail, existingRestoreToyDetail);
                 existingRestoreToyDetail.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
-                _unitOfWork.GetRepository<RestoreToyDetail>().Update(existingRestoreToyDetail);
-
+                // Update the entity
+                repository.Update(existingRestoreToyDetail);
                 await _unitOfWork.SaveAsync();
 
+                return true; // Return true to indicate successful update
             }
             catch (KeyNotFoundException)
             {
-                throw;
+                throw; // Let the calling method handle this specific exception.
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(ex.Message, ex);
+                // Log or handle additional error details if needed
+                throw new InvalidOperationException("An error occurred while updating the RestoreToyDetail.", ex);
             }
         }
 
