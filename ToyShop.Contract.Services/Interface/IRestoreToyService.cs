@@ -16,6 +16,8 @@ namespace ToyShop.Services.Service
         public Task<RestoreToy> GetById(string id);
         public Task<bool> Delete(string id);
         public Task<RestoreToy> Insert(RestoreToy restoreToy);
+		public Task<RestoreToy> GetByContractId(string contractId);
 
-    }
+
+	}
 }

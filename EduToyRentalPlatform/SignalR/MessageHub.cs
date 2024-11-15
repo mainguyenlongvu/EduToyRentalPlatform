@@ -13,6 +13,7 @@ namespace EduToyRentalPlatform.SignalR
 	{
 
 		private readonly MessageService _messageService;
+		private readonly ConnectionStorage<string> _storage;
 
 		public MessageHub(MessageService messageService)
 		{
@@ -21,26 +22,38 @@ namespace EduToyRentalPlatform.SignalR
 
 		public override async Task OnConnectedAsync()
 		{
-			await Groups.AddToGroupAsync(Context.ConnectionId, Context.User.Identity.GetUserId());
-
-			await Clients.Client(Context.ConnectionId).ReceiveMessage($"{Context.ConnectionId} has connected.");
 			await base.OnConnectedAsync();
-			
+			_storage.Add(Context.User.Identity.GetUserId(), Context.ConnectionId);
 
+			string userId = Context.User.Identity.GetUserId();
+
+			if (!_storage.GetConnections(userId).Contains(Context.ConnectionId))
+			{
+				_storage.Add(userId, Context.ConnectionId);
+			}
+			await Clients.Client(Context.ConnectionId).ReceiveMessage($"{Context.ConnectionId} has connected.");
 		}
+
+		public override async Task OnDisconnectedAsync(Exception ex)
+		{
+			await base.OnDisconnectedAsync(ex);
+			_storage.Remove(Context.User.Identity.GetUserId(), Context.ConnectionId);
+		}
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="message">CreateMessageModel</param>
-		/// <param name="receiverID">Receiver's ConnectionID</param>
+		/// <param name="receiverID">Receiver's UserId</param>
 		/// <returns></returns>
-		public async Task SendMessage(CreateMessageModel message, string receiverID)
+		public async Task SendMessage(CreateMessageModel message, string receiverUserId)
 		{
-			await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{message.SenderId}");
-			await Clients.Client(receiverID).ReceiveMessage(message);
+			string connectionId = _storage.GetConnections(receiverUserId).FirstOrDefault();
+			if (connectionId == null) return;
+			
+			await Clients.Client(connectionId).ReceiveMessage(message);
+			await _messageService.AddAsync(message);
 		}
-
-
 	}
 }
