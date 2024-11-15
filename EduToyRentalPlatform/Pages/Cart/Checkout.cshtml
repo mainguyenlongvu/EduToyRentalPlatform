@@ -1,5 +1,6 @@
 ﻿@page
 @model EduToyRentalPlatform.Pages.Cart.CheckoutModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
@@ -30,7 +31,7 @@
     </tr>
     <div class="mt-4">
         <h5 class="font-size-16 mb-3">Select Payment Method:</h5>
-        <form method="post">
+        <form method="post" >
             <button type="submit" name="paymentMethod" value="VNPay" class="btn btn-primary mb-2">Thanh toán VNPAY</button>
             <button type="submit" name="paymentMethod" value="Wallet" class="btn btn-secondary mb-2">Thanh toán ví</button>
             <button type="submit" name="paymentMethod" value="Direct" class="btn btn-success">Thanh toán trực tiếp</button>

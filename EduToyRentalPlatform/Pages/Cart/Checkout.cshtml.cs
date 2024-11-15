@@ -31,9 +31,6 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         #endregion
 
-        [BindProperty]
-        public CreateTransactionModel CreateTransactionModel { get; set; }
-
         public List<ContractDetail> CartItems { get; set; }
 
         public void OnGet()
@@ -47,7 +44,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task OnPost()
+        public async Task OnPost(string contractId, int totalValue)
         {
             Console.WriteLine("Payment OnPost Called");
 
@@ -56,19 +53,24 @@ namespace EduToyRentalPlatform.Pages.Cart
                 return;
             }
 
-            this.CreateTransactionModel.TranCode =
-                int.Parse(new Random().NextInt64(100000000, 999999999).ToString());
+            var tranModel = new CreateTransactionModel()
+            {
+                TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
+                ContractId = contractId,
+            };
+
+
             var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("userId")).Value.ToString();
-            var contract = await _contractService.GetContractAsync(CreateTransactionModel.ContractId);
+            var contract = await _contractService.GetContractAsync(contractId);
 
             if (Request.Form["paymentMethod"].Equals("VNPay")) //vnpay
             {
-                HttpContext.Session.SetObject("CreateTransactionModel", CreateTransactionModel);
+                HttpContext.Session.SetObject("CreateTransactionModel", tranModel);
 
                 var model = contract.ToyName == null ?
-                    await CreateVnPayTopUpRequest(contract)
+                    await CreateVnPayTopUpRequest(tranModel, contract)
                     :
-                    await CreateVnPayPurchaseRequest(contract);
+                    await CreateVnPayPurchaseRequest(tranModel, contract);
 
                 string url = CreatePaymentUrl(model, HttpContext);
                 Response.Redirect(url);
@@ -77,7 +79,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (Request.Form["paymentMethod"].Equals("Wallet")) //ví
             {
-                bool result = await WalletTransactionHandle(userId, contract);
+                bool result = await WalletTransactionHandle(tranModel, userId, contract);
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
@@ -89,7 +91,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (Request.Form["paymentMethod"].Equals("Direct")) //thanh toán bằng tiền mặt
             {
-                bool result = await DirectTransactionHandle();
+                bool result = await DirectTransactionHandle(tranModel);
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
@@ -106,13 +108,13 @@ namespace EduToyRentalPlatform.Pages.Cart
             return url;
         }
 
-        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(ResponseContractModel contract)
+        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(CreateTransactionModel tranModel, ResponseContractModel contract)
         {
             var model = new VnPayRequestModel()
             {
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan nap vi {CreateTransactionModel.ContractId}",
+                OrderDescription = $"Thanh toan nap vi {tranModel.ContractId}",
                 Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
                 IpAddress = "127.0.0.1"
             };
@@ -120,13 +122,13 @@ namespace EduToyRentalPlatform.Pages.Cart
             return model;
         }
 
-        private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest(ResponseContractModel contract)
+        private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest(CreateTransactionModel tranModel, ResponseContractModel contract)
         {
             var model = new VnPayRequestModel()
             {
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan don hang {CreateTransactionModel.ContractId}",
+                OrderDescription = $"Thanh toan don hang {tranModel.ContractId}",
                 Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
                 IpAddress = "127.0.0.1"
             };
@@ -134,7 +136,7 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
         #endregion
 
-        private async Task<bool> DirectTransactionHandle()
+        private async Task<bool> DirectTransactionHandle(CreateTransactionModel tranModel)
         {
             try
             {
@@ -143,8 +145,8 @@ namespace EduToyRentalPlatform.Pages.Cart
                     Status = "Processing"
                 };
 
-                await _contractService.UpdateContractAsync(this.CreateTransactionModel.ContractId, updateContract);
-                await _transactionService.Insert(this.CreateTransactionModel);
+                await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+                await _transactionService.Insert(tranModel);
                 return true;
             }
             catch (Exception ex)
@@ -155,7 +157,7 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
 
 
-        private async Task<bool> WalletTransactionHandle(string userId, ResponseContractModel contract)
+        private async Task<bool> WalletTransactionHandle(CreateTransactionModel tranModel, string userId, ResponseContractModel contract)
         {
             try
             {
@@ -169,8 +171,9 @@ namespace EduToyRentalPlatform.Pages.Cart
                 {
                     Status = "Done"
                 };
-                await _contractService.UpdateContractAsync(this.CreateTransactionModel.ContractId, updateContract);
-                await _transactionService.Insert(this.CreateTransactionModel);
+
+                await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
+                await _transactionService.Insert(tranModel);
 
                 return true;
             }

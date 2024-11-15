@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components;
 
 namespace EduToyRentalPlatform.Pages.Cart
 {
@@ -44,7 +45,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 }
             }
             }
-
+        
         public IActionResult OnPostCheckout()
         {
             TempData["CartItems"] = MyCart;

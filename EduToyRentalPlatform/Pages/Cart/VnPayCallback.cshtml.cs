@@ -57,7 +57,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
             var updateContract = new UpdateContractModel()
             {
-                Status = "Done"
+                Status = "Not Received"
             };
             await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
             await _transactionService.Insert(tranModel);

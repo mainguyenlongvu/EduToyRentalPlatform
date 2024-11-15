@@ -193,275 +193,94 @@
                         </td>
                     </tr>
 
-                    <tr class="collapse" id="restore-details-@item.Id">
-                        <td colspan="12">
-                            <h5>Restore Toy Details</h5>
-                                <table class="table table-bordered mt-2 table-success table-restore-details table-responsive" style="width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align: center;">Toy ID</th>
-                                            <th style="text-align: center;">Toy Name</th>
-                                            <th style="text-align: center;">Quantity</th>
-                                            <th style="text-align: center;">Unit Price</th>
-                                            <th style="text-align: center;">Subtotal</th>
-                                            <th style="text-align: center;">Reward</th>
-                                            <th style="text-align: center;">Is Return</th>
-                                            <th style="text-align: center;">Overdue Time (days)</th>
-                                            <th style="text-align: center;">Total Money</th>
-                                            <th style="text-align: center;">Compensation</th>
-                                            <th style="text-align: center;">Amount Due</th>
-                                            <th style="text-align: center;">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
-                                        {
-                                            foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
-                                            {
-                                                int quantity = returnToyDetail.ToyQuality ?? 0;
-                                                double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
-                                                double reward = subtotal * 0.5;
-                                                double overdueTime = returnToyDetail.OverdueTime ?? 0;
-                                                double currentTotalMoney = subtotal - reward;
-                                                double compensation = overdueTime * 10000;
-                                                double amountDue = subtotal - reward + compensation;
+					<tr class="collapse" id="restore-details-@item.Id">
+						<td colspan="12">
+							<h5>Restore Toy Details</h5>
+							<table class="table table-bordered mt-2 table-success table-restore-details table-responsive" style="width: 100%;">
+								<thead>
+									<tr>
+										<th style="text-align: center;">Toy ID</th>
+										<th style="text-align: center;">Toy Name</th>
+										<th style="text-align: center;">Quantity</th>
+										<th style="text-align: center;">Unit Price</th>
+										<th style="text-align: center;">Subtotal</th>
+										<th style="text-align: center;">Reward</th>
+										<th style="text-align: center;">Is Return</th>
+										<th style="text-align: center;">Overdue Time (days)</th>
+										<th style="text-align: center;">Total Money</th>
+										<th style="text-align: center;">Compensation</th>
+										<th style="text-align: center;">Amount Due</th>
+										<th style="text-align: center;">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									@if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
+									{
+										foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
+										{
+											int quantity = returnToyDetail.ToyQuality ?? 0;
+											double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
+											double reward = subtotal * 0.5;
+											double overdueTime = returnToyDetail.OverdueTime ?? 0;
+											double amountDue = subtotal - reward;
 
-                                                <tr>
-                                                    <td style="text-align: center;">@returnToyDetail.ToyId</td>
-                                                    <td style="text-align: center;">@returnToyDetail.ToyName</td>
-                                                    <td style="text-align: center;">@quantity</td>
-                                                    <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
-                                                    <td style="text-align: center;">@subtotal.ToString("C")</td>
-                                                    <td style="text-align: center;">@reward.ToString("C")</td>
-                                                    <td style="text-align: center;">
-                                                        <input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
-                                                               value="true" @(returnToyDetail.IsReturn == true ? "checked" : "") />
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        <input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        <input type="number" name="restoreToyDetailDTO.Compensation" value="@returnToyDetail.Compensation" class="form-control" />
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        @amountDue.ToString("C")
-                                                    </td>
-                                                    <!-- Add a submit button inside each row form -->
-                                                    <td style="text-align: center;">
-                                                    <form method="post" asp-page-handler="UpdateRestoreToyDetail" style="display:inline;">
-                                                        <input type="hidden" name="restoreToyDetailId" value="@returnToyDetail.Id" />
-                                                        <input type="hidden" name="toyId" value="@returnToyDetail.ToyId" />
-                                                        <input type="hidden" name="toyQuality" value="@returnToyDetail.ToyQuality" />
-                                                        <input type="hidden" name="totalMoney" value="@returnToyDetail.TotalMoney" />
-                                                        <input type="hidden" name="reward" value="@reward" />
-                                                        <input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
-                                                        <input type="hidden" name="compensation" value="@compensation" />
-                                                        <input type="hidden" name="isReturn" value="@returnToyDetail.IsReturn" />
-                                                        <input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                                                    </form>
+											<tr>
+												<td style="text-align: center;">@returnToyDetail.ToyId</td>
+												<td style="text-align: center;">@returnToyDetail.ToyName</td>
+												<td style="text-align: center;">@quantity</td>
+												<td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
+												<td style="text-align: center;">@subtotal.ToString("C")</td>
+												<td style="text-align: center;">@reward.ToString("C")</td>
+												<td style="text-align: center;">
+													<input type="hidden" name="restoreToyDetailDTO.IsReturn" value="false" />
+													<input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
+														   value="true" @(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "") />
+												</td>
+												<td style="text-align: center;">
+													<input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
+												</td>
+												<td style="text-align: center;">
+													<input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
+												</td>
+												<td style="text-align: center;">
+													<!-- Editable Compensation field for user input -->
+													<input type="number" name="restoreToyDetailDTO.Compensation"  class="form-control" step="any" />
+												</td>
+												<td style="text-align: center;">
+													@amountDue.ToString("C")
+												</td>
+												<td style="text-align: center;">
+													<form method="post" asp-page-handler="UpdateRestoreToyDetail" style="display:inline;">
+														<input type="hidden" name="restoreToyDetailId" value="@returnToyDetail.Id" />
+														<input type="hidden" name="toyId" value="@returnToyDetail.ToyId" />
+														<input type="hidden" name="toyQuality" value="@returnToyDetail.ToyQuality" />
+														<input type="hidden" name="totalMoney" value="@returnToyDetail.TotalMoney" />
+														<input type="hidden" name="reward" value="@reward" />
+														<input type="hidden" name="IsReturn" value="@returnToyDetail.IsReturn" />
+														<input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
+														<!-- Pass the user-input Compensation value in the form submission -->
+														<input type="hidden" name="compensation" value="@returnToyDetail.Compensation" />
+														<input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
+														<button type="submit" class="btn btn-primary btn-sm">Update</button>
+													</form>
+												</td>
+											</tr>
+										}
+									}
+									else
+									{
+										<tr>
+											<td colspan="12" class="text-center">No toys to restore</td>
+										</tr>
+									}
+								</tbody>
+							</table>
 
-
-                                                    </td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td colspan="12" class="text-center">No toys to restore</td>
-                                            </tr>
-                                        }
-                                <tbody>
-                                        @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
-                                        {
-                                            foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
-                                            {
-                                                int quantity = returnToyDetail.ToyQuality ?? 0;
-                                                double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
-                                                double reward = subtotal * 0.5;
-                                                double overdueTime = returnToyDetail.OverdueTime ?? 0;
-                                                double currentTotalMoney = subtotal - reward;
-                                                double compensation = overdueTime * 10000;
-                                                double amountDue = subtotal - reward + compensation;
-
-                                            <tr>
-                                                <td style="text-align: center;">@returnToyDetail.ToyId</td>
-                                                <td style="text-align: center;">@returnToyDetail.ToyName</td>
-                                                <td style="text-align: center;">@quantity</td>
-                                                <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
-                                                <td style="text-align: center;">@subtotal.ToString("C")</td>
-                                                <td style="text-align: center;">@reward.ToString("C")</td>
-                                                <td style="text-align: center;">
-                                                    <!-- Handle checkbox for IsReturn, true if checked, false if unchecked -->
-                                                    <input type="hidden" name="restoreToyDetailDTO.IsReturn" value="false" />
-                                                    <input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
-                                                           value="true" @(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "") />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.Compensation" value="@returnToyDetail.Compensation" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                        @amountDue.ToString("C")
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <form method="post" asp-page-handler="UpdateRestoreToyDetail" style="display:inline;">
-                                                        <input type="hidden" name="restoreToyDetailId" value="@returnToyDetail.Id" />
-                                                        <input type="hidden" name="toyId" value="@returnToyDetail.ToyId" />
-                                                        <input type="hidden" name="toyQuality" value="@returnToyDetail.ToyQuality" />
-                                                        <input type="hidden" name="totalMoney" value="@returnToyDetail.TotalMoney" />
-                                                        <input type="hidden" name="reward" value="@reward" />
-                                                        <input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
-                                                        <input type="hidden" name="compensation" value="@compensation" />
-                                                        <input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            }
-                                        }
-                                        else
-                                        {
-                                        <tr>
-                                            <td colspan="12" class="text-center">No toys to restore</td>
-                                        </tr>
-                                        }
-                                <tbody>
-                                            @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
-                                            {
-                                                foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
-                                                {
-                                                    int quantity = returnToyDetail.ToyQuality ?? 0;
-                                                    double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
-                                                    double reward = subtotal * 0.5;
-                                                    double overdueTime = returnToyDetail.OverdueTime ?? 0;
-                                                    double currentTotalMoney = subtotal - reward;
-                                                    double compensation = overdueTime * 10000;
-                                                    double amountDue = subtotal - reward + compensation;
-                                            <tr>
-                                                <td style="text-align: center;">@returnToyDetail.ToyId</td>
-                                                <td style="text-align: center;">@returnToyDetail.ToyName</td>
-                                                <td style="text-align: center;">@quantity</td>
-                                                <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
-                                                <td style="text-align: center;">@subtotal.ToString("C")</td>
-                                                <td style="text-align: center;">@reward.ToString("C")</td>
-                                                <td style="text-align: center;">
-                                                    <!-- Handle checkbox for IsReturn, set value to true if checked, false if unchecked -->
-                                                    <input type="hidden" name="restoreToyDetailDTO.IsReturn" value="false" />
-                                                    <input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
-                                                           value="true" @(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "") />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.Compensation" value="@returnToyDetail.Compensation" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                            @amountDue.ToString("C")
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <form method="post" asp-page-handler="UpdateRestoreToyDetail" style="display:inline;">
-                                                        <input type="hidden" name="restoreToyDetailId" value="@returnToyDetail.Id" />
-                                                        <input type="hidden" name="toyId" value="@returnToyDetail.ToyId" />
-                                                        <input type="hidden" name="toyQuality" value="@returnToyDetail.ToyQuality" />
-                                                        <input type="hidden" name="totalMoney" value="@returnToyDetail.TotalMoney" />
-                                                        <input type="hidden" name="reward" value="@reward" />
-                                                        <input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
-                                                        <input type="hidden" name="compensation" value="@compensation" />
-                                                        <input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                                }
-                                            }
-                                            else
-                                            {
-                                        <tr>
-                                            <td colspan="12" class="text-center">No toys to restore</td>
-                                        </tr>
-                                            }
-                                <tbody>
-                                                @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
-                                                {
-                                                    foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
-                                                    {
-                                                        int quantity = returnToyDetail.ToyQuality ?? 0;
-                                                        double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
-                                                        double reward = subtotal * 0.5;
-                                                        double overdueTime = returnToyDetail.OverdueTime ?? 0;
-                                                        double currentTotalMoney = subtotal - reward;
-                                                        double compensation = overdueTime * 10000;
-                                                        double amountDue = subtotal - reward + compensation;
-                                            <tr>
-                                                <td style="text-align: center;">@returnToyDetail.ToyId</td>
-                                                <td style="text-align: center;">@returnToyDetail.ToyName</td>
-                                                <td style="text-align: center;">@quantity</td>
-                                                <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
-                                                <td style="text-align: center;">@subtotal.ToString("C")</td>
-                                                <td style="text-align: center;">@reward.ToString("C")</td>
-                                                <td style="text-align: center;">
-                                                    <!-- Hidden input to always send 'false' if checkbox is unchecked -->
-                                                    <input type="hidden" name="restoreToyDetailDTO.IsReturn" value="false" />
-                                                    <!-- Checkbox to toggle 'true' value if checked -->
-                                                    <input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
-                                                           value="true" @(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "") />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <input type="number" name="restoreToyDetailDTO.Compensation" value="@returnToyDetail.Compensation" class="form-control" />
-                                                </td>
-                                                <td style="text-align: center;">
-                                                                @amountDue.ToString("C")
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <form method="post" asp-page-handler="UpdateRestoreToyDetail" style="display:inline;">
-                                                        <input type="hidden" name="restoreToyDetailId" value="@returnToyDetail.Id" />
-                                                        <input type="hidden" name="toyId" value="@returnToyDetail.ToyId" />
-                                                        <input type="hidden" name="toyQuality" value="@returnToyDetail.ToyQuality" />
-                                                        <input type="hidden" name="totalMoney" value="@returnToyDetail.TotalMoney" />
-                                                        <input type="hidden" name="reward" value="@reward" />
-                                                        <input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
-                                                        <input type="hidden" name="compensation" value="@compensation" />
-                                                        <input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                        <tr>
-                                            <td colspan="12" class="text-center">No toys to restore</td>
-                                        </tr>
-                                                }
-                                </tbody>
-                            </table>
-
-                                <div class="text-center mt-3">
-                                    <button type="submit" class="btn btn-success">Confirm Restore</button>
-                                </div>
-                        </td>
-                    </tr>
+							<div class="text-center mt-3">
+								<button type="submit" class="btn btn-success">Confirm Restore</button>
+							</div>
+						</td>
+					</tr>
 
                 }
             }

@@ -89,19 +89,19 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
                 };
                 var updatedTransaction = await _transactionService.Update(tranCode, transactionDTO);
 
-                var currentRestore = await _restoreToyService.GetByContractId(contractId);
-                var restoreToyDto = new UpdateRestoreModel() 
-                { 
-                    Status = status
-                };
-                await _restoreToyService.Update(currentRestore.Id, restoreToyDto);
+                //var currentRestore = await _restoreToyService.GetByContractId(contractId);
+                //var restoreToyDto = new UpdateRestoreModel() 
+                //{ 
+                //    Status = status
+                //};
+                //await _restoreToyService.Update(currentRestore.Id, restoreToyDto);
 
-                var currentRestoreDetail = await _restoreToyDetailService.GetByRestoreToyId(currentRestore.Id);
-                var restoreToyDetailDto = new UpdateRestoreDetailModel()
-                {
+                //var currentRestoreDetail = await _restoreToyDetailService.GetByRestoreToyId(currentRestore.Id);
+                //var restoreToyDetailDto = new UpdateRestoreDetailModel()
+                //{
                     
-                };
-                await _restoreToyDetailService.Update(currentRestoreDetail.Id, restoreToyDetailDto);
+                //};
+                //await _restoreToyDetailService.Update(currentRestoreDetail.Id, restoreToyDetailDto);
 
                 return RedirectToPage();
             }
@@ -131,11 +131,9 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
             {
                 return Page(); // Trả về trang với thông báo lỗi nếu dữ liệu không hợp lệ
             }
-
             try
             {
                 
-
                 var restoreToyDetailDTO = new UpdateRestoreDetailModel
                 {
                     ToyQuality = toyQuality,
@@ -147,7 +145,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
                     TotalMoney = totalMoney,
                     Compensation = compensation
                 };
-
+                Console.WriteLine("Update Restore Detail called");
                 var isUpdated = await _restoreToyDetailService.Update(restoreToyDetailId, restoreToyDetailDTO);
 
                 if (isUpdated)
