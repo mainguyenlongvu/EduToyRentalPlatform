@@ -30,14 +30,13 @@ namespace ToyShop.Pages.Account
         [Required(ErrorMessage = "Hãy nhập mật khẩu.")]
         [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
         public string Password { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Hãy nhập họ tên.")]
+        public string FullName { get; set; }
 
         [BindProperty]
         [Required(ErrorMessage = "Hãy nhập số điện thoại.")]
         public string Phone { get; set; }
-
-        [BindProperty]
-        [Required(ErrorMessage = "Hãy chọn vai trò.")]
-        public string RoleId { get; set; }
 
         [BindProperty]
         public List<SelectListItem> Quyen { get; set; }
@@ -66,6 +65,7 @@ namespace ToyShop.Pages.Account
                 Email = Email,
                 Password = Password,
                 Phone = Phone,
+                FullName = FullName,
                 RoleName = "Customer", // Set the role name; adjust as needed
                 Image = Image // Assign the uploaded file to the model
             };

@@ -155,7 +155,6 @@ namespace ToyShop.Services.Service
             {
                 throw new Exception("Mật khẩu không chính xác.");
             }
-
             // Thiết lập cookie cho tên người dùng
             var cookieOptions = new CookieOptions
             {
@@ -206,6 +205,7 @@ namespace ToyShop.Services.Service
                 Email = model.Email,
                 PasswordHash = hashedPassword, // Gán mật khẩu đã mã hóa
                 Phone = model.Phone,
+                FullName = model.FullName,
                 CreatedTime = DateTime.UtcNow,
                 ImageUrl = await FileUploadHelper.UploadFile(model.Image)
             };

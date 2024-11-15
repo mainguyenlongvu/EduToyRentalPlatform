@@ -6,38 +6,72 @@
 
 <h2>Your Cart</h2>
 
-@if (Model.MyCart == null)
-
-		{
-		<p>Your cart is empty.</p>
-		}
-else
+@if (Model.MyCart != null)
 {
     foreach (var item in Model.MyCart)
     {
-        <div class="card rounded-3 mb-4">
-            <div class="card-body p-4">
-                <div class="row d-flex justify-content-between align-items-center">
-                    <div class="col-md-12 col-lg-12 col-xl-12 mt-2">
-                        <input type="hidden" name="ToyId" value="@item.Toy.Id" />
+        <div class="card rounded-3 mb-4 shadow-sm border-light">
+            <div class="card-body">
+                <div class="row align-items-center justify-content-between">
+
+                    <!-- Toy Image -->
+                    <div class="col-md-2 text-center">
+                        <img src="~/img/@item.Toy.ToyImg" class="img-fluid rounded-3" alt="@item.Toy.ToyName">
                     </div>
-                    <div class="col-md-2 col-lg-2 col-xl-2">
-                        <img src="~/img/@item.Toy.ToyImg" class="img-fluid rounded-3" alt="Toy Image">
+
+                    <!-- Toy Details -->
+                    <div class="col-md-3">
+                        <h5 class="fw-bold mb-2">@item.Toy.ToyName</h5>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-3">
-                        <p class="lead fw-normal mb-2">@item.Toy.ToyName</p>
+
+                    <!-- Quantity Selector -->
+                    <div class="col-md-2">
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input min="1" name="quantity" value="@item.Quantity" type="number" class="form-control form-control-sm text-center" style="width: 60px;" />
+                            <button class="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2">
-                        <p>Quantity: @item.Quantity</p>
+
+                    <!-- Purchase Option -->
+                    <div class="col-md-2">
+                        <div class="d-flex justify-content-center">
+                            <!-- Rent Option -->
+                            <input type="radio" id="rent_@item.Toy.Id" name="purchaseOption_@item.Toy.Id" value="false"
+                            @(item.ContractType == false ? "checked" : null) onchange="@(() => item.ContractType = false)" />
+                            <label for="rent_@item.Toy.Id" class="ms-2">Rent</label>
+
+                            <!-- Buy Option with Space -->
+                            <input type="radio" id="buy_@item.Toy.Id" name="purchaseOption_@item.Toy.Id" value="true"
+                            @(item.ContractType == true ? "checked" : null) onchange="@(() => item.ContractType = true)" />
+                            <label for="buy_@item.Toy.Id" class="ms-2">Buy</label>
+                        </div>
                     </div>
-                    <div class="col-md-3 col-lg-2 col-xl-2">
-                        <h5 class="mb-0">@item.Toy.ToyPriceSale.ToString("C")</h5>
-                    </div><div class="col-md-3 col-lg-2 col-xl-2">
-                        <h5 class="mb-0">@item.Toy.ToyPriceRent.ToString("C")</h5>
+
+                    <!-- Price -->
+                    <div class="col-md-2 text-center">
+                        <span class="price-text fw-bold">
+                            @(item.ContractType.GetValueOrDefault(false) ? item.Toy.ToyPriceSale.ToString("C") : item.Toy.ToyPriceRent.ToString("C"))
+                        </span>
                     </div>
+
+                    <!-- Delete Button -->
+                    <div class="col-md-1 text-end">
+                        <button type="submit" formaction="/Cart/Delete?itemId=@item.Toy.Id" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
     }
 }
-
+else
+{
+    <p>Your cart is empty.</p>
+}

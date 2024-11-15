@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace ToyShop.ModelViews.TransactionModelView
 {
 	public class CreateTransactionModel
-
 	{
 		public int TranCode { get; set; }
 		public bool Method { get; set; }

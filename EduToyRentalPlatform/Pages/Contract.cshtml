@@ -1,9 +1,8 @@
 ﻿@page "/Home/Contract/"
-@using System.Collections;
-@using AutoMapper;
-@using ToyShop.ModelViews.ContractModelView;
+@using AutoMapper
+@using ToyShop.ModelViews.ContractModelView
 @using ToyShop.Repositories.Base
-@model ToyShop.Pages.ContractModel;
+@model ToyShop.Pages.ContractModel
 @inject IMapper _mapper
 
 @{
@@ -11,139 +10,75 @@
     ViewData["Title"] = "Hợp đồng";
     int index = int.TryParse(Request.Query["index"].ToString(), out index) ? index : 1;
     int pageSize = int.TryParse(Request.Query["pageSize"].ToString(), out pageSize) ? pageSize : 5;
-    int size = Model.Contracts?.TotalItems ?? 0;
+    int totalContracts = Model.Contracts?.TotalCount ?? 0;
 }
 
-<div class="container-xl">
-    <div class="table-responsive">
-        <div class="table-wrapper">
-            <div class="table-title">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <h2>Order <b>Details</b></h2>
-                    </div>
-                    <div class="col-sm-8">
-                        <a href="#" onclick="location.reload()" class="btn btn-primary">
-                            <i class="fa fa-refresh" aria-hidden="true"></i> <span>Làm mới</span>
-                        </a>
-                        <button href="#" class="btn btn-secondary" id="addContractBtn">
-                            <i class="fa fa-plus"></i> <span>Thêm hợp đồng</span>
-                        </button>
-                    </div>
-                    @await Html.PartialAsync("Partial/_contractCreateFormPartial.cshtml", new ResponseContractModel())
-                </div>
-            </div>
+<div class="container my-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
-            <div class="table-filter">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="show-entries">
-                            <span>Xem</span>
-                            <select class="form-control" id="pagingOption">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                            </select>
-                            <span>entries</span>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label>Loại</label>
-                        <select class="form-control" id="typeOption">
-                            <option selected disabled>Chọn loại HD</option>
-                            <option value="rent">Thuê</option>
-                            <option value="buy">Mua</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Tình trạng</label>
-                        <select class="form-control" id="statusOption">
-                            <option selected disabled>Chọn status</option>
-                            <option value="active">Còn hạn</option>
-                            <option value="expired">Hết hạn</option>
-                            <option value="pass">Duyệt</option>
-                        </select>
-                    </div>
-                    <span class="filter-icon"><i class="fa fa-filter"></i></span>
-                </div>
-            </div>
-        </div>
-
-        <table class="table table-striped table-hover overflow-x-scroll">
-            <thead>
+    <table class="table table-striped table-hover table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã hợp đồng</th>
+                <th>Ngày tạo</th>
+                <th>Đồ chơi</th>
+                <th>Tình trạng</th>
+                <th>Loại hợp đồng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Contracts != null && Model.Contracts.Items.Count > 0)
+            {
+                foreach (ToyShop.Contract.Repositories.Entity.ContractEntity con in Model.Contracts.Items)
+                {
+                    ResponseContractModel view = _mapper.Map<ResponseContractModel>(con);
+                    <tr class='@(view.ContractType)'>
+                        <td>@con.Id</td>
+                        <td>@con.DateCreated.ToString()</td>
+                        <td>@view.ToyName</td>
+                        <td>
+                            @(view.Status)
+                        </td>
+                        <td>
+                            @(view.ContractType)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
                 <tr>
-                    <th>Mã hợp đồng</th>
-                    <th>Ngày tạo</th>
-                    <th>Đồ chơi</th>
-                    <th>Tình trạng</th>
-                    <th>Loại hợp đồng</th>
-                    <th>Actions</th>
+                    <td colspan="5" class="text-muted">Không có hợp đồng</td>
                 </tr>
-            </thead>
-            <tbody>
-                @if (Model.Contracts != null && Model.Contracts.Items.Count > 0)
-                {
-                    foreach (ToyShop.Contract.Repositories.Entity.ContractEntity con in Model.Contracts.Items)
-                    {
-                        ResponseContractModel view = _mapper.Map<ResponseContractModel>(con);
-                        UpdateContractModel update = _mapper.Map<UpdateContractModel>(con);
-                        <tr id="@con.Id" class='@(view.ContractType=="Thuê" ? "rent" : "buy")'>
-                            <td>@con.Id</td>
-                            <td>@con.DateCreated</td>
-                            <td>@view.ToyName</td>
-                            <td>@view.ContractType</td>
-                            <td>
-                                <select class="form-control min-vw-10" id="editOption-@con.Id">
-                                    <option selected disabled>Chọn</option>
-                                    <option value="1">Cập nhật</option>
-                                    <option value="2">Xóa</option>
-                                    <option value="0">Xem</option>
-                                </select>
-                            </td>
-                            <td>
-                                <div id="contractUpdate-@con.Id" class="d-none">
-                                    <form method="post" action="/home/contract/?handler=OnPutAsync" class="form-card p-3">
-                                        <input type="hidden" name="id" value="@con.Id" />
-                                        @await Html.PartialAsync("Partial/_updateContract.cshtml", update)
-                                    </form>
-                                </div>
-                                <div id="contractView-@con.Id" class="d-none">
-                                    @await Html.PartialAsync("Partial/_contractPartial.cshtml", view)
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
 
-        <div class="clearfix">
-            <div class="hint-text">Showing <b>@index</b> out of <b>@size</b> entries</div>
-            <ul class="pagination">
-                @if (index > 1)
-                {
-                    <li class="page-item"><a href="/home/contract/?index=@(index - 1)&pageSize=@pageSize" class="page-link">Previous</a></li>
-                }
-                else
-                {
-                    <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
-                }
-                @for (int count = 1; count <= (size / pageSize) + (size % pageSize == 0 ? 0 : 1); count++)
-                {
-                    <li class="page-item @(index == count ? "active" : "")">
-                        <a href="/home/contract/?index=@count&pageSize=@pageSize" class="page-link">@count</a>
-                    </li>
-                }
-                @if (index * pageSize < size)
-                {
-                    <li class="page-item"><a href="/home/contract/?index=@(index + 1)&pageSize=@pageSize" class="page-link">Next</a></li>
-                }
-                else
-                {
-                    <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
-                }
-            </ul>
-        </div>
+    <div class="clearfix mt-4">
+        <div class="hint-text text-muted">Showing <b>@index</b> out of <b>@totalContracts</b> entries</div>
+        <ul class="pagination justify-content-center">
+            @if (index > 1)
+            {
+                <li class="page-item"><a href="/Home/Contract/?index=@(index - 1)&pageSize=@pageSize" class="page-link">Previous</a></li>
+            }
+            else
+            {
+                <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
+            }
+            @for (int count = 1; count <= (totalContracts / pageSize) + (totalContracts % pageSize == 0 ? 0 : 1); count++)
+            {
+                <li class="page-item @(index == count ? "active" : "")">
+                    <a href="/Home/Contract/?index=@count&pageSize=@pageSize" class="page-link">@count</a>
+                </li>
+            }
+            @if (index * pageSize < totalContracts)
+            {
+                <li class="page-item"><a href="/Home/Contract/?index=@(index + 1)&pageSize=@pageSize" class="page-link">Next</a></li>
+            }
+            else
+            {
+                <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
+            }
+        </ul>
     </div>
 </div>
