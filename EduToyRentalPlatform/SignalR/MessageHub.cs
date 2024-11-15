@@ -41,7 +41,6 @@ namespace EduToyRentalPlatform.SignalR
 			_storage.Remove(Context.User.Identity.GetUserId(), Context.ConnectionId);
 		}
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -51,9 +50,10 @@ namespace EduToyRentalPlatform.SignalR
 		public async Task SendMessage(CreateMessageModel message, string receiverUserId)
 		{
 			string connectionId = _storage.GetConnections(receiverUserId).FirstOrDefault();
-			if (connectionId == null) return;
-			
-			await Clients.Client(connectionId).ReceiveMessage(message);
+			if (connectionId != null)
+			{
+				await Clients.Client(connectionId).ReceiveMessage(message);
+			}
 			await _messageService.AddAsync(message);
 		}
 	}

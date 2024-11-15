@@ -44,7 +44,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task OnPost(string contractId, int totalValue)
+        public async Task OnPost(string contractId, int totalValue, string paymentMethod)
         {
             Console.WriteLine("Payment OnPost Called");
 
@@ -58,12 +58,10 @@ namespace EduToyRentalPlatform.Pages.Cart
                 TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
                 ContractId = contractId,
             };
-
-
             var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("userId")).Value.ToString();
             var contract = await _contractService.GetContractAsync(contractId);
 
-            if (Request.Form["paymentMethod"].Equals("VNPay")) //vnpay
+            if (paymentMethod.Equals("VNPay")) //vnpay
             {
                 HttpContext.Session.SetObject("CreateTransactionModel", tranModel);
 
@@ -77,7 +75,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 return;
             }
 
-            if (Request.Form["paymentMethod"].Equals("Wallet")) //ví
+            if (paymentMethod.Equals("Wallet")) //ví
             {
                 bool result = await WalletTransactionHandle(tranModel, userId, contract);
                 if (!result)
@@ -89,7 +87,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 Response.Redirect("Cart/TestSuccess");
             }
 
-            if (Request.Form["paymentMethod"].Equals("Direct")) //thanh toán bằng tiền mặt
+            if (paymentMethod.Equals("Direct")) //thanh toán bằng tiền mặt
             {
                 bool result = await DirectTransactionHandle(tranModel);
                 if (!result)
