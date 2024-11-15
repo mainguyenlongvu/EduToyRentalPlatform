@@ -219,10 +219,12 @@
 										foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
 										{
 											int quantity = returnToyDetail.ToyQuality ?? 0;
+											int compensation = Convert.ToInt32(0.1 * returnToyDetail.TotalMoney * returnToyDetail.OverdueTime);
 											double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
 											double reward = subtotal * 0.5;
 											double overdueTime = returnToyDetail.OverdueTime ?? 0;
 											double amountDue = subtotal - reward;
+											
 
 											<tr>
 												<td style="text-align: center;">@returnToyDetail.ToyId</td>
@@ -234,7 +236,7 @@
 												<td style="text-align: center;">
 													<input type="hidden" name="restoreToyDetailDTO.IsReturn" value="false" />
 													<input type="checkbox" name="restoreToyDetailDTO.IsReturn" class="form-check-input"
-														   value="true" @(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "") />
+														   value="@(returnToyDetail.IsReturn.HasValue && returnToyDetail.IsReturn.Value ? "checked" : "")" />
 												</td>
 												<td style="text-align: center;">
 													<input type="number" step="any" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" />
@@ -244,7 +246,7 @@
 												</td>
 												<td style="text-align: center;">
 													<!-- Editable Compensation field for user input -->
-													<input type="number" name="restoreToyDetailDTO.Compensation"  class="form-control" step="any" />
+													<input type="number" name="restoreToyDetailDTO.Compensation" value="@compensation" class="form-control" step="any" readonly/>
 												</td>
 												<td style="text-align: center;">
 													@amountDue.ToString("C")
@@ -258,8 +260,7 @@
 														<input type="hidden" name="reward" value="@reward" />
 														<input type="hidden" name="IsReturn" value="@returnToyDetail.IsReturn" />
 														<input type="hidden" name="overdueTime" value="@returnToyDetail.OverdueTime" />
-														<!-- Pass the user-input Compensation value in the form submission -->
-														<input type="hidden" name="compensation" value="@returnToyDetail.Compensation" />
+														<input type="hidden" name="compensation" value="@compensation" />
 														<input type="hidden" name="toyName" value="@returnToyDetail.ToyName" />
 														<button type="submit" class="btn btn-primary btn-sm">Update</button>
 													</form>
