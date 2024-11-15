@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics.Contracts;
 using ToyShop.Contract.Repositories.Entity;
@@ -44,6 +45,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             } 
         }
 
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task OnPost()
         {

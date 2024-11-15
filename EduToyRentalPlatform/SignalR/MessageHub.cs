@@ -15,9 +15,10 @@ namespace EduToyRentalPlatform.SignalR
 		private readonly MessageService _messageService;
 		private readonly ConnectionStorage<string> _storage;
 
-		public MessageHub(MessageService messageService)
+		public MessageHub(MessageService messageService, ConnectionStorage<string> storage)
 		{
 			_messageService = messageService;
+			_storage = storage;
 		}
 
 		public override async Task OnConnectedAsync()

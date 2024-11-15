@@ -92,7 +92,7 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
                 var currentRestore = await _restoreToyService.GetByContractId(contractId);
                 var restoreToyDto = new UpdateRestoreModel() 
                 { 
-                    Status = "Not Returned"
+                    Status = status
                 };
                 await _restoreToyService.Update(currentRestore.Id, restoreToyDto);
 
@@ -134,6 +134,8 @@ namespace EduToyRentalPlatform.Pages.Admin.ContractManage
 
             try
             {
+                
+
                 var restoreToyDetailDTO = new UpdateRestoreDetailModel
                 {
                     ToyQuality = toyQuality,
