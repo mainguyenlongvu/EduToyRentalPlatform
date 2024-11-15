@@ -4,66 +4,43 @@ using ToyShop.ModelViews.ContractModelView;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Contract.Services.Interface;
+using ToyShop.Contract.Repositories.PaggingItems;
+using Microsoft.EntityFrameworkCore;
 
 namespace ToyShop.Pages
 {
     public class ContractModel : PageModel
     {
+        private readonly ToyShop.Repositories.Base.ToyShopDBContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IContractService _contractService;
-        public BasePaginatedList<ToyShop.Contract.Repositories.Entity.ContractEntity>? Contracts { get; set; }
-        public ContractModel(IContractService contractService)
+        public ContractModel(ToyShop.Repositories.Base.ToyShopDBContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _contractService = contractService;
-        }
-        public async Task OnGetAsync([FromRoute] int index = 1, [FromRoute] int size = 5)
-        {
-            Contracts = await _contractService.GetContractsAsync(index, size);
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<IActionResult> OnPutAsync(string id, [FromForm] UpdateContractModel contract)
-        {
-            try
-            {
-                await _contractService.UpdateContractAsync(id, contract);
-            }
-            catch (BaseException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Content("Thành công");
-        }
+        public PaginatedList<ContractEntity> Contracts { get; set; } = new PaginatedList<ContractEntity>(new List<ContractEntity>(), 0, 1, 5); // Adjust based on your pagination logic
 
-        public async Task<IActionResult> OnDeleteAsync([FromBody] string? id)
+        public async Task<IActionResult> OnGetAsync(int index = 1, int pageSize = 5)
         {
-            try
-            {
-                await _contractService.DeleteContractAsync(id);
-            }
-            catch (BaseException ex)
-            {
-                return BadRequest("Có lỗi");
-            }
-            return Content("Xóa thành công");
-        }
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
 
-        [BindProperty]
-        private CreateContractModel createNewContract { get; set; }
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(userId))
             {
-                return BadRequest(ModelState);
+                // Redirect to login if no user ID is found in cookies
+                return RedirectToPage("/Account/Login");
             }
-            try
-            {
-                await _contractService.CreateContractAsync(createNewContract);
-            }
-            catch (BaseException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Content("Thêm thành công");
+
+            // Query contracts for the logged-in user
+            var query = _context.ContractEntitys
+                .Where(c => c.UserId.ToString() == userId) // Filter contracts by user ID
+                .OrderBy(c => c.DateCreated);
+
+            int totalItems = await query.CountAsync();
+            Contracts = await PaginatedList<ContractEntity>.CreateAsync(query, index, pageSize);
+
+            return Page();
         }
     }
 }

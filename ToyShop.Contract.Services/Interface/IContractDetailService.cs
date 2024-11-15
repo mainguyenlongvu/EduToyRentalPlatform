@@ -12,7 +12,7 @@ namespace ToyShop.Contract.Services.Interface
         Task CreateContractDetailAsync(CreateContractDetailModel model);
         Task UpdateContractDetailAsync(string id, UpdateContractDetailModel model);
         Task DeleteContractDetailAsync(string id);
-
+        Task UpdateContractDetailRentAsync(string id, UpdateContractDetailRentModel model);
 
     }
 }
