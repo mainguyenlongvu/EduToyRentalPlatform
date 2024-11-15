@@ -28,26 +28,29 @@ namespace ToyShop.Core.Utils
             {
                 try
                 {
-                    string fileExtension = Path.GetExtension(file.FileName); 
-                    string fileName = $"{fileExtension}"; 
-                    string filePath = Path.Combine(_customDirectory, fileName);
+                    string fileExtension = Path.GetExtension(file.FileName); // Lấy phần mở rộng của file
+                    string fileName = $"{Guid.NewGuid()}{fileExtension}"; // Tạo tên file duy nhất (dùng GUID + phần mở rộng file)
+                    string filePath = Path.Combine(_customDirectory, fileName); // Đường dẫn đầy đủ
 
+                    // Lưu file vào thư mục
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
-                    return fileName;
+
+                    return fileName; // Trả về tên file đã lưu
                 }
                 catch (Exception ex)
                 {
-                    return ex.Message;
+                    return ex.Message; // Trả về thông báo lỗi nếu có
                 }
             }
             else
             {
-                return "Upload failed, file is empty.";
+                return "Upload failed, file is empty."; // Nếu file trống
             }
         }
+
 
         public static void DeleteFile(string filePath)
         {
