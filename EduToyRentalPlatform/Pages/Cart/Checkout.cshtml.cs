@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics.Contracts;
@@ -16,15 +17,16 @@ namespace EduToyRentalPlatform.Pages.Cart
         private IVnPayService _vnPayService;
         private IContractService _contractService;  
         private ITransactionService _transactionService;
-
+        private IUserService _userService;
 
         #region constructors
 
-        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, ITransactionService transactionService)
+        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, ITransactionService transactionService, IUserService userService)
         {
             _vnPayService = vnPayService;
             _contractService = contractService;
             _transactionService = transactionService;
+            _userService = userService;
         }
 
         #endregion
@@ -43,31 +45,57 @@ namespace EduToyRentalPlatform.Pages.Cart
             } 
         }
 
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task OnPost() 
+        public async Task OnPost()
         {
             Console.WriteLine("Payment OnPost Called");
 
-            if (!ModelState.IsValid) 
-            { 
+            if (!ModelState.IsValid)
+            {
                 return;
             }
-            this.CreateTransactionModel.TranCode = 
-                int.Parse(new Random().NextInt64(100000000, 999999999).ToString());
 
+            this.CreateTransactionModel.TranCode =
+                int.Parse(new Random().NextInt64(100000000, 999999999).ToString());
+            var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("userId")).Value.ToString();
             var contract = await _contractService.GetContractAsync(CreateTransactionModel.ContractId);
 
-            if (CreateTransactionModel.Method) //vnpay
+            if (Request.Form["paymentMethod"].Equals("VNPay")) //vnpay
             {
                 HttpContext.Session.SetObject("CreateTransactionModel", CreateTransactionModel);
 
                 var model = contract.ToyName == null ?
-                    await CreateVnPayTopUpRequest(contract) 
-                    : 
+                    await CreateVnPayTopUpRequest(contract)
+                    :
                     await CreateVnPayPurchaseRequest(contract);
 
                 string url = CreatePaymentUrl(model, HttpContext);
                 Response.Redirect(url);
+                return;
+            }
+
+            if (Request.Form["paymentMethod"].Equals("Wallet")) //ví
+            {
+                bool result = await WalletTransactionHandle(userId, contract);
+                if (!result)
+                {
+                    Response.Redirect("Cart/TestFailed");
+                    return;
+                }
+
+                Response.Redirect("Cart/TestSuccess");
+            }
+
+            if (Request.Form["paymentMethod"].Equals("Direct")) //thanh toán bằng tiền mặt
+            {
+                bool result = await DirectTransactionHandle();
+                if (!result)
+                {
+                    Response.Redirect("Cart/TestFailed");
+                    return;
+                }
+                Response.Redirect("Cart/TestSuccess");
             }
         }
 
@@ -106,14 +134,53 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
         #endregion
 
-        private CreateTransactionModel CreateOfflineTransaction()
+        private async Task<bool> DirectTransactionHandle()
         {
-            return new CreateTransactionModel()
+            try
             {
-                Status = "Processing"
-            };
+                var updateContract = new UpdateContractModel()
+                {
+                    Status = "Processing"
+                };
+
+                await _contractService.UpdateContractAsync(this.CreateTransactionModel.ContractId, updateContract);
+                await _transactionService.Insert(this.CreateTransactionModel);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }  
         }
 
 
+        private async Task<bool> WalletTransactionHandle(string userId, ResponseContractModel contract)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user.Money < contract.TotalValue)
+                {
+                    return false;
+                }
+
+                var updateContract = new UpdateContractModel()
+                {
+                    Status = "Done"
+                };
+                await _contractService.UpdateContractAsync(this.CreateTransactionModel.ContractId, updateContract);
+                await _transactionService.Insert(this.CreateTransactionModel);
+
+                return true;
+            }
+            catch (Exception ex) 
+            { 
+                Console.WriteLine( ex.Message);
+                return false;
+            }
+        }
     }
+
+   
 }

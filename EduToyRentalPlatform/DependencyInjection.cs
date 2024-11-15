@@ -11,6 +11,7 @@ using ToyShop.Repositories.Entity;
 using Microsoft.AspNet.Identity;
 using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Contract.Repositories.Entity;
+using EduToyRentalPlatform.SignalR;
 
 namespace ToyShop
 {
@@ -91,10 +92,15 @@ namespace ToyShop
             services.AddScoped<IRestoreToyDetailService, RestoreToyDetailService>();
 			services.AddScoped<IVnPayService, VnPayService>();
 			services.AddScoped<GmailService>();
+			services.AddSingleton<ConnectionStorage<string>>();
+			
+			services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
+					.SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "\\EduToyRentalPlatform")
+					.AddJsonFile("appsettings.json")
+					.Build());
 
-
-            // Đăng ký PasswordHasher cho ApplicationUser
-            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+			// Đăng ký PasswordHasher cho ApplicationUser
+			services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
             services.AddRazorPages();
             services.AddSignalR();

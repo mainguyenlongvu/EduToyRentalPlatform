@@ -12,5 +12,7 @@ namespace ToyShop.Services.Service
         Task<RestoreToyDetail> GetById(string id);
         Task<BasePaginatedList<RestoreToyDetail>> GetPaging(int page, int pageSize, string id);
         Task<bool> Update(string id, UpdateRestoreDetailModel restoreToyDetail);
-    }
+		Task<RestoreToyDetail> GetByRestoreToyId(string restoreToyId);
+
+	}
 }
