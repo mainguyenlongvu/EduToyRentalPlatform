@@ -47,8 +47,8 @@ namespace ToyShop.Services.Service
             // Mã hóa mật khẩu
             string hashedPassword = CoreHelper.HashPassword(model.Password);
             //kiểm tra user có tồn tại
-            ApplicationUser? user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && (x.Email == model.UserName || x.UserName == model.UserName) && x.Password == model.Password).FirstOrDefaultAsync() ??
-                throw new Exception("Vui lòng điền tên đăng nhập và mật khẩu");
+            var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+                         .FirstOrDefaultAsync(u => (u.Email == model.UserName || u.UserName == model.UserName) && u.Password == model.Password && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
             //Điều kiện
             if (model.NewPassword != model.ConfirmPassword)
             {
@@ -145,7 +145,7 @@ namespace ToyShop.Services.Service
 
             // Tìm người dùng trong cơ sở dữ liệu
             var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
-                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
+                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email)&& u.Password == model.Password && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
 
 
             // Xác thực mật khẩu
@@ -207,7 +207,8 @@ namespace ToyShop.Services.Service
                 Phone = model.Phone,
                 FullName = model.FullName,
                 CreatedTime = DateTime.UtcNow,
-                ImageUrl = await FileUploadHelper.UploadFile(model.Image)
+                ImageUrl = await FileUploadHelper.UploadFile(model.Image),
+                Password = model.Password
             };
 
             try

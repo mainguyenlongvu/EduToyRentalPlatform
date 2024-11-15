@@ -14,9 +14,9 @@ namespace ToyShop.Services.Service
 	{
 		private IConfiguration _configuration;
 
-		public GmailService()
+		public GmailService(IConfiguration configuration)
 		{
-			//if (_configuration == null) InitializeConfiguration();
+			_configuration = configuration;
 		}
 
 		//private void InitializeConfiguration()

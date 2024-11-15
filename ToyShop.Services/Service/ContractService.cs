@@ -209,7 +209,6 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             await _unitOfWork.SaveAsync();
         }
-
         public async Task CancelContractAsync(string id)
         {
             //được hủy đơn để hoàn tiền trong vòng 1 ngày: điều kiện phải trước thời gian thuê
@@ -235,7 +234,6 @@ namespace ToyShop.Contract.Services.Interface
         {
             return await _unitOfWork.GetRepository<ContractEntity>().Entities.Where(X => !X.DeletedTime.HasValue).ToListAsync();
         }
-
         public Task<bool> CreateTopUpAsync(CreateTopUpModel model)
         {
             throw new NotImplementedException();
