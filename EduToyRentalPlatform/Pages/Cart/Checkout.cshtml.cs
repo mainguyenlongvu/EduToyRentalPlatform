@@ -58,13 +58,18 @@ namespace EduToyRentalPlatform.Pages.Cart
                 TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
                 ContractId = contractId,
             };
+
             var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("userId")).Value.ToString();
-            var contract = await _contractService.GetContractAsync(contractId);
+            if (userId == null)
+                throw new KeyNotFoundException("UserId not found");
+            else
+                HttpContext.Session.SetString("UserId", userId);
 
             if (paymentMethod.Equals("VNPay")) //vnpay
             {
                 HttpContext.Session.SetObject("CreateTransactionModel", tranModel);
 
+                var contract = await _contractService.GetContractAsync(contractId);
                 var model = contract.ToyName == null ?
                     await CreateVnPayTopUpRequest(tranModel, contract)
                     :
@@ -77,19 +82,18 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (paymentMethod.Equals("Wallet")) //ví
             {
-                bool result = await WalletTransactionHandle(tranModel, userId, contract);
+                bool result = await _transactionService.ProcessPurchaseWallet(tranModel, userId);
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
                     return;
                 }
-
                 Response.Redirect("Cart/TestSuccess");
             }
 
             if (paymentMethod.Equals("Direct")) //thanh toán bằng tiền mặt
             {
-                bool result = await DirectTransactionHandle(tranModel);
+                bool result = await _transactionService.ProcessPurchaseDirect(tranModel);
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
@@ -98,7 +102,6 @@ namespace EduToyRentalPlatform.Pages.Cart
                 Response.Redirect("Cart/TestSuccess");
             }
         }
-
         #region vnpay
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
@@ -134,54 +137,5 @@ namespace EduToyRentalPlatform.Pages.Cart
         }
         #endregion
 
-        private async Task<bool> DirectTransactionHandle(CreateTransactionModel tranModel)
-        {
-            try
-            {
-                var updateContract = new UpdateContractModel()
-                {
-                    Status = "Processing"
-                };
-
-                await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
-                await _transactionService.Insert(tranModel);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }  
-        }
-
-
-        private async Task<bool> WalletTransactionHandle(CreateTransactionModel tranModel, string userId, ResponseContractModel contract)
-        {
-            try
-            {
-                var user = await _userService.GetUserByIdAsync(userId);
-                if (user.Money < contract.TotalValue)
-                {
-                    return false;
-                }
-
-                var updateContract = new UpdateContractModel()
-                {
-                    Status = "Done"
-                };
-
-                await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
-                await _transactionService.Insert(tranModel);
-
-                return true;
-            }
-            catch (Exception ex) 
-            { 
-                Console.WriteLine( ex.Message);
-                return false;
-            }
         }
     }
-
-   
-}

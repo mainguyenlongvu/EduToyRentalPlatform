@@ -8,6 +8,8 @@ using ToyShop.Contract.Repositories.Interface;
 using ToyShop.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using ToyShop.ModelViews.GmailModel;
+using ToyShop.ModelViews.ContractModelView;
+using System.Diagnostics.Contracts;
 
 namespace ToyShop.Services.Service
 {
@@ -18,15 +20,15 @@ namespace ToyShop.Services.Service
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly GmailService _gmailService;
 
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, GmailService gmailService)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
-            _gmailService = gmailService;
-        }
+		public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, GmailService gmailService)
+		{
+			_unitOfWork = unitOfWork;
+			_mapper = mapper;
+			_httpContextAccessor = httpContextAccessor;
+			_gmailService = gmailService;
+		}
 
-        public async Task<bool> Delete(string id)
+		public async Task<bool> Delete(string id)
         {
             try
             {
@@ -195,5 +197,78 @@ namespace ToyShop.Services.Service
             }
         }
 
-    }
+
+		public async Task<bool> ProcessPurchaseDirect(CreateTransactionModel tranModel)
+		{
+			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
+				?? throw new KeyNotFoundException("Contract not found.");
+
+			existingContract.Status = "Processing";
+			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+			////
+			tranModel.Status = "Processing";
+			await Insert(tranModel);
+			await _unitOfWork.SaveAsync();
+
+			return true;
+		}
+
+		public async Task<bool> ProcessPurchaseVnPay(CreateTransactionModel tranModel, string userId)
+		{
+			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue) 
+				?? throw new KeyNotFoundException("Contract not found.");
+
+			existingContract.Status = "Done";
+			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+			////
+			await Insert(tranModel);
+			await _unitOfWork.SaveAsync();
+
+			return true;
+		}
+
+		public async Task<bool> ProcessPurchaseWallet(CreateTransactionModel tranModel, string userId)
+		{
+			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
+				?? throw new KeyNotFoundException("Contract not found.");
+
+			existingContract.Status = "Done";
+			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+			////
+			var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.Equals(userId))
+				?? throw new KeyNotFoundException("User not found.");
+
+			if (existingUser.Money < Convert.ToInt32(existingContract.TotalValue)) // hết xiền
+				return false;
+			existingUser.Money -= Convert.ToInt32(existingContract.TotalValue);
+			
+			await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
+			////
+			await Insert(tranModel);
+			await _unitOfWork.SaveAsync();
+
+			return true;
+		}
+
+		public async Task<bool> ProcessTopUp(CreateTransactionModel tranModel, string userId)
+		{
+			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
+				?? throw new KeyNotFoundException("Contract not found.");
+
+			existingContract.Status = "Done";
+			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+			////
+			var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.Equals(userId))
+				?? throw new KeyNotFoundException("User not found.");
+
+			existingUser.Money += Convert.ToInt32(existingContract.TotalValue);
+
+			await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
+			////
+			await Insert(tranModel);
+			await _unitOfWork.SaveAsync();
+
+			return true;
+		}
+	}
 }

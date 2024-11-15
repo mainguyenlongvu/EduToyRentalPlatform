@@ -40,7 +40,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (vnPayRes == null || !vnPayRes.VnPayResponseCode.Equals("00"))
             {
-                Response.Redirect("TestFailed");
+                Response.Redirect("Cart/TestFailed");
                 return;
             }
 
@@ -49,29 +49,31 @@ namespace EduToyRentalPlatform.Pages.Cart
             else
                 await OnPurchaseSuccess(vnPayRes);
 
-            Response.Redirect("TestSuccess");
+            Response.Redirect("Cart/TestSuccess");
         }
 
         private async Task OnTopUpSuccess(VnPayResponseModel vnPayRes)
         {
             var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
-            var updateContract = new UpdateContractModel()
-            {
-                Status = "Not Received"
-            };
-            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
-            await _transactionService.Insert(tranModel);
+            var userId = HttpContext.Session.GetString("UserId");
+            if (tranModel == null || userId == null)
+                Response.Redirect("Cart/TestFailed");
+
+            bool result = await _transactionService.ProcessTopUp(tranModel, userId);
+            if (!result)
+                Response.Redirect("Cart/TestFailed");
         }
 
         private async Task OnPurchaseSuccess(VnPayResponseModel vnPayRes)
         {
             var tranModel = HttpContext.Session.GetObject<CreateTransactionModel>("CreateTransactionModel");
-            var updateContract = new UpdateContractModel()
-            {
-                Status = "Done"
-            };
-            await _contractService.UpdateContractAsync(tranModel.ContractId, updateContract);
-            await _transactionService.Insert(tranModel);
+            var userId = HttpContext.Session.GetString("UserId");
+            if (tranModel == null || userId == null)
+                Response.Redirect("Cart/TestFailed");
+
+            bool result = await _transactionService.ProcessPurchaseVnPay(tranModel, userId);
+            if (!result)
+                Response.Redirect("Cart/TestFailed");
         }
 
     }

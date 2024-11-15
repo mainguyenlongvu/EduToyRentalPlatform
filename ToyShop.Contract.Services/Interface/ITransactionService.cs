@@ -16,5 +16,14 @@ namespace ToyShop.Contract.Services.Interface
         Task<IEnumerable<ResponseTransactionModel>> GetAll();
 
         Task<BasePaginatedList<ResponseTransactionModel>> GetPaging(int page, int pageSize);
-    }
+
+		Task<bool> ProcessPurchaseDirect(CreateTransactionModel tranModel);
+
+		Task<bool> ProcessPurchaseVnPay(CreateTransactionModel tranModel, string userId);
+
+		Task<bool> ProcessPurchaseWallet(CreateTransactionModel tranModel, string userId);
+
+		Task<bool> ProcessTopUp(CreateTransactionModel tranModel, string userId);
+
+	}
 }
