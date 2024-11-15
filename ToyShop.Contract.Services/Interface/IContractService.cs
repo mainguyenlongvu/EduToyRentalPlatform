@@ -18,5 +18,7 @@ namespace ToyShop.Contract.Services.Interface
         Task DirectPaymentAsync(string id, DirectPaymentModel model);
         Task<bool> CreateTopUpAsync(CreateTopUpModel model);
         Task CancelContractAsync(string id);
+
+        Task<List<ContractEntity>> GetAllContractsByUserIdAsync(string userId);
     }
 }
