@@ -44,5 +44,38 @@ namespace EduToyRentalPlatform.Pages.Cart
                 }
             }
         }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            // Iterate through posted values to update each item's ContractType
+            foreach (var item in MyCart)
+            {
+                string radioValue = Request.Form[$"purchaseOption_{item.Toy.Id}"];
+
+                if (bool.TryParse(radioValue, out bool selectedType))
+                {
+                    item.ContractType = selectedType;
+                }
+            }
+
+            // Save changes to database or session as needed
+            await SaveCartChangesAsync();
+
+            return Page();
+        }
+
+        public async Task SaveCartChangesAsync()
+        {
+            // Assuming the MyCart list contains ContractDetails that need to be updated
+            foreach (var item in MyCart)
+            {
+                // Update the ContractDetail with the new values (e.g., price and quantity)
+                _unitOfWork.GetRepository<ContractDetail>().Update(item);
+            }
+
+            // Save changes to the database
+            await _unitOfWork.SaveAsync();
+        }
+
     }
 }

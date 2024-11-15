@@ -14,8 +14,8 @@
                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                     <h4>@toy.ToyName</h4>
                     <p>@(toy.ToyDescription?.Length > 20 ? toy.ToyDescription.Substring(0, 20) + "..." : toy.ToyDescription)</p>
-                    <p class="text-dark fs-5 fw-bold mb-0">@toy.ToyPriceSale.ToString("N0") VND</p>
-                    <p class="text-dark fs-5 fw-bold mb-0">@toy.ToyPriceRent.ToString("N0") VND</p>
+                    <p class="text-dark fs-5 fw-bold mb-0">Buy: @toy.ToyPriceSale.ToString("N0") VND</p>
+                    <p class="text-dark fs-5 fw-bold mb-0">Rent: @toy.ToyPriceRent.ToString("N0") VND</p>
                     <div class="d-flex justify-content-start align-items-center">
                         <!-- Form Add to Cart -->
                         <form method="post" asp-page="/Shop" asp-page-handler="AddToCart">
