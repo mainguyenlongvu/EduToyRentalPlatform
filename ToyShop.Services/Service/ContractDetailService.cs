@@ -63,6 +63,7 @@ namespace ToyShop.Contract.Services.Interface
                 if (model.ContractType == true)
                 {
                     contractDetail.Price = model.Quantity * toy.ToyPriceSale;
+                    newContract.TotalValue += contractDetail.Price;
                 }
                 else//còn false là thuê lấy giá của thuê
                 {
@@ -77,11 +78,15 @@ namespace ToyShop.Contract.Services.Interface
                     restoreToyDetail.ToyName = toy.ToyName;
                     restoreToyDetail.ToyId = toy.Id;
                     restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+
+                    newContract.TotalValue += contractDetail.Price;
                     //thêm vào Db
                     await _unitOfWork.GetRepository<RestoreToy>().InsertAsync(restoreToy);
                     await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
                 }
 
+
+                await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(newContract);
                 //Lưu vào Db
                 await _unitOfWork.GetRepository<ContractDetail>().InsertAsync(contractDetail);
 
@@ -98,11 +103,14 @@ namespace ToyShop.Contract.Services.Interface
                     if (model.ContractType == true)
                     {
                         contractDetail.Price += model.Quantity * toy.ToyPriceSale;
+                        contractEntity.TotalValue += contractDetail.Price;
                     }
                     //còn false là thuê lấy giá của thuê
                     else
                     {
                         contractDetail.Price += model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2);
+                        contractEntity.TotalValue += contractDetail.Price;
+
                         //Tìm xem có sẵn đơn trả chưa
                         RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractEntity.Id && !x.DeletedTime.HasValue);
                         //Nếu có restoreToy
@@ -151,6 +159,8 @@ namespace ToyShop.Contract.Services.Interface
                     }
                     //Cập nhật số lượng
                     contractDetail.Quantity += model.Quantity;
+                    await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(contractEntity);
+
                     //Cập nhật cái trong giỏ hàng
                     await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
 
@@ -230,7 +240,7 @@ namespace ToyShop.Contract.Services.Interface
             ContractDetail contractDetail = await _unitOfWork.GetRepository<ContractDetail>().Entities
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract detail not found!");
-
+            ContractEntity contractEntity = await _unitOfWork.GetRepository<ContractEntity>().Entities.Where(p => p.Id == contractDetail.ContractId && !p.DeletedTime.HasValue).FirstOrDefaultAsync();
             // Xóa mềm
             contractDetail.DeletedTime = CoreHelper.SystemTimeNows;
             if (contractDetail.ContractType == false)
@@ -246,7 +256,11 @@ namespace ToyShop.Contract.Services.Interface
                     await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreToyDetail);
                 }
             }
-            _unitOfWork.GetRepository<ContractDetail>().Update(contractDetail);
+            //cập nhât contract
+            contractEntity.TotalValue -= contractDetail.Price;
+
+            await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(contractEntity);
+            await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
         }
 
@@ -307,6 +321,7 @@ namespace ToyShop.Contract.Services.Interface
             ContractDetail contractDetail = await _unitOfWork.GetRepository<ContractDetail>().Entities
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract detail not found!");
+            ContractEntity contractEntity = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == contractDetail.ContractId && !x.DeletedTime.HasValue);
             //Tìm đồ chơi
             Toy toy = await _unitOfWork.GetRepository<Toy>().Entities
                 .FirstOrDefaultAsync(p => p.Id == contractDetail.ToyId && !p.DeletedTime.HasValue);
@@ -314,42 +329,13 @@ namespace ToyShop.Contract.Services.Interface
             contractDetail.LastUpdatedTime = CoreHelper.SystemTimeNows;
             //Cập nhập lại giá
             //Nêu true là bán lấy giá bán
-            if (contractDetail.ContractType == true)
-            {
-                contractDetail.Price = model.Quantity * toy.ToyPriceSale;
-            }
-            else//còn false là thuê lấy giá của thuê
-            {
-                contractDetail.Price = model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2);
-                //Tìm xem có sẵn đơn trả chưa
-                RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractDetail.ContractId && !x.DeletedTime.HasValue);
-                //Nếu có restoreToy
-                if (restoreToy != null)
-                {
-                    //Tìm xem đơn trả đó có Đồ chơi này chưa
-                    RestoreToyDetail restoreDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.RestoreToyId == restoreToy.Id && x.ToyId == toy.Id);
-                    //Nếu có
-                    if (restoreDetail != null)
-                    {
-                        restoreDetail.ToyQuality = model.Quantity;
-                        restoreDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
-                        //Cập nhật lại
-                        await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreDetail);
-                    }
-                    //Nếu ko có
-                    else
-                    {
-                        RestoreToyDetail restoreToyDetail = new RestoreToyDetail();
-                        restoreToyDetail.RestoreToyId = restoreToy.Id;
-                        restoreToyDetail.ToyQuality = model.Quantity;
-                        restoreToyDetail.ToyName = toy.ToyName;
-                        restoreToyDetail.ToyId = toy.Id;
-                        restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
-                        //thêm vào Db
-                        await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
-                    }
-                }
-            }
+
+            int priceOld = contractDetail.Price;
+            contractDetail.Price = model.Quantity * toy.ToyPriceSale;
+            priceOld -= contractDetail.Price;
+            contractEntity.TotalValue += priceOld;
+
+            await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(contractEntity);
             await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
         }
@@ -369,52 +355,52 @@ namespace ToyShop.Contract.Services.Interface
             ContractDetail contractDetail = await _unitOfWork.GetRepository<ContractDetail>().Entities
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract detail not found!");
+            ContractEntity contractEntity = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == contractDetail.ContractId && !x.DeletedTime.HasValue);
             //Tìm đồ chơi
             Toy toy = await _unitOfWork.GetRepository<Toy>().Entities
                 .FirstOrDefaultAsync(p => p.Id == contractDetail.ToyId && !p.DeletedTime.HasValue);
             _mapper.Map(model, contractDetail);
             contractDetail.LastUpdatedTime = CoreHelper.SystemTimeNows;
             //Cập nhập lại giá
-            //Nêu true là bán lấy giá bán
-            if (contractDetail.ContractType == true)
+            //Gán giá trị đầu
+            int priceOld = contractDetail.Price;
+            //giá trị = số lượng của đồ chơi * (giá thuê + giá bán/2)* giá ngày thuê
+            contractDetail.Price = model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2) * (model.DateStart.Value.Day - model.DateEnd.Value.Day);
+            priceOld -= contractDetail.Price;
+            contractDetail.DateStart = model.DateStart.Value;
+            contractDetail.DateEnd = model.DateEnd.Value;
+            //Cập giá giá trong contract
+            contractEntity.TotalValue += priceOld;
+
+            //Tìm xem có sẵn đơn trả chưa
+            RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractDetail.ContractId && !x.DeletedTime.HasValue);
+            //Nếu có restoreToy
+            if (restoreToy != null)
             {
-                contractDetail.Price = model.Quantity * toy.ToyPriceSale;
-            }
-            else//còn false là thuê lấy giá của thuê
-            {
-                //giá trị = số lượng của đồ chơi * (giá thuê + giá bán/2)* giá ngày thuê
-                contractDetail.Price = model.Quantity * (toy.ToyPriceRent + toy.ToyPriceSale / 2) * (model.DateStart.Value.Day - model.DateEnd.Value.Day);
-                contractDetail.DateStart = model.DateStart.Value;
-                contractDetail.DateEnd = model.DateEnd.Value;
-                //Tìm xem có sẵn đơn trả chưa
-                RestoreToy restoreToy = _unitOfWork.GetRepository<RestoreToy>().Entities.FirstOrDefault(x => x.ContractId == contractDetail.ContractId && !x.DeletedTime.HasValue);
-                //Nếu có restoreToy
-                if (restoreToy != null)
+                //Tìm xem đơn trả đó có Đồ chơi này chưa
+                RestoreToyDetail restoreDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.RestoreToyId == restoreToy.Id && x.ToyId == toy.Id);
+                //Nếu có
+                if (restoreDetail != null)
                 {
-                    //Tìm xem đơn trả đó có Đồ chơi này chưa
-                    RestoreToyDetail restoreDetail = await _unitOfWork.GetRepository<RestoreToyDetail>().Entities.FirstOrDefaultAsync(x => x.RestoreToyId == restoreToy.Id && x.ToyId == toy.Id);
-                    //Nếu có
-                    if (restoreDetail != null)
-                    {
-                        restoreDetail.ToyQuality = model.Quantity;
-                        restoreDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
-                        //Cập nhật lại
-                        await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreDetail);
-                    }
-                    //Nếu ko có
-                    else
-                    {
-                        RestoreToyDetail restoreToyDetail = new RestoreToyDetail();
-                        restoreToyDetail.RestoreToyId = restoreToy.Id;
-                        restoreToyDetail.ToyQuality = model.Quantity;
-                        restoreToyDetail.ToyName = toy.ToyName;
-                        restoreToyDetail.ToyId = toy.Id;
-                        restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
-                        //thêm vào Db
-                        await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
-                    }
+                    restoreDetail.ToyQuality = model.Quantity;
+                    restoreDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                    //Cập nhật lại
+                    await _unitOfWork.GetRepository<RestoreToyDetail>().UpdateAsync(restoreDetail);
+                }
+                //Nếu ko có
+                else
+                {
+                    RestoreToyDetail restoreToyDetail = new RestoreToyDetail();
+                    restoreToyDetail.RestoreToyId = restoreToy.Id;
+                    restoreToyDetail.ToyQuality = model.Quantity;
+                    restoreToyDetail.ToyName = toy.ToyName;
+                    restoreToyDetail.ToyId = toy.Id;
+                    restoreToyDetail.Reward = model.Quantity * toy.ToyPriceSale / 2;
+                    //thêm vào Db
+                    await _unitOfWork.GetRepository<RestoreToyDetail>().InsertAsync(restoreToyDetail);
                 }
             }
+            await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(contractEntity);
             await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
         }
