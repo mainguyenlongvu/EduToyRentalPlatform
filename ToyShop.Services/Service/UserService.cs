@@ -346,16 +346,7 @@ namespace ToyShop.Services.Service
             //Tìm người dùng
             ApplicationUser? existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.Id == id && x.DeletedTime == null).FirstOrDefaultAsync() ??
                 throw new Exception("Người dùng không tồn tại");
-            if (existingUser.Email != model.Email)
-            {
-                //kiểm tra email
-                ApplicationUser? existingEmail = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.Email == model.Email.ToLower() && x.DeletedTime == null).FirstOrDefaultAsync();
-                // kiểm tra nếu email tồn tại và không bị xóa mềm
-                if (existingEmail != null)
-                {
-                    throw new Exception("Email đã tồn tại");
-                }
-            }
+
             //khi thay đổi mới đk
             if (existingUser.PhoneNumber != model.Phone)
             {
@@ -376,8 +367,7 @@ namespace ToyShop.Services.Service
             }
             // Tạo mã code ngẫu nhiên và hash nó
             string code = new Random().Next(1000, 9999).ToString();
-            List<string> selectedEmail = new List<string> { model.Email.ToLower() };
-            string body = $"<p>Code kích hoạt tài khoản của bạn là:: <strong>{code}</strong></p>";
+            //string body = $"<p>Code kích hoạt tài khoản của bạn là:: <strong>{code}</strong></p>";
             //gửi email xác thực tài khoản
             //await _emailService.SendEmailAsync(selectedEmail, "Code kích hoạt tài khoản", body);
             //kiểm tra xem phone có trống không
@@ -392,10 +382,8 @@ namespace ToyShop.Services.Service
             }
             //Gán vào user
             existingUser.FullName = model.FullName;
-            existingUser.Email = model.Email;
             existingUser.EmailConfirmed = false;
             existingUser.LastUpdatedTime = CoreHelper.SystemTimeNow;
-            existingUser.NormalizedEmail = model.Email.ToUpper();
             //existingUser.EmailCode = code.ToString();
             existingUser.Phone = model.Phone;
             existingUser.FullName = model.FullName;
