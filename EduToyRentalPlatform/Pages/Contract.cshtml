@@ -81,7 +81,7 @@
                                 <tbody>
                                     @if (item.ContractDetails != null && item.ContractDetails.Any())
                                     {
-                                        foreach (var detail in item.ContractDetails)
+                                        foreach (var detail in item.ContractDetails.Where(x => x.DeletedTime == null).ToList())
                                         {
                                             <tr>
                                                 <td>
