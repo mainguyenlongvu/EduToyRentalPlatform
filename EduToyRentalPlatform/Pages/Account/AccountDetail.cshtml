@@ -1,5 +1,6 @@
 ﻿@page
 @model ToyShop.Pages.Account.AccountDetailModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Your Profile";
     Layout = "~/Pages/Shared/_Layout.cshtml";
@@ -19,9 +20,9 @@
         <li><strong>Số tiền:</strong> @Model.Money</li>
     </ul>
 
-@*     <button class="btn-primary" onclick="showEditForm()">Edit Profile</button>
-    <button class="btn-primary" onclick="showChangePasswordForm()">Change Password</button> *@
-    <a href="/Shop" class="btn-secondary">Back</a>
+    <button class="btn-primary" onclick="showEditForm()">Sửa hồ sơ</button>
+    <button class="btn-primary" onclick="showToUpMoneyForm()">Nạp tiền</button>
+    <a href="/Shop" class="btn-secondary">Quay lại</a>
 </div>
 
 <!-- Modal for Editing Profile Information -->
@@ -29,7 +30,11 @@
     <div class="modal-content">
         <span class="close" onclick="closeForm('editForm')">&times;</span>
         <h3>Edit Profile</h3>
-        <form method="post" asp-page-handler="UpdateDetail" enctype="multipart/form-data">
+        <form method="post" asp-page-handler="UpdateDetail" enctype="multipart/form-data" novalidate>
+            <div class="validation-summary-valid text-danger">
+                @Html.ValidationSummary()
+            </div>
+
             <label>Họ tên:</label>
             <input type="text" asp-for="UserDetails.FullName" class="input-field" />
             <span asp-validation-for="UserDetails.FullName" class="text-danger"></span>
@@ -44,25 +49,21 @@
 
             <button type="submit" class="btn-primary px-4">Save Changes</button>
         </form>
-
     </div>
 </div>
 
+
 <!-- Modal for Changing Password -->
-<div id="changePasswordForm" class="modal" style="display:none;">
+<div id="toUpMoneyForm" class="modal" style="display:none;">
     <div class="modal-content">
-        <span class="close" onclick="closeForm('changePasswordForm')">&times;</span>
-        <h3>Change Password</h3>
-        <form method="post" asp-page-handler="ChangePassword">
-            <label>New Password:</label>
-            <input type="password" asp-for="ChangePassword.NewPassword" class="input-field" />
-            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
+        <span class="close" onclick="closeForm('toUpMoneyForm')">&times;</span>
+        <h3>Nạp tiền</h3>
+        <form method="post" asp-page-handler="ToUpMoney">
+            <label>Số tiền:</label>
+            <input type="number" asp-for="ToUpMoney" class="input-field" />
+            <span asp-validation-for="ToUpMoney" class="text-danger"></span>
 
-            <label>Confirm New Password:</label>
-            <input type="password" asp-for="ChangePassword.ConfirmPassword" class="input-field" />
-            <span asp-validation-for="ChangePassword.ConfirmPassword" class="text-danger"></span>
-
-            <button type="submit" class="btn-primary">Change Password</button>
+            <button type="submit" class="btn-primary">Nạp</button>
         </form>
 
     </div>
@@ -72,8 +73,8 @@
         document.getElementById("editForm").style.display = "block";
     }
 
-    function showChangePasswordForm() {
-        document.getElementById("changePasswordForm").style.display = "block";
+    function showToUpMoneyForm() {
+        document.getElementById("toUpMoneyForm").style.display = "block";
     }
 
     function closeForm(formId) {

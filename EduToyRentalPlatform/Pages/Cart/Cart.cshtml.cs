@@ -25,7 +25,8 @@ namespace EduToyRentalPlatform.Pages.Cart
             _contractService = contractService;
             _contractDetailService = contractDetailService;
         }
-
+        [BindProperty]
+        public string ItemId { get; set; }
         public List<ContractDetail> MyCart { get; set; }
         public async Task OnGetAsync()
         {
@@ -42,18 +43,22 @@ namespace EduToyRentalPlatform.Pages.Cart
                     MyCart = contract.Result.ContractDetails.Where(x=>!x.DeletedTime.HasValue).ToList();
                 }
             }
+            else
+            {
+                 Response.Redirect("/Account/LoginPage");
+            }
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync(string itemId)
+        public async Task<IActionResult> OnPostDeleteAsync(/*string itemId*/)
         {
-            if (string.IsNullOrEmpty(itemId))
+            if (string.IsNullOrEmpty(ItemId))
             {
                 return BadRequest("Item ID is missing."); // HTTP 400
             }
 
             try
             {
-                await _contractDetailService.DeleteContractDetailAsync(itemId);
+                await _contractDetailService.DeleteContractDetailAsync(ItemId);
                 return RedirectToPage("/Cart/Cart");
             }
             catch (Exception ex)

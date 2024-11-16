@@ -388,6 +388,7 @@ namespace ToyShop.Services.Service
             //existingUser.EmailCode = code.ToString();
             existingUser.Phone = model.Phone;
             existingUser.FullName = model.FullName;
+            existingUser.ImageUrl = model.ImageUrl;
 
             //Lưu thay đổi
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
