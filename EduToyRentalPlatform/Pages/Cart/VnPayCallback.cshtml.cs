@@ -21,13 +21,13 @@ namespace EduToyRentalPlatform.Pages.Cart
             _contractService = contractService;
         }
 
-        public void OnGet()
+        public async void OnGet()
         {
             foreach (var (key, value) in Request.Query)
             {
                 if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
                 {
-                    PaymentCallBack();
+                    await PaymentCallBack();
                     break;
                 }
             }
@@ -41,7 +41,6 @@ namespace EduToyRentalPlatform.Pages.Cart
             if (vnPayRes == null || !vnPayRes.VnPayResponseCode.Equals("00"))
             {
                 Response.Redirect("Cart/TestFailed");
-                return;
             }
 
             if (Request.Query.FirstOrDefault(m => m.Key.Equals("vnp_OrderInfo")).Value.Contains("nap vi"))

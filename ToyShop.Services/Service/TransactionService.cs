@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using ToyShop.ModelViews.GmailModel;
 using ToyShop.ModelViews.ContractModelView;
 using System.Diagnostics.Contracts;
+using ToyShop.Core.Utils;
 
 namespace ToyShop.Services.Service
 {
@@ -139,7 +140,7 @@ namespace ToyShop.Services.Service
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to insert delivery. Please try again later.", ex);
+                throw new InvalidOperationException("Failed to insert transaction. Please try again later.", ex);
             }
         }
         public async Task<UpdateTransactionModel> Update(int tranCode, CreateTransactionModel transactionDTO)
@@ -221,9 +222,23 @@ namespace ToyShop.Services.Service
 				?? throw new KeyNotFoundException("Contract not found.");
 
 			existingContract.Status = "Done";
-			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
-			////
-			await Insert(tranModel);
+            tranModel.Status = "Not Received";
+            Transaction transaction = new Transaction
+            {
+                TranCode = tranModel.TranCode,
+                Status = tranModel.Status,
+                ContractId = tranModel.ContractId,
+                Method = tranModel.Method,
+                CreatedBy = userId,
+                ContractEntity = existingContract,
+                CreatedTime = CoreHelper.SystemTimeNow,
+               
+            };
+            await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
+            await _unitOfWork.SaveAsync();
+            await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+            ////
+            ///
 			await _unitOfWork.SaveAsync();
 
 			return true;
