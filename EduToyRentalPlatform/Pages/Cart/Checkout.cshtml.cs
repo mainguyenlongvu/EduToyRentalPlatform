@@ -54,7 +54,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task OnPost(string contractId, int totalValue, string paymentMethod)
+        public async Task OnPost(string contractId, string paymentMethod)
         {
             Console.WriteLine("Payment OnPost Called");
 
@@ -62,6 +62,11 @@ namespace EduToyRentalPlatform.Pages.Cart
             {
                 return;
             }
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+            if (userId == null)
+                throw new KeyNotFoundException("UserId not found");
+            else
+                HttpContext.Session.SetString("UserId", userId);
 
             var tranModel = new CreateTransactionModel()
             {
@@ -69,11 +74,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 ContractId = contractId,
             };
 
-            var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("userId")).Value.ToString();
-            if (userId == null)
-                throw new KeyNotFoundException("UserId not found");
-            else
-                HttpContext.Session.SetString("UserId", userId);
+            
 
             if (paymentMethod.Equals("VNPay")) //vnpay
             {
@@ -110,7 +111,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                     return;
                 }
                 Response.Redirect("Cart/TestSuccess");
-            }
+            } 
         }
         #region vnpay
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
@@ -126,7 +127,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan nap vi {tranModel.ContractId}",
-                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
+                Name = tranModel.TranCode.ToString(),
                 IpAddress = "127.0.0.1"
             };
 
@@ -140,7 +141,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan don hang {tranModel.ContractId}",
-                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
+                Name = tranModel.TranCode.ToString(),
                 IpAddress = "127.0.0.1"
             };
             return model;
