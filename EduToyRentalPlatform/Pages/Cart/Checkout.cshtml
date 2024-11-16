@@ -1,39 +1,141 @@
 ﻿@page
 @model EduToyRentalPlatform.Pages.Cart.CheckoutModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<tbody>
     @if (Model.CartItems != null)
     {
-        foreach (var item in Model.CartItems)
-        {
-            <tr>
-                <td>
-                    <!-- Replace with an actual image URL if available -->
-                    <img src="@item.Toy.ToyImg" alt="product-img" class="avatar-lg rounded">
-                </td>
-                <td>
-                    <h5 class="font-size-16">
-                        <a href="#" class="text-dark">@item.Toy.ToyName</a>
-                    </h5>
-                    <p class="text-muted mb-0 mt-1">@item.Toy.ToyPriceSale x @item.Quantity</p>
-                </td>
-                <td>@(item.Toy.ToyPriceSale * item.Quantity)</td>
-            </tr>
-        }
+        <!-- Bảng Mua - ContractType là true -->
+        <h3 class="mt-4">Danh sách sản phẩm - Mua</h3>
+        <table class="table table-striped table-responsive table-light">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên đồ chơi</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems.Where(x => x.ContractType == true).ToList())
+                {
+                    <tr>
+                        <!-- Toy Image -->
+                        <td class="text-left">
+                            <img src="~/img/@item.Toy.ToyImg" alt="@item.Toy.ToyName" width="80" height="80" style="border-radius: 50%;" />
+                        </td>
+                        <!-- Toy Details -->
+                        <td>
+                            <h5 class="fw-bold mb-2">@item.Toy.ToyName</h5>
+                        </td>
+
+                        <!-- Quantity Selector -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <h5 class="fw-bold mb-2">@item.Quantity</h5>
+                            </div>
+                        </td>
+
+
+                        <!-- Price -->
+                        <td class="text-center">
+                            <span class="price-text fw-bold">
+                                @(item.ContractType.GetValueOrDefault(false) ? item.Toy.ToyPriceSale.ToString("C") : item.Toy.ToyPriceRent.ToString("C"))
+                            </span>
+                        </td>
+
+                        <!-- Delete Button -->
+                        <td class="text-end">
+                            <button type="submit" formaction="/Cart/Delete?itemId=@item.Toy.Id" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <!-- Bảng Thuê - ContractType là false -->
+        <h3 class="mt-4">Danh sách sản phẩm - Thuê</h3>
+        <table class="table table-striped table-responsive table-light">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên đồ chơi</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Ngày bắt đầu thuê</th>
+                    <th>Ngày kết thúc thuê</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems.Where(x => x.ContractType == false).ToList())
+                {
+                    <tr>
+                        <!-- Toy Image -->
+                        <td class="text-center">
+                            <img src="~/img/@item.Toy.ToyImg" alt="@item.Toy.ToyName" width="80" height="80" style="border-radius: 50%;" />
+                        </td>
+
+                        <!-- Toy Details -->
+                        <td>
+                            <h5 class="fw-bold mb-2">@item.Toy.ToyName</h5>
+                        </td>
+
+                        <!-- Quantity Selector -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <h5 class="fw-bold mb-2">@item.Quantity</h5>
+                            </div>
+                        </td>
+
+
+                        <!-- Price -->
+                        <td class="text-center">
+                            <span class="price-text fw-bold">
+                                @(item.ContractType.GetValueOrDefault(false) ? item.Toy.ToyPriceSale.ToString("C") : item.Toy.ToyPriceRent.ToString("C"))
+                            </span>
+                        </td>
+
+                        <td class="text-center">
+                            <h5 class="fw-bold mb-2">@item.DateStart</h5>
+
+                        </td>
+
+                        <td class="text-center">
+                            <h5 class="fw-bold mb-2">@item.DateEnd</h5>
+                        </td>
+
+                        <!-- Delete Button -->
+                        <td class="text-end">
+                            <button type="submit" formaction="/Cart/Delete?itemId=@item.Toy.Id" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
-    <tr class="bg-light">
-        <td colspan="2">Total:</td>
-        <td>@Model.CartItems.Sum(item => item.Toy.ToyPriceSale * item.Quantity)</td>
+    <tr class="bg-warning fw-bold text-dark border-top border-dark">
+        <td colspan="2" class="text-end fs-3">Total:</td>
+        <td class="text-center fs-3">
+            @Model.CartItems.Sum(item => item.Toy.ToyPriceSale * item.Quantity).ToString("C")
+        </td>
     </tr>
+
+
     <div class="mt-4">
-        <h5 class="font-size-16 mb-3">Select Payment Method:</h5>
+        <h5 class="font-size-16 mb-3">Lựa chọn phương thức thanh toán:</h5>
         <form method="post">
             <button type="submit" name="paymentMethod" value="VNPay" class="btn btn-primary mb-2">Thanh toán VNPAY</button>
             <button type="submit" name="paymentMethod" value="Wallet" class="btn btn-secondary mb-2">Thanh toán ví</button>
-            <button type="submit" name="paymentMethod" value="Direct" class="btn btn-success">Thanh toán trực tiếp</button>
+            @* <button type="submit" name="paymentMethod" value="Direct" class="btn btn-success">Thanh toán trực tiếp</button> *@
         </form>
     </div>
-</tbody>
