@@ -301,8 +301,8 @@ public class ApplicationDbContextInitializer
             Status = "Active",
             TotalValue = 150,
             NumberOfRentals = 1,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
+            //DateStart = DateTime.Now),
+            //DateEnd = DateTime.Now.AddDays(7)),
             RestoreToyId = null
         },
         new ContractEntity
@@ -314,8 +314,8 @@ public class ApplicationDbContextInitializer
             Status = "Completed",
             TotalValue = 100,
             NumberOfRentals = 0,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
+            //DateStart = DateTime.Now.AddDays(-10)),
+            //DateEnd = DateTime.Now.AddDays(-3)),
             RestoreToyId = null
         },
         new ContractEntity
@@ -327,8 +327,8 @@ public class ApplicationDbContextInitializer
             Status = "Active",
             TotalValue = 75,
             NumberOfRentals = 2,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
+            //DateStart = DateTime.Now),
+            //DateEnd = DateTime.Now.AddDays(5)),
             RestoreToyId = null
         },
         new ContractEntity
@@ -340,8 +340,8 @@ public class ApplicationDbContextInitializer
             Status = "Completed",
             TotalValue = 60,
             NumberOfRentals = 0,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
+            //DateStart = DateTime.Now.AddDays(-15)),
+            //DateEnd = DateTime.Now.AddDays(-10)),
             RestoreToyId = null
         },
         new ContractEntity
@@ -353,8 +353,8 @@ public class ApplicationDbContextInitializer
             Status = "Active",
             TotalValue = 150,
             NumberOfRentals = 1,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
+            //DateStart = DateTime.Now),
+            //DateEnd = DateTime.Now.AddDays(10)),
             RestoreToyId = null
         },
         new ContractEntity
@@ -366,8 +366,8 @@ public class ApplicationDbContextInitializer
             Status = "Completed",
             TotalValue = 50,
             NumberOfRentals = 0,
-            //DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
-            //DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
+            //DateStart = DateTime.Now.AddDays(-20)),
+            //DateEnd = DateTime.Now.AddDays(-15)),
             RestoreToyId = null
         }
         };
@@ -393,8 +393,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[0].Id,
                 ContractType = false, //rent
 				ToyId = toys[0].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(7)),
+                DateStart = DateTime.Now,
+                DateEnd = DateTime.Now.AddDays(7),
                 Toy = toys[0],
                 Quantity = 1,
                 Price = toys[0].ToyPriceRent * 1
@@ -405,8 +405,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[1].Id,
                 ContractType = true, //buy
 				ToyId = toys[1].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-3)),
+                DateStart = DateTime.Now.AddDays(-10),
+                DateEnd = DateTime.Now.AddDays(-3),
                 Toy = toys[1],
                 Quantity = 5,
                 Price = toys[1].ToyPriceSale * 5
@@ -417,8 +417,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[2].Id,
                 ContractType = false, //rent
 				ToyId = toys[2].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
+                DateStart = DateTime.Now,
+                DateEnd = DateTime.Now.AddDays(5),
                 Toy = toys[2],
                 Quantity = 2,
                 Price = toys[2].ToyPriceRent * 2
@@ -429,8 +429,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[3].Id,
                 ContractType = true, //buy
 				ToyId = toys[3].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
+                DateStart = DateTime.Now.AddDays(-15),
+                DateEnd = DateTime.Now.AddDays(-10),
                 Toy = toys[3],
                 Quantity = 2,
                 Price = toys[3].ToyPriceSale * 2
@@ -441,8 +441,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[4].Id,
                 ContractType = false,  //rent
 				ToyId = toys[4].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
+                DateStart = DateTime.Now,
+                DateEnd = DateTime.Now.AddDays(10),
                 Toy = toys[4],
                 Quantity = 1,
                 Price = toys[4].ToyPriceRent * 1
@@ -453,8 +453,8 @@ public class ApplicationDbContextInitializer
                 ContractId = contracts[4].Id,
                 ContractType = false,  //rent
 				ToyId = toys[5].Id,
-                DateStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
-                DateEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-15)),
+                DateStart = DateTime.Now.AddDays(-20),
+                DateEnd = DateTime.Now.AddDays(-15),
                 Toy = toys[5],
                 Quantity = 1,
                 Price = toys[5].ToyPriceRent * 1

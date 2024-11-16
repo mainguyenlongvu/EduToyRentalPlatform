@@ -102,18 +102,18 @@
 
 
                     <!-- Price -->
-                    <td class="text-center">
+                    <td class="text-left">
                         <span class="price-text fw-bold">
                             @(item.ContractType.GetValueOrDefault(false) ? item.Toy.ToyPriceSale.ToString("C") : item.Toy.ToyPriceRent.ToString("C"))
                         </span>
                     </td>
-                    <td class="text-center">
-                        <h5 class="fw-bold mb-2">@item.DateStart</h5>
+                    <td class="text-left">
+                        <h5 class="fw-bold mb-2">@item.DateStart?.ToString("dd-MM-yyyyy")</h5>
+                    </td>
+                    <td class="text-left">
+                        <h5 class="fw-bold mb-2">@item.DateEnd?.ToString("dd-MM-yyyy")</h5>
+                    </td>
 
-                    </td>
-                    <td class="text-center">
-                        <h5 class="fw-bold mb-2">@item.DateEnd</h5>
-                    </td>
 
                     <!-- Delete Button -->
                     <td class="text-end">
