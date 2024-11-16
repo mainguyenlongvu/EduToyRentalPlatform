@@ -129,6 +129,35 @@ namespace EduToyRentalPlatform.Pages.Cart
             return RedirectToPage("/Cart/Checkout");
         }
 
+        public async Task<IActionResult> OnPostTopUpAsync(int amount)
+        {
+            // Kiểm tra dữ liệu đầu vào
+            if (!ModelState.IsValid)
+            {
+                return RedirectToPage("/Cart/Checkout");
+            }
+
+            // Lấy thông tin UserId từ Cookie
+            var userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new KeyNotFoundException("UserId không tồn tại.");
+            };
+
+            var account = await _userService.GetUserByIdAsync(userId);
+
+            HttpContext.Session.SetString("UserId", userId);
+
+            // Tạo Transaction Model
+            var tranModel = new CreateTransactionModel()
+            {
+                TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
+            };
+
+
+        }
+
+
         #region vnpay
         private string CreatePaymentUrl(VnPayRequestModel model, HttpContext context)
         {
@@ -136,13 +165,13 @@ namespace EduToyRentalPlatform.Pages.Cart
             return url;
         }
 
-        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(CreateTransactionModel tranModel, ResponseContractModel contract)
+        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(CreateTransactionModel tranModel)
         {
             var model = new VnPayRequestModel()
             {
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan nap vi {tranModel.ContractId}",
+                OrderDescription = $"Thanh toan nap vi {tranModel.TranCode}",
                 Name = tranModel.TranCode.ToString(),
                 IpAddress = "127.0.0.1"
             };

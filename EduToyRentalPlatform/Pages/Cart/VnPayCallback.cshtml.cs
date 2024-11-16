@@ -60,6 +60,10 @@ namespace EduToyRentalPlatform.Pages.Cart
                 Response.Redirect("Cart/TestFailed");
 
             bool result = await _transactionService.ProcessTopUpVnPay(tranModel, userId);
+            await _contractService.CancelContractAsync(new CreateContractModel
+            {
+                TotalValue = 
+            })
             if (!result)
                 Response.Redirect("Cart/TestFailed");
         }

@@ -14,5 +14,7 @@ namespace EduToyRentalPlatform.SignalR
 		{
 			await Clients.All.NotifyAll(message);
 		}
+
+		
 	}
 }
