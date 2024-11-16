@@ -18,8 +18,8 @@ namespace ToyShop.ModelViews.ContractDetailModelView
         [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0.")]
         [DisplayName("Số lượng")]
         public int Quantity { get; set; }   // Số lượng đồ chơi
-        public DateOnly? DateStart { get; set; }
-        public DateOnly? DateEnd { get; set; }
+        public DateTime? DateStart { get; set; }
+        public DateTime? DateEnd { get; set; }
     }
 
 

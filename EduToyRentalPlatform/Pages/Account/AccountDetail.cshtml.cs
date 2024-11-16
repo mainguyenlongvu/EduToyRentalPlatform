@@ -37,6 +37,8 @@ namespace ToyShop.Pages.Account
         [BindProperty]
         public string FullName { get; set; }
         [BindProperty]
+        public int Money { get; set; }
+        [BindProperty]
         public string NewPassword { get; set; }
 
         [BindProperty]
@@ -71,6 +73,7 @@ namespace ToyShop.Pages.Account
             UserName = user.UserName;
             FullName = user.FullName;
             Img = user.ImageUrl;
+            Money = user.Money;
             return Page();
         }
 

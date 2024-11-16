@@ -14,8 +14,8 @@ namespace ToyShop.Contract.Repositories.Entity
         public virtual ContractEntity? Contract { get; set; }
         public bool? ContractType { get; set; }
         public string? ToyId { get; set; }
-        public DateOnly? DateStart { get; set; }
-        public DateOnly? DateEnd { get; set; }
+        public DateTime? DateStart { get; set; }
+        public DateTime? DateEnd { get; set; }
         public virtual Toy? Toy { get; set; }
         public int Quantity { get; set; }
         public int Price { get; set; }

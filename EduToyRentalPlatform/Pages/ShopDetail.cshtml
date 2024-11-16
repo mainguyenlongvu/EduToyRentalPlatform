@@ -22,54 +22,67 @@
 <div class="container-fluid mt-5">
     <div class="container py-5">
         <div class="row g-4 mb-5">
-            <div class="col-lg-4">
-                <div class="border rounded shadow-sm">
-                    <a href="#">
-                        <img src="@Url.Content("~/img/" + Model.Toy.ToyImg)" class="img-fluid rounded" alt="Toy Image">
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <h4 class="fw-bold mb-3">@Model.Toy.ToyName</h4>
+            <form method="post" id="purchaseForm" asp-page-handler="AddToCart">
+                <!-- Thêm trường ẩn cho ToyId -->
+                <input type="hidden" name="ToyId" value="@Model.Toy.Id" />
 
-                <!-- Giá hiển thị -->
-                <h5 id="priceDisplay" class="fw-bold mb-3">@string.Format("{0:N0}", Model.Toy.ToyPriceSale) VND</h5>
+                <div class="container-fluid mt-5">
+                    <div class="container py-5">
+                        <div class="row g-4 mb-5">
+                            <div class="col-lg-4">
+                                <div class="border rounded shadow-sm">
+                                    <a href="#">
+                                        <img src="@Url.Content("~/img/" + Model.Toy.ToyImg)" class="img-fluid rounded" alt="Toy Image">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <h4 class="fw-bold mb-3">@Model.Toy.ToyName</h4>
 
-                <!-- Lựa chọn Buy hoặc Rent -->
-                <div class="mb-4">
-                    <label for="purchaseType" class="form-label fw-bold">Choose an Option:</label>
-                    <select id="purchaseType" class="form-select" onchange="updatePriceAndFields()">
-                        <option value="buy" data-price="@Model.Toy.ToyPriceSale">Buy</option>
-                        <option value="rent" data-price="@Model.Toy.ToyPriceRent">Rent</option>
-                    </select>
-                </div>
+                                <!-- Giá hiển thị -->
+                                <h5 id="priceDisplay" class="fw-bold mb-3">@string.Format("{0:N0}", Model.Toy.ToyPriceSale) VND</h5>
 
-                <!-- Trường số lượng cho Buy -->
-                <div id="buyFields" class="input-group quantity mb-4" style="width: 180px;">
-                    <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('buy', -1)"><i class="fa fa-minus"></i></button>
-                    <input type="number" id="buyQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('buy')">
-                    <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('buy', 1)"><i class="fa fa-plus"></i></button>
-                </div>
+                                <!-- Lựa chọn Mua hoặc Thuê -->
+                                <div class="mb-4">
+                                    <label for="purchaseType" class="form-label fw-bold">Chọn tùy chọn:</label>
+                                    <select id="purchaseType" name="PurchaseType" class="form-select" onchange="updatePriceAndFields()">
+                                        <option value="buy" data-price="@Model.Toy.ToyPriceSale">Mua</option>
+                                        <option value="rent" data-price="@Model.Toy.ToyPriceRent">Thuê</option>
+                                    </select>
+                                </div>
 
-                <!-- Trường thông tin cho Rent -->
-                <div id="rentFields" class="d-none">
-                    <div class="input-group quantity mb-4" style="width: 180px;">
-                        <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('rent', -1)"><i class="fa fa-minus"></i></button>
-                        <input type="number" id="rentQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('rent')">
-                        <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('rent', 1)"><i class="fa fa-plus"></i></button>
+                                <!-- Trường số lượng cho Mua -->
+                                <div id="buyFields" class="input-group quantity mb-4" style="width: 180px;">
+                                    <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('buy', -1)"><i class="fa fa-minus"></i></button>
+                                    <input type="number" id="buyQuantity" name="BuyQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('buy')">
+                                    <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('buy', 1)"><i class="fa fa-plus"></i></button>
+                                </div>
+
+                                <!-- Trường thông tin cho Thuê -->
+                                <div id="rentFields" class="d-none">
+                                    <div class="input-group quantity mb-4" style="width: 180px;">
+                                        <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('rent', -1)"><i class="fa fa-minus"></i></button>
+                                        <input type="number" id="rentQuantity" name="RentQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('rent')">
+                                        <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('rent', 1)"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="startDate" class="form-label">Ngày bắt đầu:</label>
+                                        <input type="date" id="startDate" name="StartDate" class="form-control" onchange="updatePrice('rent')">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="endDate" class="form-label">Ngày kết thúc:</label>
+                                        <input type="date" id="endDate" name="EndDate" class="form-control" onchange="updatePrice('rent')">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary rounded-pill px-5 py-3"><i class="fa fa-shopping-bag me-3"></i>Thêm vào Giỏ hàng</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date:</label>
-                        <input type="date" id="startDate" name="startDate" class="form-control" onchange="updatePrice('rent')">
-                    </div>
-                    <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date:</label>
-                        <input type="date" id="endDate" name="endDate" class="form-control" onchange="updatePrice('rent')">
-                    </div>
                 </div>
+            </form>
 
-                <a href="#" class="btn btn-primary rounded-pill px-5 py-3"><i class="fa fa-shopping-bag me-3"></i>Add to Cart</a>
-            </div>
+
         </div>
     </div>
 </div>
