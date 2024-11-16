@@ -56,6 +56,7 @@ namespace EduToyRentalPlatform.Pages.Cart
         public async Task<IActionResult> OnPostAsync(string contractId, int totalValue, string paymentMethod)
         {
             Console.WriteLine("Payment OnPost Called");
+            _httpContextAccessor.HttpContext?.Session.SetString("OrderType", "Purchase");
 
             // Kiểm tra dữ liệu đầu vào
             if (!ModelState.IsValid)
@@ -91,13 +92,11 @@ namespace EduToyRentalPlatform.Pages.Cart
                     return RedirectToPage("/Cart/Checkout");
                 }
 
-                var model = contract.ToyName == null ?
-                    await CreateVnPayTopUpRequest(tranModel, contract) :
-                    await CreateVnPayPurchaseRequest(tranModel, contract);
+                var model = await CreateVnPayPurchaseRequest(tranModel, contract);
 
                 string url = CreatePaymentUrl(model, HttpContext);
-                Response.Redirect(url);
-                return RedirectToPage("/Cart/TestSuccess"); // Kết thúc hàm
+                return Redirect(url);
+
             }
 
             if (paymentMethod.Equals("Wallet", StringComparison.OrdinalIgnoreCase)) // Thanh toán ví
@@ -129,33 +128,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             return RedirectToPage("/Cart/Checkout");
         }
 
-        public async Task<IActionResult> OnPostTopUpAsync(int amount)
-        {
-            // Kiểm tra dữ liệu đầu vào
-            if (!ModelState.IsValid)
-            {
-                return RedirectToPage("/Cart/Checkout");
-            }
-
-            // Lấy thông tin UserId từ Cookie
-            var userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new KeyNotFoundException("UserId không tồn tại.");
-            };
-
-            var account = await _userService.GetUserByIdAsync(userId);
-
-            HttpContext.Session.SetString("UserId", userId);
-
-            // Tạo Transaction Model
-            var tranModel = new CreateTransactionModel()
-            {
-                TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
-            };
-
-
-        }
+        
 
 
         #region vnpay
@@ -163,20 +136,6 @@ namespace EduToyRentalPlatform.Pages.Cart
         {
             string url = _vnPayService.CreatePaymentUrl(model, context);
             return url;
-        }
-
-        private async Task<VnPayRequestModel> CreateVnPayTopUpRequest(CreateTransactionModel tranModel)
-        {
-            var model = new VnPayRequestModel()
-            {
-                OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
-                Amount = Double.Parse(contract.TotalValue.ToString()),
-                OrderDescription = $"Thanh toan nap vi {tranModel.TranCode}",
-                Name = tranModel.TranCode.ToString(),
-                IpAddress = "127.0.0.1"
-            };
-
-            return model;
         }
 
         private async Task<VnPayRequestModel> CreateVnPayPurchaseRequest(CreateTransactionModel tranModel, ResponseContractModel contract)

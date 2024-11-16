@@ -252,21 +252,25 @@ namespace ToyShop.Services.Service
 			return true;
 		}
 
-		public async Task<bool> ProcessTopUpVnPay(CreateTransactionModel tranModel, string userId)
+		public async Task<bool> ProcessTopUpVnPay(CreateTransactionModel tranModel, string userId, int amount)
 		{
-			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
-				?? throw new KeyNotFoundException("Contract not found.");
+			var contract = new ContractEntity()
+			{
+				UserId = Guid.Parse(userId),
+				TotalValue = amount,
+				Status = "Done"
+			};
 
-			existingContract.Status = "Done";
-			await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(existingContract);
+			await _unitOfWork.GetRepository<ContractEntity>().InsertAsync(contract);
 			////
 			var existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.Equals(userId))
 				?? throw new KeyNotFoundException("User not found.");
 
-			existingUser.Money += Convert.ToInt32(existingContract.TotalValue);
+			existingUser.Money += Convert.ToInt32(amount);
 
 			await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(existingUser);
 			////
+			tranModel.ContractId = contract.Id;
 			await Insert(tranModel);
 			await _unitOfWork.SaveAsync();
 

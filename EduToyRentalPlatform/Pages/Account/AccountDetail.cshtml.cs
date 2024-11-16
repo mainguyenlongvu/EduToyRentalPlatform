@@ -11,6 +11,10 @@ using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 using System.Drawing;
 using ToyShop.Core.Utils;
+using ToyShop.ModelViews.TransactionModelView;
+using System.Diagnostics.Contracts;
+using ToyShop.ModelViews.PaymentModelView;
+using EduToyRentalPlatform.Pages.Cart;
 
 namespace ToyShop.Pages.Account
 {
@@ -18,12 +22,17 @@ namespace ToyShop.Pages.Account
     {
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IVnPayService _vnPayService;
+        private readonly ITransactionService _transactionService;
 
-        public AccountDetailModel(IUserService userService, IHttpContextAccessor httpContextAccessor)
+        public AccountDetailModel(IUserService userService, IHttpContextAccessor httpContextAccessor, IVnPayService vnPayService, ITransactionService transactionService)
         {
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            _vnPayService = vnPayService;
+            _transactionService = transactionService;
         }
+
         [BindProperty]
         public string UserName { get; set; }
 
@@ -127,11 +136,55 @@ namespace ToyShop.Pages.Account
 
         public async Task<IActionResult> OnPostToUpMoneyAsync()
         {
-            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
-            // Call ChangePasswordAsync to change the password
-            await _userService.ChangPasswordAsync(ChangePassword);
+            // Kiểm tra dữ liệu đầu vào
+            if (ToUpMoney < 5000)
+            {
+                return RedirectToPage("/Cart/Checkout");
+            }
 
-            return RedirectToPage("/Account/AccountDetail");
+            // Lấy thông tin UserId từ Cookie
+            var userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new KeyNotFoundException("UserId không tồn tại.");
+            };
+
+            var account = await _userService.GetUserByIdAsync(userId);
+
+            HttpContext.Session.SetString("UserId", userId);
+            HttpContext.Session.SetInt32("TopUpAmount", ToUpMoney);
+
+            // Tạo Transaction Model
+            var tranModel = new CreateTransactionModel()
+            {
+                TranCode = int.Parse(new Random().NextInt64(100000000, 999999999).ToString()),
+                Status = "Not Received"
+            };
+
+            _httpContextAccessor.HttpContext?.Session.SetObject<CreateTransactionModel>("TranModel", tranModel);
+
+            string url = await CreateVnPayTopUpUrl(tranModel, ToUpMoney);
+            _httpContextAccessor.HttpContext?.Session.SetString("OrderType", "TopUp");
+            return Redirect(url);
+
         }
+
+
+        private async Task<string> CreateVnPayTopUpUrl(CreateTransactionModel tranModel, int amount)
+        {
+            var model = new VnPayRequestModel()
+            {
+                OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
+                Amount = Convert.ToDouble(amount),
+                OrderDescription = $"Thanh toan nap vi {tranModel.TranCode}",
+                Name = tranModel.TranCode.ToString(),
+                IpAddress = "127.0.0.1"
+            };
+
+            string url = _vnPayService.CreatePaymentUrl(model, HttpContext);
+            return url;
+        }
+
+
     }
 }
