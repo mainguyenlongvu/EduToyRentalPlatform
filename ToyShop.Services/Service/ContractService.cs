@@ -110,7 +110,7 @@ namespace ToyShop.Contract.Services.Interface
             _unitOfWork.GetRepository<ContractEntity>().Update(contract);
             await _unitOfWork.SaveAsync();
         }
-        public async Task DirectPaymentAsync(string id, DirectPaymentModel model)
+        public async Task DirectPaymentAsync(string id)
         {
             //Lấy id người dùng
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"]!;
@@ -119,10 +119,7 @@ namespace ToyShop.Contract.Services.Interface
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract not found!");
 
-            if (model == null)
-                throw new ArgumentNullException(nameof(model), "Update model cannot be null.");
             ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x=>x.Id.ToString() == userId)!;
-            _mapper.Map(model, contract);
             contract.LastUpdatedTime = CoreHelper.SystemTimeNows;
             contract.Status = "Done";
             //Tạo phương thức thanh toán

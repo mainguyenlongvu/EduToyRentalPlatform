@@ -1,83 +1,221 @@
 ﻿@page "/Home/Contract/"
-@using AutoMapper
-@using ToyShop.ModelViews.ContractModelView
-@using ToyShop.Repositories.Base
 @model ToyShop.Pages.ContractModel
-@inject IMapper _mapper
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "~/Pages/Shared/_Layout.cshtml";
     ViewData["Title"] = "Hợp đồng";
-    int index = int.TryParse(Request.Query["index"].ToString(), out index) ? index : 1;
-    int pageSize = int.TryParse(Request.Query["pageSize"].ToString(), out pageSize) ? pageSize : 5;
-    int totalContracts = Model.Contracts?.TotalCount ?? 0;
 }
 
-<div class="container my-4">
-    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+<div class="row shadow rounded p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Your Contract</h1>
+    </div>
 
-    <table class="table table-striped table-hover table-bordered text-center">
-        <thead class="table-dark">
+    <table class="table table-striped table-responsive table-light">
+        <thead>
             <tr>
-                <th>Mã hợp đồng</th>
-                <th>Ngày tạo</th>
-                <th>Tình trạng</th>
-                <th>Loại hợp đồng</th>
+                <th>Total Value</th>
+                <th>Status</th>
+                <th>Created Time</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @if (Model.Contracts != null && Model.Contracts.Items.Count > 0)
+            @if (Model.ContractEntities != null && Model.ContractEntities.Any())
             {
-                foreach (ToyShop.Contract.Repositories.Entity.ContractEntity con in Model.Contracts.Items)
+                foreach (var item in Model.ContractEntities)
                 {
-                    ResponseContractModel view = _mapper.Map<ResponseContractModel>(con);
-                    <tr class='@(view.ContractType)'>
-                        <td>@con.Id</td>
-                        <td>@con.DateCreated.ToString()</td>
-                        <td>@view.ToyName</td>
+                    <tr>
+                        <td>@Convert.ToDecimal(item.TotalValue).ToString("C")</td>
+                        <td>@item.Transactions.FirstOrDefault().Status</td>
+                        <td>@item.CreatedTime.ToString("HH:mm:ss")</td>
                         <td>
-                            @(view.Status)
-                        </td>
-                        <td>
-                            @(view.ContractType)
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+
+                                <!-- Cancel Button -->
+                                <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="">
+                                    <i class="fas fa-trash me-1"></i> Cancel
+                                </a>
+
+                                <!-- Contract Details Button with Custom Color -->
+                                <button type="button" class="btn btn-info btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">
+                                    <i class="fas fa-file-contract me-1"></i> Contract Details
+                                </button>
+
+                                <!-- Conditional Restore Button -->
+                                @if (item.RestoreToy != null)
+                                {
+                                    <button type="button" class="btn btn-success btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">
+                                        <i class="fas fa-redo me-1"></i> Restore
+                                    </button>
+                                }
+                            </div>
+
+                            <!-- Collapsible Sections with Margin Top -->
+                            <div class="collapse mt-2" id="contract-details-@item.Id">
+                                <!-- Contract Details Content Here -->
+                            </div>
+
+                            <div class="collapse mt-2" id="transaction-details-@item.Id">
+                                <!-- Transaction Content Here -->
+                            </div>
                         </td>
                     </tr>
+
+                    <!-- Contract Details Section -->
+                    <tr class="collapse" id="contract-details-@item.Id">
+                        <td colspan="9">
+                            <h5>Contract Details</h5>
+                            <table class="table table-bordered mt-2 table-info table-contract-details">
+                                <thead>
+                                    <tr>
+                                        <th>Toy Image</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Subtotal</th>
+                                        <th>Date Start</th>
+                                        <th>Date End</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.ContractDetails != null && item.ContractDetails.Any())
+                                    {
+                                        foreach (var detail in item.ContractDetails.Where(x => x.DeletedTime == null).ToList())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <img src="@Url.Content("~/img/"+ item.ContractDetails?.FirstOrDefault()?.Toy?.ToyImg)" alt="@item.ContractDetails?.FirstOrDefault()?.Toy?.ToyName" style="width:100px; height:auto;" />
+                                                </td>
+                                                <td>@detail.Quantity</td>
+                                                <td>@detail.Price.ToString("C")</td>
+                                                <td>@((detail.Quantity * detail.Price).ToString("C"))</td>
+                                                <td>@detail.DateStart?.ToString("yyyy-MM-dd")</td>
+                                                <td>@detail.DateEnd?.ToString("yyyy-MM-dd")</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center">No details available</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    
+
+                    <tr class="collapse" id="restore-details-@item.Id">
+                        <td colspan="12">
+                            <h5>Restore Toy Details</h5>
+                            <table class="table table-bordered mt-2 table-success table-restore-details table-responsive" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Toy Image</th>
+                                        <th style="text-align: center;">Toy Name</th>
+                                        <th style="text-align: center;">Quantity</th>
+                                        <th style="text-align: center;">Unit Price</th>
+                                        <th style="text-align: center;">Subtotal</th>
+                                        <th style="text-align: center;">Reward</th>
+                                        <th style="text-align: center;">Overdue Time (days)</th>
+                                        <th style="text-align: center;">Total Money</th>
+                                        <th style="text-align: center;">Compensation</th>
+                                        <th style="text-align: center;">Amount Due</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
+                                    {
+                                        foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
+                                        {
+                                            int quantity = returnToyDetail.ToyQuality ?? 0;
+                                            int compensation = Convert.ToInt32(0.1 * returnToyDetail.TotalMoney * returnToyDetail.OverdueTime);
+                                            double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
+                                            double reward = subtotal * 0.5;
+                                            double overdueTime = returnToyDetail.OverdueTime ?? 0;
+                                            double amountDue = subtotal - reward;
+
+
+                                            <tr>
+                                                <td>
+                                                    <img src="@Url.Content("~/img/"+ item.ContractDetails?.FirstOrDefault()?.Toy?.ToyImg)" alt="@item.ContractDetails?.FirstOrDefault()?.Toy?.ToyName" style="width:100px; height:auto;" />
+                                                </td>
+
+                                                
+                                                <td style="text-align: center;">@returnToyDetail.ToyName</td>
+                                                <td style="text-align: center;">@quantity</td>
+                                                <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
+                                                <td style="text-align: center;">@subtotal.ToString("C")</td>
+                                                <td style="text-align: center;">@reward.ToString("C")</td>
+                                                <td style="text-align: center;">
+                                                    <input type="number" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <!-- Editable Compensation field for user input -->
+                                                    <input type="number" name="restoreToyDetailDTO.Compensation" value="@compensation" class="form-control" step="any" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @amountDue.ToString("C")
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="12" class="text-center">No toys to restore</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="5" class="text-muted">Không có hợp đồng</td>
+                    <td colspan="9" class="text-center">No contracts available</td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <div class="clearfix mt-4">
-        <div class="hint-text text-muted">Showing <b>@index</b> out of <b>@totalContracts</b> entries</div>
-        <ul class="pagination justify-content-center">
-            @if (index > 1)
-            {
-                <li class="page-item"><a href="/Home/Contract/?index=@(index - 1)&pageSize=@pageSize" class="page-link">Previous</a></li>
-            }
-            else
-            {
-                <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
-            }
-            @for (int count = 1; count <= (totalContracts / pageSize) + (totalContracts % pageSize == 0 ? 0 : 1); count++)
-            {
-                <li class="page-item @(index == count ? "active" : "")">
-                    <a href="/Home/Contract/?index=@count&pageSize=@pageSize" class="page-link">@count</a>
-                </li>
-            }
-            @if (index * pageSize < totalContracts)
-            {
-                <li class="page-item"><a href="/Home/Contract/?index=@(index + 1)&pageSize=@pageSize" class="page-link">Next</a></li>
-            }
-            else
-            {
-                <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
-            }
+
+    <nav aria-label="Page navigation" class="my-4">
+        <ul class="pagination d-flex justify-content-between align-items-center w-100">
+            <!-- Previous button -->
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-page="./Contract" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">
+                    <i class="bi bi-arrow-left-circle"></i>
+                </a>
+            </li>
+
+            <!-- Page numbers centered horizontally -->
+            <li class="page-item flex-grow-1 d-flex justify-content-center">
+                <ul class="pagination mb-0 flex-row">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                            <a class="page-link" asp-page="./Contract" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+                        </li>
+                    }
+                </ul>
+            </li>
+
+            <!-- Next button -->
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-page="./Contract" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">
+                    <i class="bi bi-arrow-right-circle"></i>
+                </a>
+            </li>
         </ul>
-    </div>
+    </nav>
 </div>

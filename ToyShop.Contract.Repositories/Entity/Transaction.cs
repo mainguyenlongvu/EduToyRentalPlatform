@@ -20,6 +20,8 @@ namespace ToyShop.Contract.Repositories.Entity
         public string? ContractId { get; set; }
 
         public virtual ContractEntity? ContractEntity { get; set; }
+        public virtual ICollection<Delivery>? Deliveries { get; set; }
+
     }
 
 }

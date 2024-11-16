@@ -23,13 +23,13 @@ namespace EduToyRentalPlatform.Pages.Cart
             _contextAccessor = contextAccessor;
         }
 
-        public void OnGet()
+        public async void OnGet()
         {
             foreach (var (key, value) in Request.Query)
             {
                 if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
                 {
-                    PaymentCallBack();
+                    await PaymentCallBack();
                     break;
                 }
             }

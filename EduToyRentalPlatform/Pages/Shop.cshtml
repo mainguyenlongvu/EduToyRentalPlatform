@@ -77,7 +77,7 @@
         <div class="pagination d-flex justify-content-center mt-5">
             <!-- Previous Page Link -->
             <a asp-page="Shop" asp-route-pageNumber="@previousPage" class="page-link rounded-pill @(Model.PageNumber == 1 ? "disabled-btn" : "")">
-                &laquo; Previous
+                &laquo;
             </a>
 
             <!-- Loop through pages -->
@@ -87,8 +87,7 @@
             }
 
             <!-- Next Page Link -->
-            <a asp-page="Shop" asp-route-pageNumber="@nextPage" class="page-link rounded-pill @nextPageClass">
-                Next &raquo;
+            <a asp-page="Shop" asp-route-pageNumber="@nextPage" class="page-link rounded-pill @nextPageClass"> &raquo;
             </a>
         </div>
     </div>
