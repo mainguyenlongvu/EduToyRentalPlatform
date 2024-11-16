@@ -28,7 +28,7 @@
                 foreach (var item in Model.ContractEntities)
                 {
                     <tr>
-                        <td>@item.ContractDetails?.Sum(cd => cd.Quantity * cd.Price)</td>
+                        <td>@Convert.ToDecimal(item.TotalValue).ToString("C")</td>
                         <td>@item.Transactions.FirstOrDefault().Status</td>
                         <td>@item.ApplicationUser?.FullName</td>
                         <td>@item.CreatedTime.ToString("HH:mm:ss")</td>

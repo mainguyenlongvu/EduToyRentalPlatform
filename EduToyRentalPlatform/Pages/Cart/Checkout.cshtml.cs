@@ -96,8 +96,8 @@ namespace EduToyRentalPlatform.Pages.Cart
                     await CreateVnPayPurchaseRequest(tranModel, contract);
 
                 string url = CreatePaymentUrl(model, HttpContext);
-                Response.Redirect(url);
-                return RedirectToPage("/Cart/TestSuccess"); // Kết thúc hàm
+                return Redirect(url);
+                 RedirectToPage("/Cart/Checkout"); // Kết thúc hàm
             }
 
             if (paymentMethod.Equals("Wallet", StringComparison.OrdinalIgnoreCase)) // Thanh toán ví
@@ -109,19 +109,14 @@ namespace EduToyRentalPlatform.Pages.Cart
                     return RedirectToPage("/Cart/Checkout");
                 }
 
-                return RedirectToPage("/Cart/TestSuccess");
+                return RedirectToPage("/Cart/Checkout");
             }
 
             if (paymentMethod.Equals("Direct", StringComparison.OrdinalIgnoreCase)) // Thanh toán trực tiếp
             {
-                bool result = await _transactionService.ProcessPurchaseDirect(tranModel);
-                if (!result)
-                {
-                    ModelState.AddModelError(string.Empty, "Thanh toán tiền mặt thất bại.");
-                    return RedirectToPage("/Cart/Checkout");
-                }
+                 await _contractService.DirectPaymentAsync(tranModel.ContractId);
 
-                return RedirectToPage("/Cart/TestSuccess");
+                return RedirectToPage("/Contract");
             }
 
             // Trường hợp không khớp phương thức thanh toán nào

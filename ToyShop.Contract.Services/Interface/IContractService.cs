@@ -16,7 +16,7 @@ namespace ToyShop.Contract.Services.Interface
         Task DeleteContractAsync(string id);
         Task<List<ContractEntity>> GetAllContractsAsync(); // New method for fetching all contracts
         Task PayByWalletAsync(string id, PayByWalletModel model);
-        Task DirectPaymentAsync(string id, DirectPaymentModel model);
+        Task DirectPaymentAsync(string id);
         Task<bool> CreateTopUpAsync(CreateTopUpModel model);
         Task CancelContractAsync(string id);
         Task<ContractEntity> GetContractDetailInCart();
