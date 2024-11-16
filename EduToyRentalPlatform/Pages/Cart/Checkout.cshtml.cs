@@ -62,6 +62,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             {
                 return;
             }
+
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
             if (userId == null)
                 throw new KeyNotFoundException("UserId not found");
@@ -74,7 +75,6 @@ namespace EduToyRentalPlatform.Pages.Cart
                 ContractId = contractId,
             };
 
-            
 
             if (paymentMethod.Equals("VNPay")) //vnpay
             {
@@ -87,8 +87,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                     await CreateVnPayPurchaseRequest(tranModel, contract);
 
                 string url = CreatePaymentUrl(model, HttpContext);
-                Response.Redirect(url);
-                return;
+                Response.Redirect(url);            
             }
 
             if (paymentMethod.Equals("Wallet")) //ví
@@ -97,7 +96,6 @@ namespace EduToyRentalPlatform.Pages.Cart
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
-                    return;
                 }
                 Response.Redirect("Cart/TestSuccess");
             }
@@ -108,9 +106,8 @@ namespace EduToyRentalPlatform.Pages.Cart
                 if (!result)
                 {
                     Response.Redirect("Cart/TestFailed");
-                    return;
                 }
-                Response.Redirect("Cart/TestSuccess");
+                else Response.Redirect("Cart/TestSuccess");
             } 
         }
         #region vnpay
