@@ -40,6 +40,8 @@ namespace ToyShop.Pages.Account
         public int Money { get; set; }
         [BindProperty]
         public string NewPassword { get; set; }
+        [BindProperty]
+        public int ToUpMoney { get; set; }
 
         [BindProperty]
         public string ConfirmPassword { get; set; }
@@ -79,34 +81,52 @@ namespace ToyShop.Pages.Account
 
         public async Task<IActionResult> OnPostUpdateDetailAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
 
+            // Lấy UserId từ cookie
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
             if (string.IsNullOrEmpty(userId))
             {
-                // Xử lý khi không có UserId (có thể là redirect về trang đăng nhập)
+                // Chuyển hướng về trang đăng nhập nếu UserId không tồn tại
                 return RedirectToPage("/Account/Login");
             }
+
+            // Xử lý tải lên ảnh (nếu có)
             if (ImageFile != null)
             {
-                UserDetails.ImageUrl = await FileUploadHelper.UploadFile(ImageFile);
+                // Kiểm tra tệp hợp lệ
+                if (ImageFile.Length > 0 && (ImageFile.ContentType.Contains("image/jpeg") || ImageFile.ContentType.Contains("image/png")))
+                {
+                    // Upload ảnh và cập nhật URL
+                    UserDetails.ImageUrl = await FileUploadHelper.UploadFile(ImageFile);
+                }
+                else
+                {
+                    // Thêm lỗi nếu tệp không hợp lệ
+                    ModelState.AddModelError("ImageFile", "Tệp phải là hình ảnh định dạng JPEG hoặc PNG.");
+                    return RedirectToPage("/Account/AccountDetail");
+                }
             }
 
-            await _userService.UpdateCustomerAsync(Guid.Parse(userId), UserDetails);
+            // Gửi yêu cầu cập nhật người dùng
+            try
+            {
+                await _userService.UpdateCustomerAsync(Guid.Parse(userId), UserDetails);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi và hiển thị thông báo
+                ModelState.AddModelError(string.Empty, $"Đã xảy ra lỗi: {ex.Message}");
+                return RedirectToPage("/Account/AccountDetail");
+            }
 
+            // Chuyển hướng về trang chi tiết tài khoản sau khi cập nhật thành công
             return RedirectToPage("/Account/AccountDetail");
         }
 
 
-        public async Task<IActionResult> OnPostChangePasswordAsync()
+
+        public async Task<IActionResult> OnPostToUpMoneyAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
             // Call ChangePasswordAsync to change the password
             await _userService.ChangPasswordAsync(ChangePassword);
