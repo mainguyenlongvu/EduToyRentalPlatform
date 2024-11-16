@@ -404,5 +404,7 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.GetRepository<ContractDetail>().UpdateAsync(contractDetail);
             await _unitOfWork.SaveAsync();
         }
+
+
     }
 }

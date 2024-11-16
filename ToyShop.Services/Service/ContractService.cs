@@ -278,5 +278,16 @@ namespace ToyShop.Contract.Services.Interface
         {
             throw new NotImplementedException();
         }
+        public async Task<ContractEntity> GetContractDetailInCart()
+        {
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+            var contractEntity = await _unitOfWork.GetRepository<ContractEntity>()
+                    .Entities
+                    .Include(c => c.ContractDetails)
+                        .ThenInclude(d => d.Toy)
+                    .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart" && !x.DeletedTime.HasValue);
+            return contractEntity;
+        }
     }
 }
