@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 using ToyShop.Services.Service;
 using System.Security.Claims;
+using ToyShop.ModelViews.RestoreToyModelViews;
 
 namespace ToyShop.Pages
 {
@@ -37,7 +38,7 @@ namespace ToyShop.Pages
 
         public int TotalItems { get; private set; }
         public int PageNumber { get; private set; }
-        public int PageSize { get; private set; } = 4;
+        public int PageSize { get; private set; } = 10;
 
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
         public IList<ContractEntity> ContractEntities { get; set; } = new List<ContractEntity>();
@@ -63,6 +64,25 @@ namespace ToyShop.Pages
 
             // Get paginated contracts
             ContractEntities = contracts.Items.ToList();
+        }
+
+        public async Task<IActionResult> OnPostCreateReturn(string id, UpdateRestoreModel restoreToy)
+        {
+            try
+            {
+                // Assuming the service method handles the logic for updating
+                await _restoreToyService.Update(id, restoreToy);
+                return RedirectToPage();
+            }
+            catch (KeyNotFoundException)
+            {
+                ModelState.AddModelError(string.Empty, "RestoreToy không tìm thấy.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            return Page();
         }
 
     }

@@ -7,7 +7,7 @@
     ViewData["Title"] = "Hợp đồng";
 }
 
-<div class="row shadow rounded p-3">
+<div class="row shadow rounded p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Your Contract</h1>
     </div>
@@ -17,7 +17,6 @@
             <tr>
                 <th>Total Value</th>
                 <th>Status</th>
-                <th>Customer Name</th>
                 <th>Created Time</th>
                 <th>Actions</th>
             </tr>
@@ -28,20 +27,29 @@
                 foreach (var item in Model.ContractEntities)
                 {
                     <tr>
-                        <td>@item.ContractDetails?.Sum(cd => cd.Quantity * cd.Price)</td>
+                        <td>@item.TotalValue</td>
                         <td>@item.Transactions.FirstOrDefault().Status</td>
-                        <td>@item.ApplicationUser?.FullName</td>
                         <td>@item.CreatedTime.ToString("HH:mm:ss")</td>
                         <td>
                             <div class="d-flex flex-wrap gap-2 mb-3">
+
                                 <!-- Cancel Button -->
                                 <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="">
                                     <i class="fas fa-trash me-1"></i> Cancel
                                 </a>
+
                                 <!-- Contract Details Button with Custom Color -->
                                 <button type="button" class="btn btn-info btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">
                                     <i class="fas fa-file-contract me-1"></i> Contract Details
                                 </button>
+
+                                <!-- Conditional Restore Button -->
+                                @if (item.RestoreToy != null)
+                                {
+                                    <button type="button" class="btn btn-success btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">
+                                        <i class="fas fa-redo me-1"></i> Restore
+                                    </button>
+                                }
                             </div>
 
                             <!-- Collapsible Sections with Margin Top -->
@@ -98,7 +106,76 @@
                         </td>
                     </tr>
 
+                    
 
+                    <tr class="collapse" id="restore-details-@item.Id">
+                        <td colspan="12">
+                            <h5>Restore Toy Details</h5>
+                            <table class="table table-bordered mt-2 table-success table-restore-details table-responsive" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Toy Image</th>
+                                        <th style="text-align: center;">Toy Name</th>
+                                        <th style="text-align: center;">Quantity</th>
+                                        <th style="text-align: center;">Unit Price</th>
+                                        <th style="text-align: center;">Subtotal</th>
+                                        <th style="text-align: center;">Reward</th>
+                                        <th style="text-align: center;">Overdue Time (days)</th>
+                                        <th style="text-align: center;">Total Money</th>
+                                        <th style="text-align: center;">Compensation</th>
+                                        <th style="text-align: center;">Amount Due</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (item.RestoreToy != null && item.RestoreToy.RestoreToyDetails != null && item.RestoreToy.RestoreToyDetails.Any())
+                                    {
+                                        foreach (var returnToyDetail in item.RestoreToy.RestoreToyDetails)
+                                        {
+                                            int quantity = returnToyDetail.ToyQuality ?? 0;
+                                            int compensation = Convert.ToInt32(0.1 * returnToyDetail.TotalMoney * returnToyDetail.OverdueTime);
+                                            double subtotal = quantity * (returnToyDetail.TotalMoney ?? 0);
+                                            double reward = subtotal * 0.5;
+                                            double overdueTime = returnToyDetail.OverdueTime ?? 0;
+                                            double amountDue = subtotal - reward;
+
+
+                                            <tr>
+                                                <td>
+                                                    <img src="@Url.Content("~/img/"+ item.ContractDetails?.FirstOrDefault()?.Toy?.ToyImg)" alt="@item.ContractDetails?.FirstOrDefault()?.Toy?.ToyName" style="width:100px; height:auto;" />
+                                                </td>
+
+                                                
+                                                <td style="text-align: center;">@returnToyDetail.ToyName</td>
+                                                <td style="text-align: center;">@quantity</td>
+                                                <td style="text-align: center;">@returnToyDetail.TotalMoney?.ToString("C")</td>
+                                                <td style="text-align: center;">@subtotal.ToString("C")</td>
+                                                <td style="text-align: center;">@reward.ToString("C")</td>
+                                                <td style="text-align: center;">
+                                                    <input type="number" name="restoreToyDetailDTO.OverdueTime" value="@returnToyDetail.OverdueTime" class="form-control" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <input type="number" name="restoreToyDetailDTO.TotalMoney" value="@returnToyDetail.TotalMoney" class="form-control" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <!-- Editable Compensation field for user input -->
+                                                    <input type="number" name="restoreToyDetailDTO.Compensation" value="@compensation" class="form-control" step="any" readonly />
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @amountDue.ToString("C")
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="12" class="text-center">No toys to restore</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
 
                 }
             }
@@ -117,7 +194,7 @@
             <!-- Previous button -->
             <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
                 <a class="page-link" asp-page="./Contract" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">
-                    <i class="bi bi-arrow-left-circle"></i> Previous
+                    <i class="bi bi-arrow-left-circle"></i>
                 </a>
             </li>
 
@@ -136,7 +213,7 @@
             <!-- Next button -->
             <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
                 <a class="page-link" asp-page="./Contract" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">
-                    Next <i class="bi bi-arrow-right-circle"></i>
+                    <i class="bi bi-arrow-right-circle"></i>
                 </a>
             </li>
         </ul>
