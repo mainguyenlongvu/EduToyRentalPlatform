@@ -97,7 +97,7 @@ namespace EduToyRentalPlatform.Pages.Cart
 
                 string url = CreatePaymentUrl(model, HttpContext);
                 Response.Redirect(url);
-                return new EmptyResult(); // Kết thúc hàm
+                return RedirectToPage("/Cart/TestSuccess"); // Kết thúc hàm
             }
 
             if (paymentMethod.Equals("Wallet", StringComparison.OrdinalIgnoreCase)) // Thanh toán ví
@@ -143,7 +143,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 OrderType = "260000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan nap vi {tranModel.ContractId}",
-                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
+                Name = tranModel.TranCode.ToString(),
                 IpAddress = "127.0.0.1"
             };
 
@@ -157,7 +157,7 @@ namespace EduToyRentalPlatform.Pages.Cart
                 OrderType = "190000", // https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
                 Amount = Double.Parse(contract.TotalValue.ToString()),
                 OrderDescription = $"Thanh toan don hang {tranModel.ContractId}",
-                Name = contract.CustomerName == null ? "EduToyRent" : contract.CustomerName,
+                Name = tranModel.TranCode.ToString(),
                 IpAddress = "127.0.0.1"
             };
             return model;

@@ -23,7 +23,7 @@ namespace ToyShop.Contract.Services.Interface
 
 		Task<bool> ProcessPurchaseWallet(CreateTransactionModel tranModel, string userId);
 
-		Task<bool> ProcessTopUp(CreateTransactionModel tranModel, string userId);
+		Task<bool> ProcessTopUpVnPay(CreateTransactionModel tranModel, string userId);
 
 	}
 }

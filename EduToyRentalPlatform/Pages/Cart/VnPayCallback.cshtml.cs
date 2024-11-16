@@ -59,7 +59,7 @@ namespace EduToyRentalPlatform.Pages.Cart
             if (tranModel == null || userId == null)
                 Response.Redirect("Cart/TestFailed");
 
-            bool result = await _transactionService.ProcessTopUp(tranModel, userId);
+            bool result = await _transactionService.ProcessTopUpVnPay(tranModel, userId);
             if (!result)
                 Response.Redirect("Cart/TestFailed");
         }

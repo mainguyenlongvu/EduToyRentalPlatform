@@ -163,21 +163,23 @@ namespace ToyShop.Services.Service
                 //tìm người dùng
                 if (transactionDTO.Status == "Completed")
                 {
-                    ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.ToString() == userId)!;
-
-                    string body = $"<div style=\"font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2\">\r\n  <div style=\"margin:50px auto;width:70%;padding:20px 0\">\r\n    <div style=\"border-bottom:1px solid #eee\">\r\n      <a href=\"\" style=\"font-size:1.4em;color: #ee0000;text-decoration:none;font-weight:600\">EduToyRent Platform</a>\r\n    </div>\r\n    <p style=\"font-size:1.1em\">Chào bạn,</p>\r\n    <p>Hóa đơn của bạn thanh toán thành công. Cảm ơn bạn đã lựa chọn dịch vụ của chúng tôi</p>\r\n    <p style=\"font-size:0.9em;\">Thân,<br />EduToyRent Staff</p>\r\n    <hr style=\"border:none;border-top:1px solid #eee\" />\r\n    <div style=\"float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300\">\r\n      <p>EduToyRent Platform</p>\r\n      <p>Ho Chi Minh City</p>\r\n      <p>Vietnam</p>\r\n    </div>\r\n  </div>\r\n</div>";
-                    EmailRequestModel emailRequestModel = new EmailRequestModel
-                    {
-                        EmailBody = body,
-                        IsHtml = true,
-                        EmailSubject = "Thông báo hóa đơn",
-                        ReceiverEmail = user.Email,
-                    };
-                    //Kiểm tra gửi email có thành công không
-                    if (!_gmailService.SendEmailSingle(emailRequestModel))
-                    {
-                        throw new Exception("Gửi email thất bại");
-                    }
+                    ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.ToString().Equals( userId))!;
+					if (user != null)
+					{
+						string body = $"<div style=\"font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2\">\r\n  <div style=\"margin:50px auto;width:70%;padding:20px 0\">\r\n    <div style=\"border-bottom:1px solid #eee\">\r\n      <a href=\"\" style=\"font-size:1.4em;color: #ee0000;text-decoration:none;font-weight:600\">EduToyRent Platform</a>\r\n    </div>\r\n    <p style=\"font-size:1.1em\">Chào bạn,</p>\r\n    <p>Hóa đơn của bạn thanh toán thành công. Cảm ơn bạn đã lựa chọn dịch vụ của chúng tôi</p>\r\n    <p style=\"font-size:0.9em;\">Thân,<br />EduToyRent Staff</p>\r\n    <hr style=\"border:none;border-top:1px solid #eee\" />\r\n    <div style=\"float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300\">\r\n      <p>EduToyRent Platform</p>\r\n      <p>Ho Chi Minh City</p>\r\n      <p>Vietnam</p>\r\n    </div>\r\n  </div>\r\n</div>";
+						EmailRequestModel emailRequestModel = new EmailRequestModel
+						{
+							EmailBody = body,
+							IsHtml = true,
+							EmailSubject = "Thông báo hóa đơn",
+							ReceiverEmail = user.Email,
+						};
+						//Kiểm tra gửi email có thành công không
+						if (!_gmailService.SendEmailSingle(emailRequestModel))
+						{
+							throw new Exception("Gửi email thất bại");
+						}
+					}
                 }
 
                 _mapper.Map(transactionDTO, existingTransaction);
@@ -250,7 +252,7 @@ namespace ToyShop.Services.Service
 			return true;
 		}
 
-		public async Task<bool> ProcessTopUp(CreateTransactionModel tranModel, string userId)
+		public async Task<bool> ProcessTopUpVnPay(CreateTransactionModel tranModel, string userId)
 		{
 			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
 				?? throw new KeyNotFoundException("Contract not found.");
