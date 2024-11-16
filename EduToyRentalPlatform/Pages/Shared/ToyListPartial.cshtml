@@ -1,4 +1,4 @@
-﻿@model List<ToyShop.ModelViews.ToyModelViews.ResponeToyModel>
+@model List<ToyShop.ModelViews.ToyModelViews.ResponeToyModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @if (Model != null && Model.Count > 0)
@@ -7,28 +7,33 @@
     {
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="rounded position-relative fruite-item">
+                <!-- Toy Image -->
                 <div class="fruite-img">
-                    <img src="@Url.Content("~/img/" + toy.ToyImg)" class="img-fluid custom-img w-100 rounded-top" alt="">
+                    <img src="@Url.Content("~/img/" + toy.ToyImg)" class="img-fluid custom-img w-100 rounded-top" alt="@toy.ToyName">
                 </div>
+                <!-- Shop Badge -->
                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">ToyShop</div>
+                <!-- Card Body -->
                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                    <h4>@toy.ToyName</h4>
-                    <p>@(toy.ToyDescription?.Length > 20 ? toy.ToyDescription.Substring(0, 20) + "..." : toy.ToyDescription)</p>
+                    <!-- Toy Details -->
+                    <h4 class="text-truncate" title="@toy.ToyName">@toy.ToyName</h4>
+                    <p>@(toy.ToyDescription?.Length > 50 ? toy.ToyDescription.Substring(0, 50) + "..." : toy.ToyDescription)</p>
                     <p class="text-dark fs-5 fw-bold mb-0">Buy: @toy.ToyPriceSale.ToString("N0") VND</p>
                     <p class="text-dark fs-5 fw-bold mb-0">Rent: @toy.ToyPriceRent.ToString("N0") VND</p>
-                    <div class="d-flex justify-content-start align-items-center">
-                        <!-- Form Add to Cart -->
-                        <form method="post" asp-page="/Shop" asp-page-handler="AddToCart">
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Add to Cart Button -->
+                        <form method="post" asp-page="/Shop" asp-page-handler="AddToCart" class="d-inline-block">
                             <input type="hidden" name="ToyId" value="@toy.Id" />
                             <input type="hidden" name="Quantity" value="1" />
-                            <button type="submit" class="btn btn-sm border border-secondary rounded-pill px-2 py-1 text-success me-2" style="font-size: 0.85rem;">
-                                <i class="fa fa-shopping-bag me-2 text-success"></i> Thêm vào giỏ
+                            <button type="submit" class="btn btn-outline-success btn-sm rounded-pill">
+                                <i class="fa fa-shopping-bag me-2"></i> Thêm vào giỏ
                             </button>
                         </form>
-
                         <!-- View Details Button -->
-                        <a href="@Url.Page("./ShopDetail", new { id = toy.Id })" class="btn btn-sm border border-secondary rounded-pill px-2 py-1 text-primary" style="font-size: 0.85rem;">
-                            <i class="fa fa-info-circle me-2 text-primary"></i> Chi tiết
+                        <a href="@Url.Page("./ShopDetail", new { id = toy.Id })" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="fa fa-info-circle me-2"></i> Chi tiết
                         </a>
                     </div>
                 </div>

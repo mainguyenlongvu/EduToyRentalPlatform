@@ -9,7 +9,7 @@ using ToyShop.Repositories.Entity;
 using ToyShop.Contract.Repositories.Entity;
 using ToyShop.Contract.Services.Interface;
 
-namespace ToyShop.Pages.Account
+namespace EduToyRentalPlatform.Pages.Account
 {
     public class ProfileDetailModel : PageModel
     {

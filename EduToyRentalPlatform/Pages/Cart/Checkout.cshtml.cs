@@ -18,15 +18,17 @@ namespace EduToyRentalPlatform.Pages.Cart
         private IContractService _contractService;  
         private ITransactionService _transactionService;
         private IUserService _userService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #region constructors
 
-        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, ITransactionService transactionService, IUserService userService)
+        public CheckoutModel(IVnPayService vnPayService, IContractService contractService, ITransactionService transactionService, IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _vnPayService = vnPayService;
             _contractService = contractService;
             _transactionService = transactionService;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -35,11 +37,19 @@ namespace EduToyRentalPlatform.Pages.Cart
 
         public void OnGet()
         {
-            // Retrieve the cart items from TempData
-            if (TempData["CartItems"] != null)
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+            if (!string.IsNullOrEmpty(userId))
             {
-                CartItems = TempData["CartItems"] as List<ContractDetail>;
-            } 
+                // Find the contract with status "In Cart" for this user
+                var contract = _contractService.GetContractDetailInCart();
+
+                if (contract != null)
+                {
+                    // Populate MyCart with contract details
+                    CartItems = contract.Result.ContractDetails.Where(x => !x.DeletedTime.HasValue).ToList();
+                }
+            }
         }
 
         [Authorize]

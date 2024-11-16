@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using ToyShop.Repositories.Entity;
 using ToyShop.Services.Service;
 using ToyShop.ModelViews.GmailModel;
+using ToyShop.Contract.Repositories.PaggingItems;
 
 namespace ToyShop.Contract.Services.Interface
 {
@@ -59,7 +60,7 @@ namespace ToyShop.Contract.Services.Interface
 
             // Start building the query for non-deleted contracts
             IQueryable<ContractEntity> contractsQuery = _unitOfWork.GetRepository<ContractEntity>().Entities
-                .Where(p => !p.DeletedTime.HasValue) // Filter out deleted contracts
+                .Where(p => !p.DeletedTime.HasValue && p.Status != "In Cart") // Filter out deleted contracts
                 .Include(p => p.ApplicationUser); // Include ApplicationUser navigation property
 
             // If a search term is provided, filter the results
@@ -209,7 +210,6 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             await _unitOfWork.SaveAsync();
         }
-
         public async Task CancelContractAsync(string id)
         {
             //được hủy đơn để hoàn tiền trong vòng 1 ngày: điều kiện phải trước thời gian thuê
@@ -236,9 +236,57 @@ namespace ToyShop.Contract.Services.Interface
             return await _unitOfWork.GetRepository<ContractEntity>().Entities.Where(X => !X.DeletedTime.HasValue).ToListAsync();
         }
 
+        public async Task<PaginatedList<ContractEntity>> GetAllContractsByUserIdAsync(string userId, string searchTerm)
+        {
+            // Validate page number and page size
+            int pageNumber = 1;
+            int pageSize = 10;
+  
+
+            // Start building the query for non-deleted contracts
+            IQueryable<ContractEntity> contractsQuery = _unitOfWork.GetRepository<ContractEntity>().Entities
+                .Where(p => !p.DeletedTime.HasValue && p.Status != "In Cart" && p.UserId.ToString() == userId) // Filter out deleted contracts
+                .Include(p => p.ApplicationUser); // Include ApplicationUser navigation property
+
+            // If a search term is provided, filter the results
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                contractsQuery = contractsQuery.Where(p =>
+                    p.Status.Contains(searchTerm) || // Filter by status
+                    p.ApplicationUser.FullName.Contains(searchTerm) // Filter based on User's Full Name
+                );
+            }
+
+            // Order by CreatedTime
+            contractsQuery = contractsQuery.OrderByDescending(p => p.DateCreated); // Assuming DateCreated is the field to order by
+
+            // Get total count for pagination
+            int totalCount = await contractsQuery.CountAsync();
+
+            // Apply pagination
+            List<ContractEntity> paginatedContracts = await contractsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Return the paginated list
+            return new PaginatedList<ContractEntity>(paginatedContracts, totalCount, pageNumber, pageSize);
+        }
+
         public Task<bool> CreateTopUpAsync(CreateTopUpModel model)
         {
             throw new NotImplementedException();
+        }
+        public async Task<ContractEntity> GetContractDetailInCart()
+        {
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+            var contractEntity = await _unitOfWork.GetRepository<ContractEntity>()
+                    .Entities
+                    .Include(c => c.ContractDetails)
+                        .ThenInclude(d => d.Toy)
+                    .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart" && !x.DeletedTime.HasValue);
+            return contractEntity;
         }
     }
 }

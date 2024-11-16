@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.ModelViews.ToyModelViews;
@@ -15,74 +15,55 @@ namespace EduToyRentalPlatform.Pages.Cart
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IContractService _contractService;
+        private readonly IContractDetailService _contractDetailService;
 
-        public CartModel(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public CartModel(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IContractService contractService, IContractDetailService contractDetailService)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
+            _contractService = contractService;
+            _contractDetailService = contractDetailService;
         }
 
         public List<ContractDetail> MyCart { get; set; }
-
         public async Task OnGetAsync()
         {
-            // Retrieve the current user ID from cookies
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
 
             if (!string.IsNullOrEmpty(userId))
             {
                 // Find the contract with status "In Cart" for this user
-                var contract = await _unitOfWork.GetRepository<ContractEntity>()
-                    .Entities
-                    .Include(c => c.ContractDetails)
-                        .ThenInclude(d => d.Toy)
-                    .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart");
+                var contract = _contractService.GetContractDetailInCart();
 
                 if (contract != null)
                 {
                     // Populate MyCart with contract details
-                    MyCart = contract.ContractDetails.ToList();
+                    MyCart = contract.Result.ContractDetails.Where(x=>!x.DeletedTime.HasValue).ToList();
                 }
             }
-            }
-        
-        public IActionResult OnPostCheckout()
-        {
-            TempData["CartItems"] = MyCart;
-            return RedirectToPage("/Cart/Checkout");
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostDeleteAsync(string itemId)
         {
-            // Iterate through posted values to update each item's ContractType
-            foreach (var item in MyCart)
+            if (string.IsNullOrEmpty(itemId))
             {
-                string radioValue = Request.Form[$"purchaseOption_{item.Toy.Id}"];
-
-                if (bool.TryParse(radioValue, out bool selectedType))
-                {
-                    item.ContractType = selectedType;
-                }
+                return BadRequest("Item ID is missing."); // HTTP 400
             }
 
-            // Save changes to database or session as needed
-            await SaveCartChangesAsync();
-
-            return Page();
-        }
-
-        public async Task SaveCartChangesAsync()
-        {
-            // Assuming the MyCart list contains ContractDetails that need to be updated
-            foreach (var item in MyCart)
+            try
             {
-                // Update the ContractDetail with the new values (e.g., price and quantity)
-                _unitOfWork.GetRepository<ContractDetail>().Update(item);
+                await _contractDetailService.DeleteContractDetailAsync(itemId);
+                return RedirectToPage("/Cart/Cart");
             }
-
-            // Save changes to the database
-            await _unitOfWork.SaveAsync();
+            catch (Exception ex)
+            {
+                // Ghi log lỗi để kiểm tra (tùy chọn)
+                return RedirectToPage("/Cart/Cart");
+            }
         }
+
+
 
     }
-    }
+}
