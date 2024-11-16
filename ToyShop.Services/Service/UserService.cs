@@ -47,8 +47,8 @@ namespace ToyShop.Services.Service
             // Mã hóa mật khẩu
             string hashedPassword = CoreHelper.HashPassword(model.Password);
             //kiểm tra user có tồn tại
-            ApplicationUser? user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.Where(x => x.DeletedTime == null && (x.Email == model.UserName || x.UserName == model.UserName) && x.Password == model.Password).FirstOrDefaultAsync() ??
-                throw new Exception("Vui lòng điền tên đăng nhập và mật khẩu");
+            var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+                         .FirstOrDefaultAsync(u => (u.Email == model.UserName || u.UserName == model.UserName) && u.Password == model.Password && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
             //Điều kiện
             if (model.NewPassword != model.ConfirmPassword)
             {
@@ -145,7 +145,7 @@ namespace ToyShop.Services.Service
 
             // Tìm người dùng trong cơ sở dữ liệu
             var user = await _unitOfWork.GetRepository<ApplicationUser>().Entities
-                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email) && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
+                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.UserName == model.Email)&& u.Password == model.Password && !u.DeletedTime.HasValue) ?? throw new Exception("Người dùng không tồn tại.");
 
 
             // Xác thực mật khẩu
@@ -207,7 +207,8 @@ namespace ToyShop.Services.Service
                 Phone = model.Phone,
                 FullName = model.FullName,
                 CreatedTime = DateTime.UtcNow,
-                ImageUrl = await FileUploadHelper.UploadFile(model.Image)
+                ImageUrl = await FileUploadHelper.UploadFile(model.Image),
+                Password = model.Password
             };
 
             try
@@ -434,10 +435,10 @@ namespace ToyShop.Services.Service
             user.PasswordHash = CoreHelper.HashPassword(code);
             //user.CodeGeneratedTime = DateTime.UtcNow;
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
-
+            await _unitOfWork.SaveAsync();
             // Gửi email chứa mã code tới người dùng
             //List<string> selectedEmail = new List<string> { email };
-            string body = $"<div style=\"font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2\">\r\n  <div style=\"margin:50px auto;width:70%;padding:20px 0\">\r\n    <div style=\"border-bottom:1px solid #eee\">\r\n      <a href=\"\" style=\"font-size:1.4em;color: #ee0000;text-decoration:none;font-weight:600\">EduToyRent Platform</a>\r\n    </div>\r\n    <p style=\"font-size:1.1em\">Chào bạn,</p>\r\n    <p>Đây là mật khẩu mới của bạn. Vui lòng đổi sau khi đăng nhập.</p>\r\n    <h2 style=\"background: #aa0000;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;\">@{code}</h2>\r\n    <p style=\"font-size:0.9em;\">Thân,<br />EduToyRent Staff</p>\r\n    <hr style=\"border:none;border-top:1px solid #eee\" />\r\n    <div style=\"float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300\">\r\n      <p>EduToyRent Platform</p>\r\n      <p>Ho Chi Minh City</p>\r\n      <p>Vietnam</p>\r\n    </div>\r\n  </div>\r\n</div>";
+            string body = $"<div style=\"font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2\">\r\n  <div style=\"margin:50px auto;width:70%;padding:20px 0\">\r\n    <div style=\"border-bottom:1px solid #eee\">\r\n      <a href=\"\" style=\"font-size:1.4em;color: #ee0000;text-decoration:none;font-weight:600\">EduToyRent Platform</a>\r\n    </div>\r\n    <p style=\"font-size:1.1em\">Chào bạn,</p>\r\n    <p>Đây là mật khẩu mới của bạn. Vui lòng đổi sau khi đăng nhập.</p>\r\n    <h2 style=\"background: #81c408;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;\">{code}</h2>\r\n    <p style=\"font-size:0.9em;\">Thân,<br />EduToyRent Staff</p>\r\n    <hr style=\"border:none;border-top:1px solid #eee\" />\r\n    <div style=\"float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300\">\r\n      <p>EduToyRent Platform</p>\r\n      <p>Ho Chi Minh City</p>\r\n      <p>Vietnam</p>\r\n    </div>\r\n  </div>\r\n</div>";
             EmailRequestModel emailRequestModel = new EmailRequestModel
             {
                 EmailBody = body,

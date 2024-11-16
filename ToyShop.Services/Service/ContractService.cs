@@ -210,7 +210,6 @@ namespace ToyShop.Contract.Services.Interface
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             await _unitOfWork.SaveAsync();
         }
-
         public async Task CancelContractAsync(string id)
         {
             //được hủy đơn để hoàn tiền trong vòng 1 ngày: điều kiện phải trước thời gian thuê
@@ -277,6 +276,17 @@ namespace ToyShop.Contract.Services.Interface
         public Task<bool> CreateTopUpAsync(CreateTopUpModel model)
         {
             throw new NotImplementedException();
+        }
+        public async Task<ContractEntity> GetContractDetailInCart()
+        {
+            string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
+
+            var contractEntity = await _unitOfWork.GetRepository<ContractEntity>()
+                    .Entities
+                    .Include(c => c.ContractDetails)
+                        .ThenInclude(d => d.Toy)
+                    .FirstOrDefaultAsync(x => x.UserId.ToString() == userId && x.Status == "In Cart" && !x.DeletedTime.HasValue);
+            return contractEntity;
         }
     }
 }
