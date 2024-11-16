@@ -369,9 +369,9 @@ namespace ToyShop.Services.Service
             // Tạo mã code ngẫu nhiên và hash nó
             string code = new Random().Next(1000, 9999).ToString();
             //string body = $"<p>Code kích hoạt tài khoản của bạn là:: <strong>{code}</strong></p>";
-            ////gửi email xác thực tài khoản
-            ////await _emailService.SendEmailAsync(selectedEmail, "Code kích hoạt tài khoản", body);
-            ////kiểm tra xem phone có trống không
+            //gửi email xác thực tài khoản
+            //await _emailService.SendEmailAsync(selectedEmail, "Code kích hoạt tài khoản", body);
+            //kiểm tra xem phone có trống không
             if (string.IsNullOrWhiteSpace(model.Phone))
             {
                 throw new Exception("Không để số điện thoại trống");

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ToyShop.Contract.Repositories.Entity;
+using ToyShop.Contract.Repositories.PaggingItems;
 using ToyShop.Core.Base;
 using ToyShop.ModelViews.ContractModelView;
 using ToyShop.ModelViews.TopUpModel;
@@ -18,5 +19,7 @@ namespace ToyShop.Contract.Services.Interface
         Task DirectPaymentAsync(string id, DirectPaymentModel model);
         Task<bool> CreateTopUpAsync(CreateTopUpModel model);
         Task CancelContractAsync(string id);
+        Task<ContractEntity> GetContractDetailInCart();
+        Task<PaginatedList<ContractEntity>> GetAllContractsByUserIdAsync(string userId, string searchTerm);
     }
 }

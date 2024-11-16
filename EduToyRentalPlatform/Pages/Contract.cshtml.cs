@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Contract.Services.Interface;
 using ToyShop.Contract.Repositories.PaggingItems;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 
 namespace ToyShop.Pages
 {
@@ -13,16 +14,18 @@ namespace ToyShop.Pages
     {
         private readonly ToyShop.Repositories.Base.ToyShopDBContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IContractService _contractService;
 
-        public ContractModel(ToyShop.Repositories.Base.ToyShopDBContext context, IHttpContextAccessor httpContextAccessor)
+        public ContractModel(ToyShop.Repositories.Base.ToyShopDBContext context, IHttpContextAccessor httpContextAccessor, IContractService contractService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _contractService = contractService;
         }
 
         public PaginatedList<ContractEntity> Contracts { get; set; } = new PaginatedList<ContractEntity>(new List<ContractEntity>(), 0, 1, 5); // Adjust based on your pagination logic
 
-        public async Task<IActionResult> OnGetAsync(int index = 1, int pageSize = 5)
+        public async Task<IActionResult> OnGetAsync(int index = 1, int pageSize = 5, string? searchTerm = null)
         {
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
 
@@ -36,9 +39,9 @@ namespace ToyShop.Pages
             var query = _context.ContractEntitys
                 .Where(c => c.UserId.ToString() == userId) // Filter contracts by user ID
                 .OrderBy(c => c.DateCreated);
-
+            var contract = await _contractService.GetAllContractsByUserIdAsync(userId, searchTerm);
             int totalItems = await query.CountAsync();
-            Contracts = await PaginatedList<ContractEntity>.CreateAsync(query, index, pageSize);
+            Contracts = contract;
 
             return Page();
         }
