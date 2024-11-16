@@ -8,7 +8,7 @@
 
 <link rel="stylesheet" href="~/css/FeedBack.css">
 
-<!-- Single Page Header start -->
+<!-- Single Page Header Start -->
 <div class="container-fluid page-header py-5 bg-primary text-light">
     <h1 class="text-center text-white display-4">Product Details</h1>
     <ol class="breadcrumb justify-content-center mb-0">
@@ -31,69 +31,172 @@
             </div>
             <div class="col-lg-8">
                 <h4 class="fw-bold mb-3">@Model.Toy.ToyName</h4>
-                <h5 class="fw-bold mb-3 ">@string.Format("{0:N0}", Model.Toy.ToyPriceSale) VND</h5>
-                <p class="mb-4">@Model.Toy.ToyDescription</p>
-                <div class="input-group quantity mb-5" style="width: 130px;">
-                    <button class="btn btn-outline-secondary btn-minus "><i class="fa fa-minus"></i></button>
-                    <input type="text" class="form-control text-center border-0" value="1">
-                    <button class="btn btn-outline-secondary btn-plus "><i class="fa fa-plus"></i></button>
+
+                <!-- Giá hiển thị -->
+                <h5 id="priceDisplay" class="fw-bold mb-3">@string.Format("{0:N0}", Model.Toy.ToyPriceSale) VND</h5>
+
+                <!-- Lựa chọn Buy hoặc Rent -->
+                <div class="mb-4">
+                    <label for="purchaseType" class="form-label fw-bold">Choose an Option:</label>
+                    <select id="purchaseType" class="form-select" onchange="updatePriceAndFields()">
+                        <option value="buy" data-price="@Model.Toy.ToyPriceSale">Buy</option>
+                        <option value="rent" data-price="@Model.Toy.ToyPriceRent">Rent</option>
+                    </select>
                 </div>
+
+                <!-- Trường số lượng cho Buy -->
+                <div id="buyFields" class="input-group quantity mb-4" style="width: 180px;">
+                    <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('buy', -1)"><i class="fa fa-minus"></i></button>
+                    <input type="number" id="buyQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('buy')">
+                    <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('buy', 1)"><i class="fa fa-plus"></i></button>
+                </div>
+
+                <!-- Trường thông tin cho Rent -->
+                <div id="rentFields" class="d-none">
+                    <div class="input-group quantity mb-4" style="width: 180px;">
+                        <button class="btn btn-outline-secondary btn-minus" onclick="changeQuantity('rent', -1)"><i class="fa fa-minus"></i></button>
+                        <input type="number" id="rentQuantity" class="form-control text-center border-0" value="1" min="1" oninput="validateQuantity('rent')">
+                        <button class="btn btn-outline-secondary btn-plus" onclick="changeQuantity('rent', 1)"><i class="fa fa-plus"></i></button>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control" onchange="updatePrice('rent')">
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control" onchange="updatePrice('rent')">
+                    </div>
+                </div>
+
                 <a href="#" class="btn btn-primary rounded-pill px-5 py-3"><i class="fa fa-shopping-bag me-3"></i>Add to Cart</a>
             </div>
         </div>
     </div>
 </div>
 <!-- Single Product End -->
-<!-- FeedBack Start -->
-<div class="container mt-5 feedback-container">
-    <div class="feedback-form p-4 bg-light rounded shadow-sm mb-5">
-        <h3 class="mb-4">Submit Your Feedback</h3>
-        <form method="post">
-            <input type="hidden" name="FeedBack.UserId" value="FeedBack.UserId" />
-            <input type="hidden" name="FeedBack.ToyId" value="@Model.Toy.Id" />
-            <textarea asp-for="Feedback.Content" class="form-control mb-3" placeholder="Your feedback here..." required></textarea>
-            <button type="submit" class="btn btn-primary">Submit Feedback</button>
-        </form>
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
-        }
-    </div>
 
-    <h3 class="mb-4">Feedback List</h3>
-    <ul class="feedback-list list-unstyled">
-        @if (Model.Feedbacks.Any())
-        {
-            @foreach (var feedback in Model.Feedbacks)
-            {
-                <li class="feedback-item p-3 border rounded mb-3" style="background-color: #f9f9f9;">
-                    <strong>@feedback.FullName</strong> - <span class="text-muted">@feedback.CreatedTime.ToString("g")</span>
-                    <p class="mt-2">@feedback.Content</p>
-                </li>
-            }
+<script>
+    // Update price and display the appropriate fields for Buy or Rent
+    function updatePriceAndFields() {
+        const purchaseType = document.getElementById("purchaseType").value;
+        const priceDisplay = document.getElementById("priceDisplay");
+        const buyFields = document.getElementById("buyFields");
+        const rentFields = document.getElementById("rentFields");
+        const selectedOption = document.getElementById("purchaseType").selectedOptions[0];
+        const price = selectedOption.getAttribute("data-price");
+
+        // Update price display
+        priceDisplay.innerText = parseInt(price).toLocaleString() + " VND";
+
+        // Show the appropriate fields for Buy or Rent
+        if (purchaseType === "rent") {
+            rentFields.classList.remove("d-none");
+            buyFields.classList.add("d-none");
+        } else {
+            rentFields.classList.add("d-none");
+            buyFields.classList.remove("d-none");
         }
-        else
+    }
+
+    function changeQuantity(type, change) {
+        const quantityInput = document.getElementById(type + "Quantity");
+        let currentQuantity = parseInt(quantityInput.value);
+
+        // Ensure quantity doesn't go below 1
+        currentQuantity += change;
+        if (currentQuantity < 1) {
+            currentQuantity = 1;
+        }
+
+        // Update quantity input value
+        quantityInput.value = currentQuantity;
+
+        // Update price based on quantity
+        updatePrice(type);
+    }
+
+    // Validate the quantity input (if needed)
+    function validateQuantity(type) {
+        const quantityInput = document.getElementById(type + "Quantity");
+        let currentQuantity = parseInt(quantityInput.value);
+
+        // Ensure quantity is at least 1
+        if (currentQuantity < 1) {
+            quantityInput.value = 1;
+        }
+
+        // Update price based on the new value
+        updatePrice(type);
+    }
+
+    // Function to update the displayed price based on the quantity selected
+    function updatePrice(type) {
+        const priceDisplay = document.getElementById("priceDisplay");
+        const quantity = document.getElementById(type + "Quantity").value;
+        const selectedOption = document.getElementById("purchaseType").selectedOptions[0];
+        const price = selectedOption.getAttribute("data-price");
+
+        // If it's Rent, calculate price based on dates
+        if (type === 'rent') {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const days = Math.ceil((end - start) / (1000 * 3600 * 24)) + 1;
+
+                // Calculate total rent price
+                const totalPrice = days * parseInt(price) * parseInt(quantity);
+                priceDisplay.innerText = totalPrice.toLocaleString() + " VND";
+            }
+        } else {
+            // Multiply the price by quantity for Buy
+            const totalPrice = parseInt(price) * parseInt(quantity);
+            priceDisplay.innerText = totalPrice.toLocaleString() + " VND";
+        }
+    }
+
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', function () {
+        updatePriceAndFields();
+    });
+</script>
+
+
+<h3 class="mb-4">Feedback List</h3>
+<ul class="feedback-list list-unstyled">
+    @if (Model.Feedbacks.Any())
+    {
+        @foreach (var feedback in Model.Feedbacks)
         {
-            <li class="feedback-item p-3 border rounded mb-3" style="background-color: #f9f9f9; text-align: center;">
-                <i class="fas fa-comment-dots fa-2x text-muted mb-2"></i>
-                <p class="lead text-muted">No comments yet.</p>
-                <p>Be the first to share your thoughts!</p>
-                <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#feedbackModal">Leave Feedback</button>
+            <li class="feedback-item p-3 border rounded mb-3" style="background-color: #f9f9f9;">
+                <strong>@feedback.FullName</strong> - <span class="text-muted">@feedback.CreatedTime.ToString("g")</span>
+                <p class="mt-2">@feedback.Content</p>
             </li>
         }
-    </ul>
+    }
+    else
+    {
+        <li class="feedback-item p-3 border rounded mb-3" style="background-color: #f9f9f9; text-align: center;">
+            <i class="fas fa-comment-dots fa-2x text-muted mb-2"></i>
+            <p class="lead text-muted">No comments yet.</p>
+            <p>Be the first to share your thoughts!</p>
+            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#feedbackModal">Leave Feedback</button>
+        </li>
+    }
+</ul>
 
-    <div class="pagination d-flex justify-content-center mt-4">
-        @if (Model.PageNumber > 1)
-        {
-            <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber - 1)" class="btn btn-secondary me-2"><i class="fas fa-chevron-left"></i></a>
-        }
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            <a asp-page="ShopDetail" asp-route-pageNumber="@i" class="@(i == Model.PageNumber ? "btn btn-primary" : "btn btn-outline-primary") me-1">@i</a>
-        }
-        @if (Model.PageNumber < Model.TotalPages)
-        {
-            <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber + 1)" class="btn btn-secondary"><i class="fas fa-chevron-right"></i></a>
-        }
-    </div>
+<div class="pagination d-flex justify-content-center mt-4">
+    @if (Model.PageNumber > 1)
+    {
+        <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber - 1)" class="btn btn-secondary me-2"><i class="fas fa-chevron-left"></i></a>
+    }
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        <a asp-page="ShopDetail" asp-route-pageNumber="@i" class="@(i == Model.PageNumber ? "btn btn-primary" : "btn btn-outline-primary") me-1">@i</a>
+    }
+    @if (Model.PageNumber < Model.TotalPages)
+    {
+        <a asp-page="ShopDetail" asp-route-pageNumber="@(Model.PageNumber + 1)" class="btn btn-secondary"><i class="fas fa-chevron-right"></i></a>
+    }
+</div>
