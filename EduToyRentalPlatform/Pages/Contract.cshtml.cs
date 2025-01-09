@@ -10,6 +10,7 @@ using System.Net.WebSockets;
 using ToyShop.Services.Service;
 using System.Security.Claims;
 using ToyShop.ModelViews.RestoreToyModelViews;
+using EduToyRentalPlatform.Pages.Cart;
 
 namespace ToyShop.Pages
 {
@@ -35,7 +36,8 @@ namespace ToyShop.Pages
             _httpContextAccessor = httpContextAccessor;
         }
 
-
+        [BindProperty]
+        public string ItemId { get; set; }
         public int TotalItems { get; private set; }
         public int PageNumber { get; private set; }
         public int PageSize { get; private set; } = 10;
@@ -84,6 +86,23 @@ namespace ToyShop.Pages
             }
             return Page();
         }
+        public async Task<IActionResult> OnPostDeleteAsync(/*string itemId*/)
+        {
+            if (string.IsNullOrEmpty(ItemId))
+            {
+                return BadRequest("Item ID is missing."); // HTTP 400
+            }
 
+            try
+            {
+                await _contractService.CancelContractAsync(ItemId);
+                return RedirectToPage("/Contract");
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi để kiểm tra (tùy chọn)
+                return RedirectToPage("/Contract");
+            }
+        }
     }
 }

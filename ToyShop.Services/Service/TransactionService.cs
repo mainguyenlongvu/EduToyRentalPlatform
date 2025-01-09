@@ -225,14 +225,13 @@ namespace ToyShop.Services.Service
             tranModel.Status = "Not Received";
             Transaction transaction = new Transaction
             {
-                TranCode = tranModel.TranCode,
-                Status = tranModel.Status,
-                ContractId = tranModel.ContractId,
-                Method = tranModel.Method,
+                Status = "Processing",
                 CreatedBy = userId,
-                ContractEntity = existingContract,
-                CreatedTime = CoreHelper.SystemTimeNow,
-               
+                ContractId = tranModel.ContractId,
+                DateCreated = CoreHelper.SystemTimeNows,
+                Method = true,
+                TranCode = GenerateBillCode(),
+                LastUpdatedTime = CoreHelper.SystemTimeNows,
             };
             await _unitOfWork.GetRepository<Transaction>().InsertAsync(transaction);
             await _unitOfWork.SaveAsync();
@@ -243,8 +242,12 @@ namespace ToyShop.Services.Service
 
 			return true;
 		}
-
-		public async Task<bool> ProcessPurchaseWallet(CreateTransactionModel tranModel, string userId)
+        private int GenerateBillCode()
+        {
+            Random random = new Random();
+            return random.Next(100000, 1000000); // Generates a 6-digit number between 100000 and 999999
+        }
+        public async Task<bool> ProcessPurchaseWallet(CreateTransactionModel tranModel, string userId)
 		{
 			var existingContract = await _unitOfWork.GetRepository<ContractEntity>().Entities.FirstOrDefaultAsync(x => x.Id == tranModel.ContractId && !x.DeletedTime.HasValue)
 				?? throw new KeyNotFoundException("Contract not found.");

@@ -155,7 +155,7 @@ namespace ToyShop.Contract.Services.Interface
             Random random = new Random();
             return random.Next(100000, 1000000); // Generates a 6-digit number between 100000 and 999999
         }
-        public async Task PayByWalletAsync(string id, PayByWalletModel model)
+        public async Task PayByWalletAsync(string id)
         {
             //Lấy id người dùng
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"]!;
@@ -163,20 +163,16 @@ namespace ToyShop.Contract.Services.Interface
                 .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract not found!");
 
-            if (model == null)
-                throw new ArgumentNullException(nameof(model), "Update model cannot be null.");
-
-            _mapper.Map(model, contract);
             contract.LastUpdatedTime = CoreHelper.SystemTimeNows;
-
+            contract.Status = "Not Received";
             //tìm người dùng
             ApplicationUser user = await _unitOfWork.GetRepository<ApplicationUser>().Entities.FirstOrDefaultAsync(x => x.Id.ToString() == userId);
-            if (user.Money < model.TotalValue)
+            if (user.Money < contract.TotalValue)
             {
                 throw new ErrorException((int)StatusCodeHelper.BadRequest, ResponseCodeConstants.BADREQUEST, "Tài khoản của bạn không đủ!");
             }
             //trừ tiền trong tài khoản
-            user.Money -= (int)model.TotalValue;
+            user.Money -= (int)contract.TotalValue;
 
             //Tạo phương thức thanh toán
             Transaction transaction = new Transaction
@@ -211,10 +207,11 @@ namespace ToyShop.Contract.Services.Interface
         {
             //được hủy đơn để hoàn tiền trong vòng 1 ngày: điều kiện phải trước thời gian thuê
             ContractEntity contract = await _unitOfWork.GetRepository<ContractEntity>().Entities
-                .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue && p.Status == "Not Received")
+                .FirstOrDefaultAsync(p => p.Id == id && !p.DeletedTime.HasValue)
                 ?? throw new ErrorException((int)StatusCodeHelper.Notfound, ResponseCodeConstants.NOT_FOUND, "Contract not found!");
 
             contract.Status = "Canceled";
+            contract.Transactions.FirstOrDefault().Status = "Canceled";
             contract.LastUpdatedTime = CoreHelper.SystemTimeNows;
             //Lấy Id người dùng
             string userId = _httpContextAccessor.HttpContext?.Request.Cookies["UserId"];
@@ -224,6 +221,7 @@ namespace ToyShop.Contract.Services.Interface
 
             await _unitOfWork.GetRepository<ApplicationUser>().UpdateAsync(user);
             await _unitOfWork.GetRepository<ContractEntity>().UpdateAsync(contract);
+            await _unitOfWork.GetRepository<Transaction>().UpdateAsync(contract.Transactions.FirstOrDefault());
             await _unitOfWork.SaveAsync();
         }
 

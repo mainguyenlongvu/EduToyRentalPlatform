@@ -100,14 +100,9 @@ namespace EduToyRentalPlatform.Pages.Cart
 
             if (paymentMethod.Equals("Wallet", StringComparison.OrdinalIgnoreCase)) // Thanh toán ví
             {
-                bool result = await _transactionService.ProcessPurchaseWallet(tranModel, userId);
-                if (!result)
-                {
-                    ModelState.AddModelError(string.Empty, "Thanh toán qua ví thất bại.");
-                    return RedirectToPage("/Cart/Checkout");
-                }
+                await _contractService.PayByWalletAsync(tranModel.ContractId);
 
-                return RedirectToPage("/Cart/Checkout");
+                return RedirectToPage("/Contract");
             }
 
             if (paymentMethod.Equals("Direct", StringComparison.OrdinalIgnoreCase)) // Thanh toán trực tiếp

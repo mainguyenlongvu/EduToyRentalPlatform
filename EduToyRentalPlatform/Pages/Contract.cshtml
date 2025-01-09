@@ -33,10 +33,6 @@
                         <td>
                             <div class="d-flex flex-wrap gap-2 mb-3">
 
-                                <!-- Cancel Button -->
-                                <a href="#" class="btn btn-danger btn-sm d-flex align-items-center" onclick="">
-                                    <i class="fas fa-trash me-1"></i> Cancel
-                                </a>
 
                                 <!-- Contract Details Button with Custom Color -->
                                 <button type="button" class="btn btn-info btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#contract-details-@item.Id" aria-expanded="false" aria-controls="contract-details-@item.Id">
@@ -49,6 +45,14 @@
                                     <button type="button" class="btn btn-success btn-sm d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#restore-details-@item.Id" aria-expanded="false" aria-controls="restore-details-@item.Id">
                                         <i class="fas fa-redo me-1"></i> Restore
                                     </button>
+                                }
+                                <!-- Cancel Button -->
+                                @if (item.Transactions.FirstOrDefault().Status == "Not Received" || item.Transactions.FirstOrDefault().Status == "Processing")
+                                {
+                                    <form method="post" asp-page-handler="Delete">
+                                        <input type="hidden" name="itemId" value="@item.Id" />
+                                        <input type="submit" value="Cancel" class="btn btn-danger btn-sm d-flex align-items-center" />
+                                    </form>
                                 }
                             </div>
 

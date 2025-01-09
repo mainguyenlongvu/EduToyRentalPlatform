@@ -36,16 +36,17 @@ namespace EduToyRentalPlatform.Pages.Cart
             {
                 // Find the contract with status "In Cart" for this user
                 var contract = _contractService.GetContractDetailInCart();
-
                 if (contract != null)
                 {
-                    // Populate MyCart with contract details
-                    MyCart = contract.Result.ContractDetails.Where(x=>!x.DeletedTime.HasValue).ToList();
+
+                    MyCart = contract.Result?.ContractDetails?
+                        .Where(x => !x.DeletedTime.HasValue)
+                        .ToList() ?? new List<ContractDetail>();
                 }
             }
             else
             {
-                 Response.Redirect("/Account/LoginPage");
+                Response.Redirect("/Account/LoginPage");
             }
         }
 

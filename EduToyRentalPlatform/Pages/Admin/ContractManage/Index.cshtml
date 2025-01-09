@@ -156,7 +156,7 @@
                                                 <td style="text-align: center;">@transaction.Method</td>
                                                 <td style="text-align: center;">@transaction.Status</td>
                                                 <td style="text-align: center;">
-                                                    @if (transaction.Status == "Pending")
+                                                    @if (transaction.Status == "Not Received")
                                                     {
                                                         <!-- Form to update transaction status to Completed -->
                                                         <form method="post" asp-page-handler="UpdateTransaction" style="display:inline;">
